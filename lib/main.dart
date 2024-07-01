@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
               900: const Color(primaryColorCode).withOpacity(1.0),
             },
           ),
-          scaffoldBackgroundColor: Color(0xFF171821),
+          scaffoldBackgroundColor: const Color(0xFF171821),
           fontFamily: 'IBMPlexSans',
           brightness: Brightness.dark),
       home: DashBoard(),
