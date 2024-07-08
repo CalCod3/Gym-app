@@ -92,10 +92,10 @@ class LineChartCard extends StatelessWidget {
             aspectRatio: Responsive.isMobile(context) ? 9 / 4 : 16 / 6,
             child: LineChart(
               LineChartData(
-                lineTouchData: LineTouchData(
+                lineTouchData: const LineTouchData(
                   handleBuiltInTouches: true,
                 ),
-                gridData: FlGridData(show: false),
+                gridData: const FlGridData(show: false),
                 titlesData: FlTitlesData(
                   bottomTitles: AxisTitles(
                     sideTitles: SideTitles(
@@ -119,10 +119,10 @@ class LineChartCard extends StatelessWidget {
                       },
                     ),
                   ),
-                  rightTitles: AxisTitles(
+                  rightTitles: const AxisTitles(
                     sideTitles: SideTitles(showTitles: false),
                   ),
-                  topTitles: AxisTitles(
+                  topTitles: const AxisTitles(
                     sideTitles: SideTitles(showTitles: false),
                   ),
                   leftTitles: AxisTitles(
@@ -162,7 +162,7 @@ class LineChartCard extends StatelessWidget {
                         show: true,
                         color: Theme.of(context).primaryColor.withOpacity(0.5),
                       ),
-                      dotData: FlDotData(show: false),
+                      dotData: const FlDotData(show: false),
                       spots: spots)
                 ],
                 minX: 0,

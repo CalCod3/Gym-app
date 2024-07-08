@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dashboard/Responsive.dart';
+import 'package:flutter_dashboard/responsive.dart';
 import 'package:flutter_dashboard/model/menu_modal.dart';
 import 'package:flutter_svg/svg.dart';
 
