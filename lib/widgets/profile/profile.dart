@@ -5,7 +5,7 @@ import 'package:flutter_dashboard/widgets/profile/widgets/scheduled.dart';
 import 'package:flutter_dashboard/widgets/profile/widgets/weightHeightBloodCard.dart';
 
 class Profile extends StatelessWidget {
-  const Profile({Key? key}) : super(key: key);
+  const Profile({super.key});
 
   @override
   Widget build(BuildContext context) {

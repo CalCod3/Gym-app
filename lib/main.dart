@@ -3,8 +3,8 @@ import 'package:provider/provider.dart';
 import 'auth/auth_provider.dart';
 import 'auth/login_page.dart';
 import 'auth/signup_page.dart';
-import 'dashboard.dart';
 import 'const.dart';
+import 'splash_screen.dart'; // Import the splash screen
 
 void main() {
   runApp(const MyApp());
@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (_) => AuthProvider(),
       child: MaterialApp(
-        title: 'RegyBox',
+        title: 'FitUp',
         debugShowCheckedModeBanner: false,
         themeMode: ThemeMode.dark,
         theme: ThemeData(
@@ -40,15 +40,7 @@ class MyApp extends StatelessWidget {
             scaffoldBackgroundColor: const Color(0xFF171821),
             fontFamily: 'IBMPlexSans',
             brightness: Brightness.dark),
-        home: Consumer<AuthProvider>(
-          builder: (context, authProvider, child) {
-            if (authProvider.token == null) {
-              return const HomePage();
-            } else {
-              return DashBoard();
-            }
-          },
-        ),
+        home: const SplashScreen(), // Set the splash screen as the home
       ),
     );
   }
@@ -61,31 +53,40 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('RegyBox'),
+        title: const Text('FitUp'),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const LoginPage()),
-                );
-              },
-              child: const Text('Login'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const SignupPage()),
-                );
-              },
-              child: const Text('Signup'),
-            ),
-          ],
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const LoginPage()),
+                    );
+                  },
+                  child: const Text('Login'),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const SignupPage()),
+                    );
+                  },
+                  child: const Text('Signup'),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
