@@ -1,5 +1,12 @@
+// models/menu_modal.dart
 class MenuModel {
-  String icon;
-  String title;
-  MenuModel({required this.icon, required this.title});
+  final String icon;
+  final String title;
+  final String route;
+
+  MenuModel({
+    required this.icon,
+    required this.title,
+    required this.route,
+  });
 }
