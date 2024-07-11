@@ -4,7 +4,7 @@ import 'package:flutter_dashboard/const.dart';
 import 'package:flutter_dashboard/widgets/profile/widgets/scheduled.dart';
 import 'package:flutter_dashboard/widgets/profile/widgets/weightHeightBloodCard.dart';
 import 'package:provider/provider.dart';
-import 'user_provider.dart';
+import '../../providers/user_provider.dart';
 
 class Profile extends StatelessWidget {
   const Profile({super.key});

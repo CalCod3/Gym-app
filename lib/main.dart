@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'providers/performance_provider.dart';
+import 'providers/post_provider.dart';
 import 'package:provider/provider.dart';
 import 'auth/auth_provider.dart';
 import 'auth/login_page.dart';
 import 'auth/signup_page.dart';
 import 'const.dart';
+import 'providers/schedule_provider.dart';
 import 'splash_screen.dart'; // Import the splash screen
-import 'widgets/profile/user_provider.dart'; // Import the UserProvider
+import 'providers/user_provider.dart'; // Import the UserProvider
 
 void main() {
   runApp(const MyApp());
@@ -20,6 +23,9 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => UserProvider()),
+        ChangeNotifierProvider(create: (_) => PostProvider()),
+        ChangeNotifierProvider(create: (_) => ScheduleProvider()),
+        ChangeNotifierProvider(create: (_) => PerformanceProvider()),
       ],
       child: MaterialApp(
         title: 'FitUp',
