@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dashboard/pages/leaderboard/leaderboard.dart';
-import 'package:flutter_dashboard/pages/schedule/schedule.dart';
-import 'package:flutter_dashboard/widgets/profile/profile.dart';
+import 'package:flutter_dashboard/services/api_service.dart';
 import 'providers/performance_provider.dart';
 import 'providers/post_provider.dart';
 import 'package:provider/provider.dart';
@@ -25,8 +23,12 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
-        ChangeNotifierProvider(create: (_) => UserProvider()),
-        ChangeNotifierProvider(create: (_) => PostProvider()),
+        ChangeNotifierProvider(
+          create: (_) => UserProvider(Provider.of<AuthProvider>(context, listen: false)),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => PostProvider(ApiService()), // Provide ApiService here
+        ),
         ChangeNotifierProvider(create: (_) => ScheduleProvider()),
         ChangeNotifierProvider(create: (_) => PerformanceProvider()),
       ],
@@ -54,16 +56,6 @@ class MyApp extends StatelessWidget {
           fontFamily: 'IBMPlexSans',
           brightness: Brightness.dark,
         ),
-        initialRoute: '/', // Set the initial route
-        routes: {
-          '/': (context) => const SplashScreen(), // Define the splash screen route
-          '/home': (context) => const HomePage(), // Define the home screen route
-          '/login': (context) => const LoginPage(), // Define the login screen route
-          '/signup': (context) => const SignupPage(), // Define the signup screen route
-          '/leaderboard': (context) => const LeaderboardScreen(), // Define the leaderboard screen route
-          '/profile': (context) => const Profile(), // Define the leaderboard screen route
-          '/schedule': (context) => const ScheduleScreen(), // Define the leaderboard screen route
-        },
         home: const SplashScreen(), // Set the splash screen as the home
       ),
     );

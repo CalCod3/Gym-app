@@ -8,6 +8,7 @@ class ScheduleScreen extends StatefulWidget {
   const ScheduleScreen({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _ScheduleScreenState createState() => _ScheduleScreenState();
 }
 

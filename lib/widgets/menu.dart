@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dashboard/pages/home/home_page.dart';
+import 'package:flutter_dashboard/pages/social/posts.dart';
 import 'package:flutter_dashboard/responsive.dart';
 import 'package:flutter_dashboard/model/menu_modal.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:flutter_dashboard/pages/leaderboard/leaderboard.dart';
+import 'package:flutter_dashboard/pages/schedule/schedule.dart';
+import 'package:flutter_dashboard/widgets/profile/profile.dart';
+import 'package:flutter_dashboard/auth/login_page.dart'; // Assume you handle signout via login page
 
 class Menu extends StatefulWidget {
   final GlobalKey<ScaffoldState> scaffoldKey;
@@ -14,14 +20,23 @@ class Menu extends StatefulWidget {
 }
 
 class _MenuState extends State<Menu> {
-  List<MenuModel> menu = [
-    MenuModel(icon: 'assets/svg/home.svg', title: "Dashboard", route: '/home'),
-    MenuModel(icon: 'assets/svg/profile.svg', title: "Profile", route: '/profile'),
-    MenuModel(icon: 'assets/svg/exercise.svg', title: "Exercise Schedule", route: '/schedule'),
-    MenuModel(icon: 'assets/svg/setting.svg', title: "Settings", route: ''),
-    MenuModel(icon: 'assets/svg/history.svg', title: "Leaderboard", route: '/leaderboard'),
-    MenuModel(icon: 'assets/svg/signout.svg', title: "Signout", route: ''),
-  ];
+  late List<MenuModel> menu;
+
+  @override
+  void initState() {
+    super.initState();
+    menu = [
+      MenuModel(
+          icon: 'assets/svg/home.svg',
+          title: "Dashboard",
+          route: HomePage(scaffoldKey: widget.scaffoldKey)),
+      MenuModel(icon: 'assets/svg/profile.svg', title: "Profile", route: const Profile()),
+      MenuModel(icon: 'assets/svg/exercise.svg', title: "Exercise Schedule", route: const ScheduleScreen()),
+      MenuModel(icon: 'assets/svg/setting.svg', title: "Feeds", route: const PostsScreen()),
+      MenuModel(icon: 'assets/svg/history.svg', title: "Leaderboard", route: const LeaderboardScreen()),
+      MenuModel(icon: 'assets/svg/signout.svg', title: "Signout", route: const LoginPage()),
+    ];
+  }
 
   int selected = 0;
 
@@ -64,7 +79,10 @@ class _MenuState extends State<Menu> {
                         selected = i;
                       });
                       widget.scaffoldKey.currentState!.closeDrawer();
-                      Navigator.pushNamed(context, menu[i].route);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => menu[i].route),
+                      );
                     },
                     child: Row(
                       children: [
@@ -72,7 +90,6 @@ class _MenuState extends State<Menu> {
                           padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 7),
                           child: SvgPicture.asset(
                             menu[i].icon,
-                            // ignore: deprecated_member_use
                             color: selected == i ? Colors.black : Colors.grey,
                           ),
                         ),

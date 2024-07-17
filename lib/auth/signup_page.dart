@@ -21,7 +21,7 @@ class SignupPageState extends State<SignupPage> {
 
   Future<void> _signup() async {
     final response = await http.post(
-      Uri.parse('http://127.0.0.1:8000/auth'),  // Replace with your FastAPI endpoint
+      Uri.parse('http://127.0.0.1:8001/auth'),  // Replace with your FastAPI endpoint
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },

@@ -4,7 +4,7 @@ import 'dart:convert';
 import '../model/post_model.dart';
 
 class ApiService {
-  static const String baseUrl = 'http://your-api-url.com';
+  static const String baseUrl = 'https://127.0.0.1:8001';
 
   Future<List<Post>> getPosts() async {
     final response = await http.get(Uri.parse('$baseUrl/posts/'));
@@ -58,6 +58,14 @@ class ApiService {
       return Comment.fromJson(json.decode(response.body));
     } else {
       throw Exception('Failed to create comment');
+    }
+  }
+
+  Future<void> deleteComment(int postId, int commentId) async {
+    final response = await http.delete(Uri.parse('$baseUrl/posts/$postId/comments/$commentId'));
+
+    if (response.statusCode != 204) {
+      throw Exception('Failed to delete comment');
     }
   }
 }

@@ -11,7 +11,10 @@ class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AnimatedSplashScreen(
-      splash: Icons.home, // You can replace this with an Image widget for your logo
+      splash: Image.asset(
+        'assets/images/splash.png', // Replace with your actual image path
+        fit: BoxFit.contain, // Adjust the fit as per your image dimensions
+      ),
       nextScreen: Consumer<AuthProvider>(
         builder: (context, authProvider, child) {
           if (authProvider.token == null) {
