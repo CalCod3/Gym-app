@@ -21,7 +21,7 @@ class _NewPostScreenState extends State<NewPostScreen> {
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context);
-    final currentUserId = userProvider.authProvider.userId;
+    final currentUserId = userProvider.authProvider?.userId;
     final currentUserName = userProvider.name;
     final currentUserProfileImageUrl = userProvider.profileImageUrl;
 

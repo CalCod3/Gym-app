@@ -37,8 +37,8 @@ class Profile extends StatelessWidget {
                   children: [
                     const SizedBox(height: 50),
                     userProvider.profileImageUrl != null
-                      ? Image.network(userProvider.profileImageUrl!)
-                      : Image.asset("assets/images/avatar.jpg"),
+                        ? Image.network(userProvider.profileImageUrl!)
+                        : Image.asset("assets/images/avatar.jpg"),
                     const SizedBox(height: 15),
                     Text(
                       userProvider.name ?? "Unknown",
@@ -56,8 +56,15 @@ class Profile extends StatelessWidget {
                       padding: EdgeInsets.all(Responsive.isMobile(context) ? 15 : 20.0),
                       child: const WeightHeightBloodCard(),
                     ),
-                    SizedBox(height: Responsive.isMobile(context) ? 20 : 40),
+                    const SizedBox(height: 20),
+                    _buildMembershipStatus(userProvider),
+                    const SizedBox(height: 20),
                     Scheduled(),
+                    const SizedBox(height: 15),
+                    Text(
+                      userProvider.name ?? "Unknown",
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                    ),
                   ],
                 ),
               ),
@@ -65,6 +72,17 @@ class Profile extends StatelessWidget {
           );
         }
       },
+    );
+  }
+
+  Widget _buildMembershipStatus(UserProvider userProvider) {
+    String membershipStatus = userProvider.isMembershipActive
+        ? 'Membership Status: Active'
+        : 'Membership Status: Inactive';
+
+    return Text(
+      membershipStatus,
+      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
     );
   }
 }

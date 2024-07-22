@@ -13,7 +13,7 @@ class PostDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context);
-    final currentUserId = userProvider.authProvider.userId;
+    final currentUserId = userProvider.authProvider?.userId;
     final currentUserProfileImageUrl = userProvider.profileImageUrl;
     final commentController = TextEditingController();
 

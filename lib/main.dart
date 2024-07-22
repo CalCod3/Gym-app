@@ -23,8 +23,10 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
-        ChangeNotifierProvider(
-          create: (_) => UserProvider(Provider.of<AuthProvider>(context, listen: false)),
+        ChangeNotifierProxyProvider<AuthProvider, UserProvider>(
+          create: (_) => UserProvider(null),
+          update: (_, authProvider, previousUserProvider) =>
+              previousUserProvider!..updateAuthProvider(authProvider),
         ),
         ChangeNotifierProvider(
           create: (_) => PostProvider(ApiService()), // Provide ApiService here

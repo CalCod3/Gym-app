@@ -36,7 +36,7 @@ class AuthProvider with ChangeNotifier {
   Future<void> _fetchUserId() async {
     if (_token == null) return;
 
-    final url = Uri.parse('http://127.0.0.1:8001/auth/me');
+    final url = Uri.parse('http://127.0.0.1:8001/users/me');
     final response = await http.get(url, headers: {
       'Authorization': 'Bearer $_token',
     });
