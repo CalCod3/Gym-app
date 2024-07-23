@@ -6,8 +6,9 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class UserProvider with ChangeNotifier {
-  AuthProvider? _authProvider; // Reference to AuthProvider
-  int? _userId; // Add field for userId
+  AuthProvider? _authProvider;
+  int? _userId;
+  int? _boxId; // Assuming you have a way to get/set boxId
   String? _name;
   String? _profileImageUrl;
   bool _isMembershipActive = false;
@@ -22,7 +23,8 @@ class UserProvider with ChangeNotifier {
   }
 
   AuthProvider? get authProvider => _authProvider;
-  int? get userId => _userId; // Add getter for userId
+  int? get userId => _userId;
+  int? get boxId => _boxId; // Getter for boxId
   String? get name => _name;
   String? get profileImageUrl => _profileImageUrl;
   bool get isMembershipActive => _isMembershipActive;
@@ -50,6 +52,7 @@ class UserProvider with ChangeNotifier {
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         _userId = data['id']; // Store userId
+        _boxId = data['box_id']; // Store boxId if available in the response
         _name = data['first_name'];
         _profileImageUrl = data['profile_image'];
 

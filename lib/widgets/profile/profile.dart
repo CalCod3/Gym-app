@@ -4,6 +4,7 @@ import 'package:flutter_dashboard/const.dart';
 import 'package:flutter_dashboard/widgets/profile/widgets/scheduled.dart';
 import 'package:flutter_dashboard/widgets/profile/widgets/weightHeightBloodCard.dart';
 import 'package:provider/provider.dart';
+import '../../pages/payments/payment.dart';
 import '../../providers/user_provider.dart';
 
 // ignore: must_be_immutable
@@ -14,80 +15,106 @@ class Profile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final userProvider = Provider.of<UserProvider>(context);
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
 
     _fetchUserDataFuture ??= userProvider.fetchUserData();
 
-    return FutureBuilder(
-      future: _fetchUserDataFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        } else {
-          return Container(
-            height: MediaQuery.of(context).size.height,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(Responsive.isMobile(context) ? 10 : 30.0),
-                topLeft: Radius.circular(Responsive.isMobile(context) ? 10 : 30.0),
+    return Scaffold(
+      body: FutureBuilder(
+        future: _fetchUserDataFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else {
+            return Container(
+              height: MediaQuery.of(context).size.height,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(Responsive.isMobile(context) ? 10 : 30.0),
+                  topLeft: Radius.circular(Responsive.isMobile(context) ? 10 : 30.0),
+                ),
+                color: cardBackgroundColor,
               ),
-              color: cardBackgroundColor,
-            ),
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Column(
-                  children: [
-                    const SizedBox(height: 50),
-                    userProvider.profileImageUrl != null
-                        ? Image.network(userProvider.profileImageUrl!)
-                        : Image.asset("assets/images/avatar.jpg"),
-                    const SizedBox(height: 15),
-                    Text(
-                      userProvider.name ?? "Unknown",
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      "Edit Profile details",
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Theme.of(context).primaryColor,
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 50),
+                      Consumer<UserProvider>(
+                        builder: (context, userProvider, child) {
+                          return userProvider.profileImageUrl != null
+                              ? Image.network(userProvider.profileImageUrl!)
+                              : Image.asset("assets/images/avatar.jpg");
+                        },
                       ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(Responsive.isMobile(context) ? 15 : 20.0),
-                      child: const WeightHeightBloodCard(),
-                    ),
-                    const SizedBox(height: 20),
-                    _buildMembershipStatus(userProvider),
-                    const SizedBox(height: 20),
-                    Scheduled(),
-                    const SizedBox(height: 15),
-                    Text(
-                      userProvider.name ?? "Unknown",
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                    ),
-                  ],
+                      const SizedBox(height: 15),
+                      Consumer<UserProvider>(
+                        builder: (context, userProvider, child) {
+                          return Text(
+                            userProvider.name ?? "Unknown",
+                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        "Edit Profile details",
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(Responsive.isMobile(context) ? 15 : 20.0),
+                        child: const WeightHeightBloodCard(),
+                      ),
+                      const SizedBox(height: 20),
+                      Consumer<UserProvider>(
+                        builder: (context, userProvider, child) {
+                          return _buildMembershipStatus(context, userProvider);
+                        },
+                      ),
+                      const SizedBox(height: 20),
+                      const Scheduled(),
+                      const SizedBox(height: 15),
+                      Consumer<UserProvider>(
+                        builder: (context, userProvider, child) {
+                          return Text(
+                            userProvider.name ?? "Unknown",
+                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          );
-        }
-      },
+            );
+          }
+        },
+      ),
     );
   }
 
-  Widget _buildMembershipStatus(UserProvider userProvider) {
+  Widget _buildMembershipStatus(BuildContext context, UserProvider userProvider) {
     String membershipStatus = userProvider.isMembershipActive
         ? 'Membership Status: Active'
         : 'Membership Status: Inactive';
 
-    return Text(
-      membershipStatus,
-      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const PaymentPage()),
+        );
+      },
+      child: Text(
+        membershipStatus,
+        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+      ),
     );
   }
 }

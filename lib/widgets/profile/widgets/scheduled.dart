@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dashboard/model/scheduled_model.dart';
 import 'package:flutter_dashboard/widgets/custom_card.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
+import '../../../providers/schedule_provider.dart';
+import '../../../pages/schedule/schedule.dart';
 
 class Scheduled extends StatelessWidget {
-  Scheduled({super.key});
-
-  final List<ScheduledModel> scheduled = [
-    ScheduledModel(title: "Endurance", date: "Today, 9AM - 11AM"),
-    ScheduledModel(title: "Gymnastics", date: "Tomorrow, 5PM - 6PM"),
-    ScheduledModel(title: "Mobility", date: "Wednesday, 9AM - 11AM"),
-  ];
+  const Scheduled({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -21,47 +17,73 @@ class Scheduled extends StatelessWidget {
           "Scheduled",
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
         ),
-        const SizedBox(
-          height: 12,
-        ),
-        for (var i = 0; i < scheduled.length; i++)
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 5),
-            child: CustomCard(
-              color: Colors.black,
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+        const SizedBox(height: 12),
+        Consumer<ScheduleProvider>(
+          builder: (context, scheduleProvider, child) {
+            // Sort schedules by start time in ascending order
+            final schedules = scheduleProvider.schedules
+                .where((schedule) => schedule.startTime.isAfter(DateTime.now()))
+                .toList()
+              ..sort((a, b) => a.startTime.compareTo(b.startTime));
+
+            // Limit to three items
+            final limitedSchedules = schedules.take(3).toList();
+
+            return Column(
+              children: [
+                for (var schedule in limitedSchedules)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 5),
+                    child: CustomCard(
+                      color: Colors.black,
+                      child: Column(
                         children: [
-                          Text(
-                            scheduled[i].title,
-                            style: const TextStyle(
-                                fontSize: 12, fontWeight: FontWeight.w500),
-                          ),
-                          const SizedBox(
-                            height: 2,
-                          ),
-                          Text(
-                            scheduled[i].date,
-                            style: const TextStyle(
-                                fontSize: 12,
-                                color: Colors.grey,
-                                fontWeight: FontWeight.w500),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    schedule.title,
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    "${schedule.startTime} - ${schedule.endTime}",
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.grey,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SvgPicture.asset('assets/svg/more.svg'),
+                            ],
                           ),
                         ],
                       ),
-                      SvgPicture.asset('assets/svg/more.svg')
-                    ],
+                    ),
                   ),
-                ],
-              ),
-            ),
-          ),
+                if (schedules.length > 3)
+                  TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const ScheduleScreen()),
+                      );
+                    },
+                    child: const Text("More"),
+                  ),
+              ],
+            );
+          },
+        ),
       ],
     );
   }

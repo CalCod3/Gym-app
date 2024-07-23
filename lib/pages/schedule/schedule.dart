@@ -1,8 +1,12 @@
 // screens/schedule_screen.dart
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
+import 'package:flutter_dashboard/pages/schedule/schedule_create.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 import '../../providers/schedule_provider.dart';
+import '../../auth/auth_provider.dart';
 
 class ScheduleScreen extends StatefulWidget {
   const ScheduleScreen({super.key});
@@ -16,6 +20,26 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   CalendarFormat _calendarFormat = CalendarFormat.month;
   DateTime _selectedDay = DateTime.now();
   DateTime _focusedDay = DateTime.now();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final token = Provider.of<AuthProvider>(context, listen: false).getToken();
+      if (token != null) {
+        Provider.of<ScheduleProvider>(context, listen: false).fetchSchedules(token);
+      }
+    });
+  }
+
+  void _showSuccessSnackbar() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Schedule added successfully!'),
+        backgroundColor: Colors.green,
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +60,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
             onDaySelected: (selectedDay, focusedDay) {
               setState(() {
                 _selectedDay = selectedDay;
-                _focusedDay = focusedDay; // update `_focusedDay` here as well
+                _focusedDay = focusedDay;
               });
             },
             onFormatChanged: (format) {
@@ -75,8 +99,18 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Navigate to add schedule screen
+        onPressed: () async {
+          final result = await Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const AddScheduleScreen()),
+          );
+          if (result == true) {
+            final token = Provider.of<AuthProvider>(context, listen: false).getToken();
+            if (token != null) {
+              Provider.of<ScheduleProvider>(context, listen: false).fetchSchedules(token);
+            }
+            _showSuccessSnackbar();
+          }
         },
         child: const Icon(Icons.add),
       ),

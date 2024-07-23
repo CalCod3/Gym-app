@@ -1,3 +1,4 @@
+// providers/auth_provider.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
@@ -47,5 +48,10 @@ class AuthProvider with ChangeNotifier {
     } else {
       throw Exception('Failed to fetch user ID: ${response.statusCode}');
     }
+  }
+
+  // New method to get the token
+  String? getToken() {
+    return _token;
   }
 }

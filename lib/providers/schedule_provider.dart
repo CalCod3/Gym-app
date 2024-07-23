@@ -9,8 +9,14 @@ class ScheduleProvider with ChangeNotifier {
 
   List<Schedule> get schedules => _schedules;
 
-  Future<void> fetchSchedules() async {
-    final response = await http.get(Uri.parse('http://127.0.0.1:8001/schedules/'));
+  Future<void> fetchSchedules(String token) async {
+    final response = await http.get(
+      Uri.parse('http://127.0.0.1:8001/schedules/'),
+      headers: {
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $token',
+      },
+    );
     if (response.statusCode == 200) {
       List<dynamic> data = json.decode(response.body);
       _schedules = data.map((json) => Schedule.fromJson(json)).toList();
@@ -20,11 +26,18 @@ class ScheduleProvider with ChangeNotifier {
     }
   }
 
-  Future<void> addSchedule(String title, String description, DateTime startTime, DateTime endTime) async {
+  Future<bool> addSchedule(
+    String token,
+    String title,
+    String description,
+    DateTime startTime,
+    DateTime endTime,
+  ) async {
     final response = await http.post(
       Uri.parse('http://127.0.0.1:8001/schedules/'),
-      headers: <String, String>{
+      headers: {
         'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $token',
       },
       body: jsonEncode(<String, dynamic>{
         'title': title,
@@ -34,12 +47,13 @@ class ScheduleProvider with ChangeNotifier {
       }),
     );
 
-    if (response.statusCode == 201) {
+    if (response.statusCode == 200 || response.statusCode == 201) {
       final newSchedule = Schedule.fromJson(json.decode(response.body));
       _schedules.add(newSchedule);
       notifyListeners();
+      return true;
     } else {
-      throw Exception('Failed to add schedule');
+      return false;
     }
   }
 }
