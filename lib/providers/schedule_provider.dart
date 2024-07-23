@@ -10,7 +10,7 @@ class ScheduleProvider with ChangeNotifier {
   List<Schedule> get schedules => _schedules;
 
   Future<void> fetchSchedules() async {
-    final response = await http.get(Uri.parse('http://your-backend-url/schedules/'));
+    final response = await http.get(Uri.parse('http://127.0.0.1:8001/schedules/'));
     if (response.statusCode == 200) {
       List<dynamic> data = json.decode(response.body);
       _schedules = data.map((json) => Schedule.fromJson(json)).toList();
@@ -22,7 +22,7 @@ class ScheduleProvider with ChangeNotifier {
 
   Future<void> addSchedule(String title, String description, DateTime startTime, DateTime endTime) async {
     final response = await http.post(
-      Uri.parse('http://your-backend-url/schedules/'),
+      Uri.parse('http://127.0.0.1:8001/schedules/'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },

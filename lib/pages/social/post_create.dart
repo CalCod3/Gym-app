@@ -38,8 +38,11 @@ class _NewPostScreenState extends State<NewPostScreen> {
                   content: _contentController.text,
                   userId: currentUserId!,
                   comments: [],
+                  userProfileImageUrl: '',
+                  userName: '',
                 );
-                Provider.of<PostProvider>(context, listen: false).addPost(newPost);
+                Provider.of<PostProvider>(context, listen: false)
+                    .addPost(newPost);
                 Navigator.pop(context);
               }
             },

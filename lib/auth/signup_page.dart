@@ -1,9 +1,12 @@
+// ignore_for_file: use_build_context_synchronously, avoid_print
+
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_dashboard/dashboard.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'auth_provider.dart';
-import '../dashboard.dart';
+import 'login_page.dart'; // Make sure to import your login page
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -18,38 +21,65 @@ class SignupPageState extends State<SignupPage> {
   final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
+  bool _isSubmitting = false;
 
   Future<void> _signup() async {
-    final response = await http.post(
-      Uri.parse('http://127.0.0.1:8001/auth'),  // Replace with your FastAPI endpoint
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, String>{
-        'first_name': _firstNameController.text,
-        'last_name': _lastNameController.text,
-        'email': _emailController.text,
-        'password': _passwordController.text,
-      }),
-    );
+    if (_passwordController.text != _confirmPasswordController.text) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Passwords do not match')),
+      );
+      return;
+    }
 
-    if (response.statusCode == 200) {
-      final responseData = json.decode(response.body);
-      // ignore: use_build_context_synchronously
-      await Provider.of<AuthProvider>(context, listen: false).login(responseData['token']);
-      if (mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => DashBoard()),
-        );
-      }
-    } else {
-      // Show error message
-      if (mounted) {
+    setState(() {
+      _isSubmitting = true;
+    });
+
+    try {
+      final response = await http.post(
+        Uri.parse(
+            'http://127.0.0.1:8001/auth'), // Replace with your FastAPI signup endpoint
+        headers: <String, String>{
+          'Content-Type':
+              'application/json', // Change the Content-Type to application/json
+        },
+        body: json.encode({
+          'first_name': _firstNameController.text,
+          'last_name': _lastNameController.text,
+          'email': _emailController.text,
+          'password': _passwordController.text,
+        }),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final responseData = json.decode(response.body);
+
+        final authProvider = Provider.of<AuthProvider>(context, listen: false);
+        await authProvider.login(responseData['access_token']);
+
+        if (mounted) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => DashBoard()),
+          );
+        }
+      } else {
+        final responseBody = response.body;
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Signup failed')),
+          SnackBar(content: Text('Signup failed: $responseBody')),
         );
       }
+    } catch (e) {
+      print(e);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('An error occurred: $e')),
+      );
+    } finally {
+      setState(() {
+        _isSubmitting = false;
+      });
     }
   }
 
@@ -73,7 +103,8 @@ class SignupPageState extends State<SignupPage> {
                     children: <Widget>[
                       TextFormField(
                         controller: _firstNameController,
-                        decoration: const InputDecoration(labelText: 'First Name'),
+                        decoration:
+                            const InputDecoration(labelText: 'First Name'),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please enter your first name';
@@ -83,7 +114,8 @@ class SignupPageState extends State<SignupPage> {
                       ),
                       TextFormField(
                         controller: _lastNameController,
-                        decoration: const InputDecoration(labelText: 'Last Name'),
+                        decoration:
+                            const InputDecoration(labelText: 'Last Name'),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please enter your last name';
@@ -103,7 +135,8 @@ class SignupPageState extends State<SignupPage> {
                       ),
                       TextFormField(
                         controller: _passwordController,
-                        decoration: const InputDecoration(labelText: 'Password'),
+                        decoration:
+                            const InputDecoration(labelText: 'Password'),
                         obscureText: true,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -112,14 +145,39 @@ class SignupPageState extends State<SignupPage> {
                           return null;
                         },
                       ),
-                      const SizedBox(height: 20),
-                      ElevatedButton(
-                        onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            _signup();
+                      TextFormField(
+                        controller: _confirmPasswordController,
+                        decoration: const InputDecoration(
+                            labelText: 'Confirm Password'),
+                        obscureText: true,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please confirm your password';
                           }
+                          return null;
                         },
-                        child: const Text('Signup'),
+                      ),
+                      const SizedBox(height: 20),
+                      _isSubmitting
+                          ? const CircularProgressIndicator()
+                          : ElevatedButton(
+                              onPressed: () {
+                                if (_formKey.currentState!.validate()) {
+                                  _signup();
+                                }
+                              },
+                              child: const Text('Signup'),
+                            ),
+                      const SizedBox(height: 20),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const LoginPage()),
+                          );
+                        },
+                        child: const Text('Already have an account? Login'),
                       ),
                     ],
                   ),

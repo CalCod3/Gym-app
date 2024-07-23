@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'auth_provider.dart';
 import '../dashboard.dart';
+import 'signup_page.dart';  // Make sure to import the signup page
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -97,6 +98,17 @@ class LoginPageState extends State<LoginPage> {
                           }
                         },
                         child: const Text('Login'),
+                      ),
+                      const SizedBox(height: 20), // Add some spacing
+                      // Register link
+                      TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const SignupPage()), // Navigate to SignupPage
+                          );
+                        },
+                        child: const Text('Don\'t have an account? Register'),
                       ),
                     ],
                   ),

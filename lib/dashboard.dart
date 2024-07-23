@@ -17,7 +17,7 @@ class DashBoard extends StatelessWidget {
         child: Menu(scaffoldKey: _scaffoldKey)) :null,
         endDrawer:Responsive.isMobile(context) ? SizedBox(
             width: MediaQuery.of(context).size.width * 0.8,
-            child: const Profile()) : null,
+            child: Profile()) : null,
         body: SafeArea(
           child: Row(
             children: [
@@ -30,7 +30,7 @@ class DashBoard extends StatelessWidget {
                 ),
               Expanded(flex: 8, child: HomePage(scaffoldKey: _scaffoldKey)),
               if (!Responsive.isMobile(context))
-                const Expanded(
+                Expanded(
                   flex: 4,
                   child: Profile(),
                 ),

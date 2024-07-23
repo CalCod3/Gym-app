@@ -30,7 +30,7 @@ class _MenuState extends State<Menu> {
           icon: 'assets/svg/home.svg',
           title: "Dashboard",
           route: HomePage(scaffoldKey: widget.scaffoldKey)),
-      MenuModel(icon: 'assets/svg/profile.svg', title: "Profile", route: const Profile()),
+      MenuModel(icon: 'assets/svg/profile.svg', title: "Profile", route: Profile()),
       MenuModel(icon: 'assets/svg/exercise.svg', title: "Exercise Schedule", route: const ScheduleScreen()),
       MenuModel(icon: 'assets/svg/setting.svg', title: "Feeds", route: const PostsScreen()),
       MenuModel(icon: 'assets/svg/history.svg', title: "Leaderboard", route: const LeaderboardScreen()),

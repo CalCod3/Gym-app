@@ -64,7 +64,7 @@ class _PaymentPageState extends State<PaymentPage> {
 
   void _navigateToProfile() {
     Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (context) => const Profile()),
+      MaterialPageRoute(builder: (context) => Profile()),
     );
   }
 

@@ -1,4 +1,9 @@
 // providers/post_provider.dart
+// ignore_for_file: avoid_print
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import '../model/post_model.dart';
 import '../services/api_service.dart';
@@ -13,9 +18,12 @@ class PostProvider with ChangeNotifier {
 
   Future<void> fetchPosts() async {
     try {
+      print('Fetching posts...');
       _posts = await _apiService.getPosts();
+      print('Posts fetched: $_posts');
       notifyListeners();
     } catch (e) {
+      print('Error fetching posts: $e');
       throw Exception('Failed to load posts');
     }
   }
@@ -53,6 +61,36 @@ class PostProvider with ChangeNotifier {
       }
     } catch (e) {
       throw Exception('Failed to delete comment');
+    }
+  }
+
+  Future<void> addLike(int postId) async {
+    try {
+      await _apiService.addLike(postId); // Ensure this method is implemented in ApiService
+      final postIndex = _posts.indexWhere((post) => post.id == postId);
+      if (postIndex != -1) {
+        _posts[postIndex].likesCount += 1; // Increment the like count
+        notifyListeners();
+      }
+    } catch (e) {
+      throw Exception('Failed to add like');
+    }
+  }
+
+  Post? getPostById(int postId) {
+    return _posts.firstWhereOrNull((post) => post.id == postId);
+  }
+
+  Future<void> fetchComments(int postId) async {
+    try {
+      final comments = await _apiService.getComments(postId);
+      final postIndex = _posts.indexWhere((post) => post.id == postId);
+      if (postIndex != -1) {
+        _posts[postIndex].comments = comments;
+        notifyListeners();
+      }
+    } catch (e) {
+      throw Exception('Failed to load comments');
     }
   }
 }

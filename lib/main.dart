@@ -28,14 +28,16 @@ class MyApp extends StatelessWidget {
           update: (_, authProvider, previousUserProvider) =>
               previousUserProvider!..updateAuthProvider(authProvider),
         ),
-        ChangeNotifierProvider(
-          create: (_) => PostProvider(ApiService()), // Provide ApiService here
+        ChangeNotifierProxyProvider<UserProvider, PostProvider>(
+          create: (_) => PostProvider(ApiService('')),
+          update: (context, userProvider, previousPostProvider) =>
+              PostProvider(ApiService(userProvider.authProvider?.token ?? '')),
         ),
         ChangeNotifierProvider(create: (_) => ScheduleProvider()),
         ChangeNotifierProvider(create: (_) => PerformanceProvider()),
       ],
       child: MaterialApp(
-        title: 'FitUp',
+        title: 'FitNivel',
         debugShowCheckedModeBanner: false,
         themeMode: ThemeMode.dark,
         theme: ThemeData(

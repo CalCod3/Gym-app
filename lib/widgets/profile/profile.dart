@@ -6,15 +6,20 @@ import 'package:flutter_dashboard/widgets/profile/widgets/weightHeightBloodCard.
 import 'package:provider/provider.dart';
 import '../../providers/user_provider.dart';
 
+// ignore: must_be_immutable
 class Profile extends StatelessWidget {
-  const Profile({super.key});
+  Profile({super.key});
+
+  Future<void>? _fetchUserDataFuture;
 
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context);
 
+    _fetchUserDataFuture ??= userProvider.fetchUserData();
+
     return FutureBuilder(
-      future: userProvider.fetchUserData(),
+      future: _fetchUserDataFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());

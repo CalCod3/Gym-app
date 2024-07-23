@@ -12,7 +12,7 @@ class PerformanceProvider with ChangeNotifier {
   List<Performance> get leaderboard => _leaderboard;
 
   Future<void> fetchPerformances() async {
-    final response = await http.get(Uri.parse('http://your-backend-url/performances/'));
+    final response = await http.get(Uri.parse('http://127.0.0.1:8001/performances/'));
     if (response.statusCode == 200) {
       List<dynamic> data = json.decode(response.body);
       _performances = data.map((json) => Performance.fromJson(json)).toList();
@@ -24,7 +24,7 @@ class PerformanceProvider with ChangeNotifier {
 
   Future<void> addPerformance(String category, int weight) async {
     final response = await http.post(
-      Uri.parse('http://your-backend-url/performances/'),
+      Uri.parse('http://127.0.0.1:8001/performances/'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -44,7 +44,7 @@ class PerformanceProvider with ChangeNotifier {
   }
 
   Future<void> fetchLeaderboard() async {
-    final response = await http.get(Uri.parse('http://your-backend-url/leaderboard/'));
+    final response = await http.get(Uri.parse('http://127.0.0.1:8001/leaderboard/'));
     if (response.statusCode == 200) {
       List<dynamic> data = json.decode(response.body);
       _leaderboard = data.map((json) => Performance.fromJson(json)).toList();
