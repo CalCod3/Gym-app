@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../const.dart';
 import '../../providers/post_provider.dart';
-import '../../providers/user_provider.dart';
 import 'post_create.dart';
 import 'post_detail.dart';
 import 'comment_create.dart'; // Import for CommentCreate screen
