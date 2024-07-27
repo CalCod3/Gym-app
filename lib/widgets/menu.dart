@@ -1,9 +1,12 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
+import 'package:flutter_dashboard/pages/admin/communications.dart';
 import 'package:flutter_dashboard/pages/home/home_page.dart';
 import 'package:flutter_dashboard/pages/social/posts.dart';
 import 'package:flutter_dashboard/responsive.dart';
 import 'package:flutter_dashboard/model/menu_modal.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_dashboard/pages/leaderboard/leaderboard.dart';
 import 'package:flutter_dashboard/pages/schedule/schedule.dart';
 import 'package:flutter_dashboard/widgets/profile/profile.dart';
@@ -12,7 +15,7 @@ import 'package:flutter_dashboard/auth/auth_provider.dart';
 import 'package:provider/provider.dart';
 
 import '../pages/admin/activities.dart';
-import '../pages/admin/members.dart'; // Import your AuthProvider
+import '../pages/admin/members.dart';
 
 class Menu extends StatefulWidget {
   final GlobalKey<ScaffoldState> scaffoldKey;
@@ -27,6 +30,7 @@ class Menu extends StatefulWidget {
 class _MenuState extends State<Menu> {
   late List<MenuModel> menu;
   late AuthProvider _authProvider;
+  bool _isAdminExpanded = false;
 
   @override
   void initState() {
@@ -40,20 +44,58 @@ class _MenuState extends State<Menu> {
   void _buildMenu() {
     menu = [
       MenuModel(
-          icon: 'assets/svg/home.svg',
-          title: "Dashboard",
-          route: HomePage(scaffoldKey: widget.scaffoldKey)),
-      MenuModel(icon: 'assets/svg/profile.svg', title: "Profile", route: Profile()),
-      MenuModel(icon: 'assets/svg/exercise.svg', title: "Exercise Schedule", route: const ScheduleScreen()),
-      MenuModel(icon: 'assets/svg/setting.svg', title: "Feeds", route: const PostsScreen()),
-      MenuModel(icon: 'assets/svg/history.svg', title: "Leaderboard", route: const LeaderboardScreen()),
-      if (_authProvider.isAdmin ?? false) // Check if the user is an admin
+        icon: 'svg/home.svg',
+        title: "Dashboard",
+        route: HomePage(scaffoldKey: widget.scaffoldKey),
+      ),
+      MenuModel(
+        icon: 'svg/profile.svg',
+        title: "Profile",
+        route: Profile(),
+      ),
+      MenuModel(
+        icon: 'svg/exercise.svg',
+        title: "Exercise Schedule",
+        route: const ScheduleScreen(),
+      ),
+      MenuModel(
+        icon: 'svg/community.svg',
+        title: "Community",
+        route: const PostsScreen(),
+      ),
+      MenuModel(
+        icon: 'svg/history.svg',
+        title: "Leaderboard",
+        route: const LeaderboardScreen(),
+      ),
+      if (_authProvider.isAdmin ?? false)
         MenuModel(
-            icon: 'assets/svg/members.svg', // Provide an appropriate icon for Members
-            title: "Members",
-            route: const MembersScreen()),
-        MenuModel(icon: 'assets/svg/activity.svg', title: "Activities", route: const ActivityListScreen()),
-      MenuModel(icon: 'assets/svg/signout.svg', title: "Signout", route: const LoginPage()),
+          icon: 'svg/admin.svg',
+          title: "Admin",
+          route: Container(), // Placeholder route for the dropdown
+          children: [
+            MenuModel(
+              icon: 'svg/members.svg', // Provide an appropriate icon for Members
+              title: "Members",
+              route: const MembersScreen(),
+            ),
+            MenuModel(
+              icon: 'svg/events.svg',
+              title: "Activities",
+              route: const ActivityListScreen(),
+            ),
+            MenuModel(
+              icon: 'svg/communications.svg',
+              title: "Communications Center",
+              route: const CommunicationsScreen(),
+            ),
+          ],
+        ),
+      MenuModel(
+        icon: 'svg/signout.svg',
+        title: "Signout",
+        route: const LoginPage(),
+      ),
     ];
   }
 
@@ -81,39 +123,13 @@ class _MenuState extends State<Menu> {
                 height: Responsive.isMobile(context) ? 40 : 80,
               ),
               for (var i = 0; i < menu.length; i++)
-                Container(
-                  width: MediaQuery.of(context).size.width,
-                  margin: const EdgeInsets.symmetric(vertical: 5),
-                  decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.all(
-                      Radius.circular(6.0),
-                    ),
-                    color: selected == i
-                        ? Theme.of(context).primaryColor
-                        : Colors.transparent,
-                  ),
-                  child: InkWell(
-                    onTap: () {
-                      setState(() {
-                        selected = i;
-                      });
-                      widget.scaffoldKey.currentState!.closeDrawer();
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => menu[i].route),
-                      );
-                    },
-                    child: Row(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 7),
-                          child: SvgPicture.asset(
-                            menu[i].icon,
-                            // ignore: deprecated_member_use
-                            color: selected == i ? Colors.black : Colors.grey,
-                          ),
+                menu[i].children != null
+                    ? ExpansionTile(
+                        leading: SvgPicture.asset(
+                          menu[i].icon,
+                          color: selected == i ? Colors.black : Colors.grey,
                         ),
-                        Text(
+                        title: Text(
                           menu[i].title,
                           style: TextStyle(
                             fontSize: 16,
@@ -121,10 +137,74 @@ class _MenuState extends State<Menu> {
                             fontWeight: selected == i ? FontWeight.w600 : FontWeight.normal,
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                ),
+                        children: menu[i].children!.map((child) {
+                          return ListTile(
+                            leading: SvgPicture.asset(
+                              child.icon,
+                              color: selected == i ? Colors.black : Colors.grey,
+                            ),
+                            title: Text(
+                              child.title,
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: selected == i ? Colors.black : Colors.grey,
+                                fontWeight: selected == i ? FontWeight.w600 : FontWeight.normal,
+                              ),
+                            ),
+                            onTap: () {
+                              setState(() {
+                                selected = i;
+                              });
+                              widget.scaffoldKey.currentState!.closeDrawer();
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => child.route),
+                              );
+                            },
+                          );
+                        }).toList(),
+                      )
+                    : Container(
+                        width: MediaQuery.of(context).size.width,
+                        margin: const EdgeInsets.symmetric(vertical: 5),
+                        decoration: BoxDecoration(
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(6.0),
+                          ),
+                          color: selected == i ? Theme.of(context).primaryColor : Colors.transparent,
+                        ),
+                        child: InkWell(
+                          onTap: () {
+                            setState(() {
+                              selected = i;
+                            });
+                            widget.scaffoldKey.currentState!.closeDrawer();
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => menu[i].route),
+                            );
+                          },
+                          child: Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 7),
+                                child: SvgPicture.asset(
+                                  menu[i].icon,
+                                  color: selected == i ? Colors.black : Colors.grey,
+                                ),
+                              ),
+                              Text(
+                                menu[i].title,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: selected == i ? Colors.black : Colors.grey,
+                                  fontWeight: selected == i ? FontWeight.w600 : FontWeight.normal,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
             ],
           ),
         ),

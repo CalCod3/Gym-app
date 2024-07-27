@@ -1,5 +1,5 @@
 // screens/activity_list_screen.dart
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -58,7 +58,6 @@ class ActivityCreateScreen extends StatefulWidget {
   const ActivityCreateScreen({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _ActivityCreateScreenState createState() => _ActivityCreateScreenState();
 }
 
@@ -85,7 +84,6 @@ class _ActivityCreateScreenState extends State<ActivityCreateScreen> {
       // First, upload the image
       final imageUrl = await Provider.of<ActivityProvider>(context, listen: false).uploadImage(_image!);
 
-      // ignore: duplicate_ignore
       if (imageUrl != null) {
         // Then, create the activity with the image URL
         final newActivity = ActivityModel(
@@ -119,9 +117,17 @@ class _ActivityCreateScreenState extends State<ActivityCreateScreen> {
             children: <Widget>[
               GestureDetector(
                 onTap: _pickImage,
-                child: _image == null
-                    ? const Placeholder(fallbackHeight: 200, fallbackWidth: double.infinity)
-                    : Image.file(_image!, height: 200, width: double.infinity, fit: BoxFit.cover),
+                child: Container(
+                  height: 200,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey),
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  child: _image == null
+                      ? const Center(child: Text('Tap to pick an image', style: TextStyle(color: Colors.grey)))
+                      : Image.file(_image!, fit: BoxFit.cover),
+                ),
               ),
               const SizedBox(height: 20),
               TextFormField(

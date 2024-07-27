@@ -5,6 +5,8 @@ import 'package:flutter_dashboard/pages/home/widgets/activity_details_card.dart'
 import 'package:flutter_dashboard/pages/home/widgets/bar_graph_card.dart';
 import 'package:flutter_dashboard/pages/home/widgets/line_chart_card.dart';
 
+import 'widgets/news_summary_card.dart';
+
 class HomePage extends StatelessWidget {
   final GlobalKey<ScaffoldState> scaffoldKey;
 
@@ -30,6 +32,8 @@ class HomePage extends StatelessWidget {
               Header(scaffoldKey: scaffoldKey),
               height(context),
               const ActivityDetailsCard(),
+              height(context),
+              const NewsSummaryCard(), // Add the news summary card here
               height(context),
               LineChartCard(),
               height(context),

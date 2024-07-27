@@ -1,7 +1,5 @@
 // providers/post_provider.dart
 // ignore_for_file: avoid_print
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
