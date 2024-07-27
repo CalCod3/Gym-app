@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dashboard/providers/activity_provider.dart';
 import 'package:flutter_dashboard/services/api_service.dart';
 import 'providers/performance_provider.dart';
 import 'providers/post_provider.dart';
@@ -35,6 +36,7 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(create: (_) => ScheduleProvider()),
         ChangeNotifierProvider(create: (_) => PerformanceProvider()),
+        ChangeNotifierProvider(create: (_) => ActivityProvider()),
       ],
       child: MaterialApp(
         title: 'FitNivel',

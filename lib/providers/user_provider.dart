@@ -14,6 +14,7 @@ class UserProvider with ChangeNotifier {
   bool _isMembershipActive = false;
   DateTime? _membershipExpiryDate;
   bool _isLoading = false;
+  List<UserWithPaymentStatus>? _members; // Updated to use the new model
 
   UserProvider(this._authProvider);
 
@@ -24,11 +25,13 @@ class UserProvider with ChangeNotifier {
 
   AuthProvider? get authProvider => _authProvider;
   int? get userId => _userId;
-  int? get boxId => _boxId; // Getter for boxId
+  int? get boxId => _boxId;
   String? get name => _name;
   String? get profileImageUrl => _profileImageUrl;
   bool get isMembershipActive => _isMembershipActive;
   DateTime? get membershipExpiryDate => _membershipExpiryDate;
+  List<UserWithPaymentStatus>? get members => _members;
+  bool get isLoading => _isLoading;
 
   Future<void> fetchUserData() async {
     if (_isLoading) return;
@@ -101,5 +104,90 @@ class UserProvider with ChangeNotifier {
       print('Error fetching payment info: $e'); // Debug print
       throw Exception('An error occurred: $e');
     }
+  }
+
+  Future<void> fetchMembers() async {
+    if (_isLoading) return;
+    _isLoading = true;
+    notifyListeners();
+
+    final token = _authProvider?.token;
+    final isAdmin = _authProvider?.isAdmin ?? false;
+
+    if (token == null || !isAdmin) {
+      _isLoading = false;
+      notifyListeners();
+      throw Exception('Unauthorized or Token not found');
+    }
+
+    try {
+      final url = Uri.parse('http://127.0.0.1:8001/admin/users/membership-status'); // Adjust URL if needed
+      final response = await http.get(url, headers: {
+        'Authorization': 'Bearer $token',
+      });
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        _members = (data as List)
+            .map((item) => UserWithPaymentStatus.fromJson(item))
+            .toList();
+      } else {
+        throw Exception('Failed to load members: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('An error occurred: $e');
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+}
+
+class User {
+  final int id;
+  final String firstName;
+  final String lastName;
+  final String email;
+  final bool isStaff;
+  final String? profileImage;
+  final int? boxId;
+
+  User({
+    required this.id,
+    required this.firstName,
+    required this.lastName,
+    required this.email,
+    required this.isStaff,
+    this.profileImage,
+    this.boxId,
+  });
+
+  factory User.fromJson(Map<String, dynamic> json) {
+    return User(
+      id: json['id'],
+      firstName: json['first_name'],
+      lastName: json['last_name'],
+      email: json['email'],
+      isStaff: json['is_staff'],
+      profileImage: json['profile_image'],
+      boxId: json['box_id'],
+    );
+  }
+}
+
+class UserWithPaymentStatus {
+  final User user;
+  final bool hasPaid;
+
+  UserWithPaymentStatus({
+    required this.user,
+    required this.hasPaid,
+  });
+
+  factory UserWithPaymentStatus.fromJson(Map<String, dynamic> json) {
+    return UserWithPaymentStatus(
+      user: User.fromJson(json['user']),
+      hasPaid: json['has_paid'],
+    );
   }
 }
