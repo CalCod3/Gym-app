@@ -1,63 +1,55 @@
-// ignore_for_file: avoid_print, unused_local_variable
+// ignore_for_file: use_build_context_synchronously
+
 
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:provider/provider.dart';
 import '../../auth/auth_provider.dart';
-import '../../providers/user_provider.dart';
-import '../../widgets/profile/profile.dart';
+import '../../providers/payment_plan_provider.dart';
 
-class PaymentPage extends StatefulWidget {
-  const PaymentPage({super.key});
+class PaymentDetailsPage extends StatefulWidget {
+  final Map<String, dynamic> plan;
+
+  const PaymentDetailsPage({super.key, required this.plan});
 
   @override
   // ignore: library_private_types_in_public_api
-  _PaymentPageState createState() => _PaymentPageState();
+  _PaymentDetailsPageState createState() => _PaymentDetailsPageState();
 }
 
-class _PaymentPageState extends State<PaymentPage> {
+class _PaymentDetailsPageState extends State<PaymentDetailsPage> {
   final _formKey = GlobalKey<FormState>();
   late int _amount;
   String _currency = 'USD';
-  late int _userId;
-  late int _boxId;
   bool _isLoading = false;
 
   Future<void> _makePayment() async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final paymentPlanProvider = Provider.of<PaymentPlanProvider>(context, listen: false);
 
     setState(() {
       _isLoading = true;
     });
 
-    final response = await http.post(
-      Uri.parse('http://127.0.0.1:8001/payments/'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${authProvider.token}',
-      },
-      body: json.encode({
-        'user_id': _userId,
-        'box_id': _boxId,
-        'amount': _amount,
-        'currency': _currency,
-      }),
-    );
+    try {
+      await paymentPlanProvider.createPayment(
+        userId: authProvider.userId!,
+        boxId: widget.plan['box_id'],
+        amount: _amount,
+        currency: _currency,
+        paymentPlanId: widget.plan['id'], // Ensure you have 'id' in the plan map
+        token: authProvider.token!,
+      );
 
-    setState(() {
-      _isLoading = false;
-    });
-
-    if (response.statusCode == 200) {
-      final payment = json.decode(response.body);
-      print('Payment successful: $payment');
       _showSnackBar('Payment successful!');
-      _navigateToProfile();
-    } else {
-      print('Payment failed: ${response.body}');
-      final errorDetail = json.decode(response.body)['detail'];
-      _showSnackBar('Payment failed: $errorDetail');
+      Navigator.of(context).pop();
+    } catch (e) {
+      _showSnackBar('Payment failed: $e');
+      // ignore: avoid_print
+      print(widget.plan);
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -67,22 +59,11 @@ class _PaymentPageState extends State<PaymentPage> {
     );
   }
 
-  void _navigateToProfile() {
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (context) => Profile()),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    final userProvider = Provider.of<UserProvider>(context);
-
-    _userId = userProvider.userId!; // Assuming you have a userId field in UserProvider
-    _boxId = userProvider.boxId!; // Assuming you have a boxId field in UserProvider
-
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Make Payment'),
+        title: Text('Payment for ${widget.plan['plan_id']}'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -94,6 +75,7 @@ class _PaymentPageState extends State<PaymentPage> {
               TextFormField(
                 decoration: const InputDecoration(labelText: 'Amount'),
                 keyboardType: TextInputType.number,
+                initialValue: widget.plan['amount'].toString(),
                 onSaved: (value) {
                   _amount = int.parse(value!);
                 },

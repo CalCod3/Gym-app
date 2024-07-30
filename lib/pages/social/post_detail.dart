@@ -1,34 +1,62 @@
-// screens/post_detail_screen.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../model/post_model.dart';
 import '../../providers/post_provider.dart';
 import '../../providers/user_provider.dart';
-import 'comment_create.dart'; // Import for CommentCreate screen
 
-class PostDetailScreen extends StatelessWidget {
+class PostDetailScreen extends StatefulWidget {
   final Post post;
 
   const PostDetailScreen({required this.post, super.key});
 
   @override
+  _PostDetailScreenState createState() => _PostDetailScreenState();
+}
+
+class _PostDetailScreenState extends State<PostDetailScreen> {
+  late TextEditingController _commentController;
+
+  @override
+  void initState() {
+    super.initState();
+    _commentController = TextEditingController();
+    // Optionally fetch comments if not already done
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<PostProvider>(context, listen: false).fetchComments(widget.post.id);
+    });
+  }
+
+  @override
+  void dispose() {
+    _commentController.dispose();
+    super.dispose();
+  }
+
+  void _addComment() {
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    final currentUserId = userProvider.authProvider?.userId;
+    if (currentUserId == null || _commentController.text.isEmpty) return;
+
+    final newComment = Comment(
+      id: DateTime.now().millisecondsSinceEpoch,
+      content: _commentController.text,
+      postId: widget.post.id,
+      userId: currentUserId,
+    );
+
+    Provider.of<PostProvider>(context, listen: false).addComment(widget.post.id, newComment)
+      .then((_) {
+        _commentController.clear();
+        // Optionally refresh comments if needed
+        Provider.of<PostProvider>(context, listen: false).fetchComments(widget.post.id);
+      });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final post = widget.post;
     final userProvider = Provider.of<UserProvider>(context);
     final currentUserId = userProvider.authProvider?.userId;
-    final commentController = TextEditingController();
-
-    void addComment() {
-      if (commentController.text.isNotEmpty) {
-        final newComment = Comment(
-          id: DateTime.now().millisecondsSinceEpoch,
-          content: commentController.text,
-          postId: post.id,
-          userId: currentUserId!,
-        );
-        Provider.of<PostProvider>(context, listen: false).addComment(post.id, newComment);
-        commentController.clear();
-      }
-    }
 
     return Scaffold(
       appBar: AppBar(
@@ -89,8 +117,8 @@ class PostDetailScreen extends StatelessWidget {
                   final comment = post.comments[index];
                   return ListTile(
                     leading: CircleAvatar(
-                      backgroundImage: post.userProfileImageUrl.isNotEmpty
-                          ? NetworkImage(post.userProfileImageUrl)
+                      backgroundImage: userProvider.profileImageUrl != null
+                          ? NetworkImage(userProvider.profileImageUrl!)
                           : const AssetImage('images/avatar.png') as ImageProvider,
                     ),
                     title: Text(comment.content),
@@ -99,7 +127,8 @@ class PostDetailScreen extends StatelessWidget {
                         ? IconButton(
                             icon: const Icon(Icons.delete),
                             onPressed: () {
-                              Provider.of<PostProvider>(context, listen: false).deleteComment(post.id, comment.id);
+                              Provider.of<PostProvider>(context, listen: false)
+                                  .deleteComment(post.id, comment.id);
                             },
                           )
                         : null,
@@ -113,7 +142,7 @@ class PostDetailScreen extends StatelessWidget {
                 children: [
                   Expanded(
                     child: TextField(
-                      controller: commentController,
+                      controller: _commentController,
                       decoration: const InputDecoration(
                         hintText: 'Add a comment',
                         border: OutlineInputBorder(),
@@ -123,7 +152,7 @@ class PostDetailScreen extends StatelessWidget {
                   ),
                   IconButton(
                     icon: const Icon(Icons.send),
-                    onPressed: addComment,
+                    onPressed: _addComment,
                   ),
                 ],
               ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dashboard/providers/activity_provider.dart';
 import 'package:flutter_dashboard/providers/communications_provider.dart';
 import 'package:flutter_dashboard/services/api_service.dart';
+import 'providers/payment_plan_provider.dart';
 import 'providers/performance_provider.dart';
 import 'providers/post_provider.dart';
 import 'package:provider/provider.dart';
@@ -10,6 +11,7 @@ import 'auth/login_page.dart';
 import 'auth/signup_page.dart';
 import 'const.dart';
 import 'providers/schedule_provider.dart';
+import 'providers/workout_provider.dart';
 import 'splash_screen.dart'; // Import the splash screen
 import 'providers/user_provider.dart'; // Import the UserProvider
 
@@ -39,6 +41,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => PerformanceProvider()),
         ChangeNotifierProvider(create: (_) => ActivityProvider()),
         ChangeNotifierProvider(create: (_) => CommunicationsProvider()),
+        ChangeNotifierProvider(create: (_) => GroupWorkoutProvider()),
+        ChangeNotifierProvider(create: (_) => PaymentPlanProvider()),
       ],
       child: MaterialApp(
         title: 'FitNivel',

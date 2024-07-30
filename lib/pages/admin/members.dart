@@ -42,7 +42,13 @@ class _MembersScreenState extends State<MembersScreen> {
                     return ListTile(
                       title: Text('${member.user.firstName} ${member.user.lastName}'),
                       subtitle: Text('Email: ${member.user.email}'),
-                      trailing: Text(member.hasPaid ? 'Paid' : 'Not Paid'),
+                      trailing: Text(
+                        member.hasPaid ? 'Paid' : 'Not Paid',
+                        style: TextStyle(
+                          color: member.hasPaid ? Colors.green : Colors.red,
+                          fontWeight: FontWeight.bold,
+                          ),
+                      )
                     );
                   },
                 ),

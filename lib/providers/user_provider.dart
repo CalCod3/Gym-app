@@ -85,18 +85,19 @@ class UserProvider with ChangeNotifier {
         final data = json.decode(response.body);
         print('Payment Data: $data'); // Debug print
 
-        if (data != null && data.isNotEmpty) {
+        if (data is List && data.isNotEmpty) {
           final lastPayment = data.last;
           final paymentDate = DateTime.parse(lastPayment['created_at']);
           final paymentStatus = lastPayment['status'];
 
           _membershipExpiryDate = paymentDate.add(const Duration(days: 30));
-          _isMembershipActive = paymentStatus == 'successful' &&
+          _isMembershipActive = paymentStatus == 'completed' &&
               _membershipExpiryDate!.isAfter(DateTime.now());
         } else {
           _isMembershipActive = false;
           _membershipExpiryDate = null;
         }
+        notifyListeners();
       } else {
         throw Exception('Failed to load payment data: ${response.statusCode}');
       }
@@ -105,6 +106,7 @@ class UserProvider with ChangeNotifier {
       throw Exception('An error occurred: $e');
     }
   }
+
 
   Future<void> fetchMembers() async {
     if (_isLoading) return;

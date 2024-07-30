@@ -8,10 +8,12 @@ class AuthProvider with ChangeNotifier {
   String? _token;
   int? _userId;
   bool? _isAdmin;
+  bool? _isCoach;
 
   String? get token => _token;
   int? get userId => _userId;
   bool? get isAdmin => _isAdmin;
+  bool? get isCoach => _isCoach;
 
   Future<void> login(String token) async {
     _token = token;
@@ -24,6 +26,7 @@ class AuthProvider with ChangeNotifier {
     _token = null;
     _userId = null;
     _isAdmin = null;
+    _isCoach = null;
     await _storage.delete(key: 'token');
     notifyListeners();
   }
@@ -48,6 +51,7 @@ class AuthProvider with ChangeNotifier {
       final data = json.decode(response.body);
       _userId = data['id']; // Assuming the response contains the user ID as 'id'
       _isAdmin = data['is_staff']; // Assuming the response contains the is_staff field as 'is_staff'
+      _isCoach = data['is_coach'];
     } else {
       throw Exception('Failed to fetch user data: ${response.statusCode}');
     }

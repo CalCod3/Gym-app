@@ -16,6 +16,8 @@ import 'package:provider/provider.dart';
 
 import '../pages/admin/activities.dart';
 import '../pages/admin/members.dart';
+import '../pages/payments/payment_plan_create.dart';
+import '../pages/workouts/workouts.dart';
 
 class Menu extends StatefulWidget {
   final GlobalKey<ScaffoldState> scaffoldKey;
@@ -30,7 +32,7 @@ class Menu extends StatefulWidget {
 class _MenuState extends State<Menu> {
   late List<MenuModel> menu;
   late AuthProvider _authProvider;
-  bool _isAdminExpanded = false;
+  final bool _isAdminExpanded = false;
 
   @override
   void initState() {
@@ -43,6 +45,56 @@ class _MenuState extends State<Menu> {
 
   void _buildMenu() {
     menu = [
+      if (_authProvider.isAdmin ?? false)
+        MenuModel(
+          icon: 'svg/admin.svg',
+          title: "Admin",
+          route: Container(), // Placeholder route for the dropdown
+          children: [
+            MenuModel(
+              icon:
+                  'svg/members.svg', // Provide an appropriate icon for Members
+              title: "Members",
+              route: const MembersScreen(),
+            ),
+            MenuModel(
+              icon: 'svg/events.svg',
+              title: "Activities",
+              route: const ActivityListScreen(),
+            ),
+            MenuModel(
+              icon: 'svg/communications.svg',
+              title: "Communications Center",
+              route: const CommunicationsScreen(),
+            ),
+            MenuModel(
+              icon: 'svg/payments.svg',
+              title: "Finance Manager",
+              route: Container(), // Placeholder for the nested dropdown
+              children: [
+                MenuModel(
+                  icon: 'svg/plan.svg',
+                  title: "Payment Plans",
+                  route: const CreatePaymentPlanPage(),
+                ),
+              ],
+            ),
+          ],
+        ),
+      if (_authProvider.isCoach ?? false)
+        MenuModel(
+          icon: 'svg/coach.svg',
+          title: "Coach",
+          route: Container(), // Placeholder route for the dropdown
+          children: [
+            MenuModel(
+              icon:
+                  'svg/groupworkouts.svg', // Provide an appropriate icon for Members
+              title: "Group Workouts",
+              route: const GroupWorkoutsListScreen(),
+            ),
+          ],
+        ),
       MenuModel(
         icon: 'svg/home.svg',
         title: "Dashboard",
@@ -68,29 +120,6 @@ class _MenuState extends State<Menu> {
         title: "Leaderboard",
         route: const LeaderboardScreen(),
       ),
-      if (_authProvider.isAdmin ?? false)
-        MenuModel(
-          icon: 'svg/admin.svg',
-          title: "Admin",
-          route: Container(), // Placeholder route for the dropdown
-          children: [
-            MenuModel(
-              icon: 'svg/members.svg', // Provide an appropriate icon for Members
-              title: "Members",
-              route: const MembersScreen(),
-            ),
-            MenuModel(
-              icon: 'svg/events.svg',
-              title: "Activities",
-              route: const ActivityListScreen(),
-            ),
-            MenuModel(
-              icon: 'svg/communications.svg',
-              title: "Communications Center",
-              route: const CommunicationsScreen(),
-            ),
-          ],
-        ),
       MenuModel(
         icon: 'svg/signout.svg',
         title: "Signout",
@@ -127,41 +156,107 @@ class _MenuState extends State<Menu> {
                     ? ExpansionTile(
                         leading: SvgPicture.asset(
                           menu[i].icon,
-                          color: selected == i ? Colors.black : Colors.grey,
+                          color: selected == i ? const Color.fromARGB(255, 49, 49, 49) : Colors.grey,
                         ),
                         title: Text(
                           menu[i].title,
                           style: TextStyle(
                             fontSize: 16,
-                            color: selected == i ? Colors.black : Colors.grey,
-                            fontWeight: selected == i ? FontWeight.w600 : FontWeight.normal,
+                            color: selected == i ? const Color.fromARGB(255, 49, 49, 49) : Colors.grey,
+                            fontWeight: selected == i
+                                ? FontWeight.w600
+                                : FontWeight.normal,
                           ),
                         ),
                         children: menu[i].children!.map((child) {
-                          return ListTile(
-                            leading: SvgPicture.asset(
-                              child.icon,
-                              color: selected == i ? Colors.black : Colors.grey,
-                            ),
-                            title: Text(
-                              child.title,
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: selected == i ? Colors.black : Colors.grey,
-                                fontWeight: selected == i ? FontWeight.w600 : FontWeight.normal,
-                              ),
-                            ),
-                            onTap: () {
-                              setState(() {
-                                selected = i;
-                              });
-                              widget.scaffoldKey.currentState!.closeDrawer();
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => child.route),
-                              );
-                            },
-                          );
+                          return child.children != null
+                              ? ExpansionTile(
+                                  leading: SvgPicture.asset(
+                                    child.icon,
+                                    color: selected == i
+                                        ? Colors.black
+                                        : Colors.grey,
+                                  ),
+                                  title: Text(
+                                    child.title,
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: selected == i
+                                          ? Colors.black
+                                          : Colors.grey,
+                                      fontWeight: selected == i
+                                          ? FontWeight.w600
+                                          : FontWeight.normal,
+                                    ),
+                                  ),
+                                  children: child.children!.map((subChild) {
+                                    return ListTile(
+                                      leading: SvgPicture.asset(
+                                        subChild.icon,
+                                        color: selected == i
+                                            ? Colors.black
+                                            : Colors.grey,
+                                      ),
+                                      title: Text(
+                                        subChild.title,
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          color: selected == i
+                                              ? Colors.black
+                                              : Colors.grey,
+                                          fontWeight: selected == i
+                                              ? FontWeight.w600
+                                              : FontWeight.normal,
+                                        ),
+                                      ),
+                                      onTap: () {
+                                        setState(() {
+                                          selected = i;
+                                        });
+                                        widget.scaffoldKey.currentState!
+                                            .closeDrawer();
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  subChild.route),
+                                        );
+                                      },
+                                    );
+                                  }).toList(),
+                                )
+                              : ListTile(
+                                  leading: SvgPicture.asset(
+                                    child.icon,
+                                    color: selected == i
+                                        ? Colors.black
+                                        : Colors.grey,
+                                  ),
+                                  title: Text(
+                                    child.title,
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: selected == i
+                                          ? Colors.black
+                                          : Colors.grey,
+                                      fontWeight: selected == i
+                                          ? FontWeight.w600
+                                          : FontWeight.normal,
+                                    ),
+                                  ),
+                                  onTap: () {
+                                    setState(() {
+                                      selected = i;
+                                    });
+                                    widget.scaffoldKey.currentState!
+                                        .closeDrawer();
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => child.route),
+                                    );
+                                  },
+                                );
                         }).toList(),
                       )
                     : Container(
@@ -171,7 +266,9 @@ class _MenuState extends State<Menu> {
                           borderRadius: const BorderRadius.all(
                             Radius.circular(6.0),
                           ),
-                          color: selected == i ? Theme.of(context).primaryColor : Colors.transparent,
+                          color: selected == i
+                              ? Theme.of(context).primaryColor
+                              : Colors.transparent,
                         ),
                         child: InkWell(
                           onTap: () {
@@ -181,24 +278,32 @@ class _MenuState extends State<Menu> {
                             widget.scaffoldKey.currentState!.closeDrawer();
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => menu[i].route),
+                              MaterialPageRoute(
+                                  builder: (context) => menu[i].route),
                             );
                           },
                           child: Row(
                             children: [
                               Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 7),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 13, vertical: 7),
                                 child: SvgPicture.asset(
                                   menu[i].icon,
-                                  color: selected == i ? Colors.black : Colors.grey,
+                                  color: selected == i
+                                      ? Colors.black
+                                      : Colors.grey,
                                 ),
                               ),
                               Text(
                                 menu[i].title,
                                 style: TextStyle(
                                   fontSize: 16,
-                                  color: selected == i ? Colors.black : Colors.grey,
-                                  fontWeight: selected == i ? FontWeight.w600 : FontWeight.normal,
+                                  color: selected == i
+                                      ? Colors.black
+                                      : Colors.grey,
+                                  fontWeight: selected == i
+                                      ? FontWeight.w600
+                                      : FontWeight.normal,
                                 ),
                               ),
                             ],

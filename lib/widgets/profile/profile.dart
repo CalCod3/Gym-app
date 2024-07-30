@@ -4,7 +4,7 @@ import 'package:flutter_dashboard/const.dart';
 import 'package:flutter_dashboard/widgets/profile/widgets/scheduled.dart';
 import 'package:flutter_dashboard/widgets/profile/widgets/weightHeightBloodCard.dart';
 import 'package:provider/provider.dart';
-import '../../pages/payments/payment.dart';
+import '../../pages/payments/payment_plans.dart';
 import '../../providers/user_provider.dart';
 
 // ignore: must_be_immutable
@@ -108,7 +108,7 @@ class Profile extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const PaymentPage()),
+          MaterialPageRoute(builder: (context) => const PaymentPlansPage()),
         );
       },
       child: Text(
