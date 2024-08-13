@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dashboard/pages/home/home_page.dart';
-import 'package:flutter_dashboard/widgets/menu.dart';
-import 'package:flutter_dashboard/responsive.dart';
-import 'package:flutter_dashboard/widgets/profile/profile.dart';
+import 'package:fit_nivel/pages/home/home_page.dart';
+import 'package:fit_nivel/widgets/menu.dart';
+import 'package:fit_nivel/responsive.dart';
+import 'package:fit_nivel/widgets/profile/profile.dart';
 
 class DashBoard extends StatelessWidget {
   DashBoard({super.key});

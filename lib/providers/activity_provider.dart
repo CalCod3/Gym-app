@@ -20,7 +20,7 @@ class ActivityProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      final response = await http.get(Uri.parse('http://127.0.0.1:8001/activities'));
+      final response = await http.get(Uri.parse('https://fitnivel-eba221a3a423.herokuapp.com/activities'));
 
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
@@ -39,7 +39,7 @@ class ActivityProvider with ChangeNotifier {
   Future<void> createActivity(ActivityModel activity) async {
     try {
       final response = await http.post(
-        Uri.parse('http://127.0.0.1:8001/admin/activities/'),
+        Uri.parse('https://fitnivel-eba221a3a423.herokuapp.com/admin/activities/'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode(activity.toJson()),
       );
@@ -58,7 +58,7 @@ class ActivityProvider with ChangeNotifier {
     final mimeType = lookupMimeType(image.path);
     final request = http.MultipartRequest(
       'POST',
-      Uri.parse('http://127.0.0.1:8001/upload'),
+      Uri.parse('https://fitnivel-eba221a3a423.herokuapp.com/upload'),
     );
 
     request.files.add(

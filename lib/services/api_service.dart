@@ -5,7 +5,7 @@ import 'dart:convert';
 import '../model/post_model.dart';
 
 class ApiService {
-  static const String baseUrl = 'http://127.0.0.1:8001';
+  static const String baseUrl = 'https://fitnivel-eba221a3a423.herokuapp.com';
   final String token;
 
   ApiService(this.token);

@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class PaymentPlanProvider with ChangeNotifier {
-  final String _baseUrl = 'http://127.0.0.1:8001';
+  final String _baseUrl = 'https://fitnivel-eba221a3a423.herokuapp.com';
   bool _isLoading = false;
   List<Map<String, dynamic>> _paymentPlans = [];
 

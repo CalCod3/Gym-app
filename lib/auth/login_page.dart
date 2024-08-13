@@ -21,7 +21,7 @@ class LoginPageState extends State<LoginPage> {
 
   Future<void> _login() async {
     final response = await http.post(
-      Uri.parse('http://127.0.0.1:8001/auth/token'),  // Replace with your FastAPI endpoint
+      Uri.parse('https://fitnivel-eba221a3a423.herokuapp.com/auth/token'),  // Replace with your FastAPI endpoint
       headers: <String, String>{
         'Content-Type': 'application/x-www-form-urlencoded',
       },

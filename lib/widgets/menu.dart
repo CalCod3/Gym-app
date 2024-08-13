@@ -1,17 +1,17 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
-import 'package:flutter_dashboard/pages/admin/communications.dart';
-import 'package:flutter_dashboard/pages/home/home_page.dart';
-import 'package:flutter_dashboard/pages/social/posts.dart';
-import 'package:flutter_dashboard/responsive.dart';
-import 'package:flutter_dashboard/model/menu_modal.dart';
+import 'package:fit_nivel/pages/admin/communications.dart';
+import 'package:fit_nivel/pages/home/home_page.dart';
+import 'package:fit_nivel/pages/social/posts.dart';
+import 'package:fit_nivel/responsive.dart';
+import 'package:fit_nivel/model/menu_modal.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_dashboard/pages/leaderboard/leaderboard.dart';
-import 'package:flutter_dashboard/pages/schedule/schedule.dart';
-import 'package:flutter_dashboard/widgets/profile/profile.dart';
-import 'package:flutter_dashboard/auth/login_page.dart'; // Assume you handle signout via login page
-import 'package:flutter_dashboard/auth/auth_provider.dart';
+import 'package:fit_nivel/pages/leaderboard/leaderboard.dart';
+import 'package:fit_nivel/pages/schedule/schedule.dart';
+import 'package:fit_nivel/widgets/profile/profile.dart';
+import 'package:fit_nivel/auth/login_page.dart'; // Assume you handle signout via login page
+import 'package:fit_nivel/auth/auth_provider.dart';
 import 'package:provider/provider.dart';
 
 import '../pages/admin/activities.dart';

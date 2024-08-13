@@ -2,7 +2,7 @@
 
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_dashboard/dashboard.dart';
+import '../dashboard.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'auth_provider.dart';
@@ -40,7 +40,7 @@ class SignupPageState extends State<SignupPage> {
     try {
       final response = await http.post(
         Uri.parse(
-            'http://127.0.0.1:8001/auth'), // Replace with your FastAPI signup endpoint
+            'https://fitnivel-eba221a3a423.herokuapp.com/auth'), // Replace with your FastAPI signup endpoint
         headers: <String, String>{
           'Content-Type':
               'application/json', // Change the Content-Type to application/json

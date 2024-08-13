@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dashboard/providers/activity_provider.dart';
-import 'package:flutter_dashboard/providers/communications_provider.dart';
-import 'package:flutter_dashboard/services/api_service.dart';
+import 'package:fit_nivel/providers/activity_provider.dart';
+import 'package:fit_nivel/providers/communications_provider.dart';
+import 'package:fit_nivel/services/api_service.dart';
 import 'providers/payment_plan_provider.dart';
 import 'providers/performance_provider.dart';
 import 'providers/post_provider.dart';

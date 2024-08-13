@@ -1,4 +1,6 @@
 // screens/new_post_screen.dart
+// ignore_for_file: avoid_print
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/post_provider.dart';
@@ -24,6 +26,10 @@ class _NewPostScreenState extends State<NewPostScreen> {
     final currentUserId = userProvider.authProvider?.userId;
     final currentUserName = userProvider.name;
     final currentUserProfileImageUrl = userProvider.profileImageUrl;
+
+    print(currentUserId);
+    print(currentUserName);
+    print(currentUserProfileImageUrl);
 
     return Scaffold(
       appBar: AppBar(

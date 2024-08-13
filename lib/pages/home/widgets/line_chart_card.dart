@@ -1,7 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dashboard/responsive.dart';
-import 'package:flutter_dashboard/widgets/custom_card.dart';
+import 'package:fit_nivel/responsive.dart';
+import 'package:fit_nivel/widgets/custom_card.dart';
 
 class LineChartCard extends StatelessWidget {
   LineChartCard({super.key});

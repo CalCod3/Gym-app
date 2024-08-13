@@ -1,9 +1,8 @@
 // ignore_for_file: unused_field, unused_import
 
+import 'package:fit_nivel/auth/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:animated_splash_screen/animated_splash_screen.dart';
-import 'package:flutter_dashboard/auth/login_page.dart';
-import 'package:flutter_dashboard/main.dart';
 import 'package:provider/provider.dart';
 import 'auth/auth_provider.dart';
 import 'dashboard.dart';
@@ -36,7 +35,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
     );
 
     // Simulate loading by completing the future after a delay
-    Future.delayed(const Duration(seconds: 7), () {
+    Future.delayed(const Duration(seconds: 5), () {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
       if (authProvider.token == null) {
         Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const LoginPage()));

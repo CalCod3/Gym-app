@@ -1,5 +1,5 @@
-name: flutter_dashboard
-description: A new Flutter project.
+name: fit_nivel
+description: A Gym data management and community Flutter project.
 
 publish_to: 'none' 
 
@@ -33,6 +33,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^4.0.0
+  flutter_launcher_icons: "^0.13.1"
 
 flutter:
 
@@ -41,6 +42,7 @@ flutter:
   assets:
     - assets/images/
     - assets/svg/
+    - assets/icons/
 
   fonts:
     - family: IBMPlexSans
@@ -64,3 +66,8 @@ flutter:
         - asset: assets/fonts/IBMPlexSans-Thin.ttf
           weight: 100  
   
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/icons/1024.png"
+  min_sdk_android: 21

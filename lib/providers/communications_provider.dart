@@ -11,7 +11,7 @@ class CommunicationsProvider with ChangeNotifier {
 
   Future<void> fetchArticles() async {
     try {
-      final response = await http.get(Uri.parse('http://127.0.0.1:8001/api/news'));
+      final response = await http.get(Uri.parse('https://fitnivel-eba221a3a423.herokuapp.com/api/news'));
 
       if (response.statusCode == 200) {
         List<dynamic> data = json.decode(response.body);
@@ -30,7 +30,7 @@ class CommunicationsProvider with ChangeNotifier {
   Future<void> addArticle(Article article) async {
   try {
     final response = await http.post(
-      Uri.parse('http://127.0.0.1:8001/admin/news/new'),
+      Uri.parse('https://fitnivel-eba221a3a423.herokuapp.com/admin/news/new'),
       headers: {'Content-Type': 'application/json'},
       body: json.encode(article.toJson()),
     );

@@ -1,7 +1,7 @@
 // ignore_for_file: avoid_print
 
 import 'package:flutter/material.dart';
-import 'package:flutter_dashboard/auth/auth_provider.dart';
+import 'package:fit_nivel/auth/auth_provider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -47,7 +47,7 @@ class UserProvider with ChangeNotifier {
     }
 
     try {
-      final url = Uri.parse('http://127.0.0.1:8001/users/me');
+      final url = Uri.parse('https://fitnivel-eba221a3a423.herokuapp.com/users/me');
       final response = await http.get(url, headers: {
         'Authorization': 'Bearer $token',
       });
@@ -75,7 +75,7 @@ class UserProvider with ChangeNotifier {
   }
 
   Future<void> fetchPaymentInfo(String token) async {
-    final url = Uri.parse('http://127.0.0.1:8001/payments/');
+    final url = Uri.parse('https://fitnivel-eba221a3a423.herokuapp.com/payments/');
     try {
       final response = await http.get(url, headers: {
         'Authorization': 'Bearer $token',
@@ -123,7 +123,7 @@ class UserProvider with ChangeNotifier {
     }
 
     try {
-      final url = Uri.parse('http://127.0.0.1:8001/admin/users/membership-status'); // Adjust URL if needed
+      final url = Uri.parse('https://fitnivel-eba221a3a423.herokuapp.com/admin/users/membership-status'); // Adjust URL if needed
       final response = await http.get(url, headers: {
         'Authorization': 'Bearer $token',
       });

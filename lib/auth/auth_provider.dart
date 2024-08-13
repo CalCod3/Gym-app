@@ -42,7 +42,7 @@ class AuthProvider with ChangeNotifier {
   Future<void> _fetchUserData() async {
     if (_token == null) return;
 
-    final url = Uri.parse('http://127.0.0.1:8001/users/me');
+    final url = Uri.parse('https://fitnivel-eba221a3a423.herokuapp.com/users/me');
     final response = await http.get(url, headers: {
       'Authorization': 'Bearer $_token',
     });

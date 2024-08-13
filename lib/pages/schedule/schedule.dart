@@ -2,7 +2,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
-import 'package:flutter_dashboard/pages/schedule/schedule_create.dart';
+import 'package:fit_nivel/pages/schedule/schedule_create.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 import '../../providers/schedule_provider.dart';

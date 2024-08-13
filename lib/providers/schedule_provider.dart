@@ -11,7 +11,7 @@ class ScheduleProvider with ChangeNotifier {
 
   Future<void> fetchSchedules(String token) async {
     final response = await http.get(
-      Uri.parse('http://127.0.0.1:8001/schedules/'),
+      Uri.parse('https://fitnivel-eba221a3a423.herokuapp.com/schedules/'),
       headers: {
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': 'Bearer $token',
@@ -32,7 +32,7 @@ class ScheduleProvider with ChangeNotifier {
 
   Future<void> fetchGroupWorkouts(String token) async {
     final response = await http.get(
-      Uri.parse('http://127.0.0.1:8001/group_workouts/'),
+      Uri.parse('https://fitnivel-eba221a3a423.herokuapp.com/group_workouts/'),
       headers: {
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': 'Bearer $token',
@@ -63,7 +63,7 @@ class ScheduleProvider with ChangeNotifier {
     DateTime endTime,
   ) async {
     final response = await http.post(
-      Uri.parse('http://127.0.0.1:8001/schedules/'),
+      Uri.parse('https://fitnivel-eba221a3a423.herokuapp.com/schedules/'),
       headers: {
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': 'Bearer $token',
@@ -94,7 +94,7 @@ class ScheduleProvider with ChangeNotifier {
     List<String> videoLinks,
   ) async {
     final response = await http.post(
-      Uri.parse('http://127.0.0.1:8001/group_workouts/'),
+      Uri.parse('https://fitnivel-eba221a3a423.herokuapp.com/group_workouts/'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',

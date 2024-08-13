@@ -66,7 +66,7 @@ class GroupWorkoutProvider with ChangeNotifier {
   Future<void> fetchGroupWorkouts(BuildContext context) async {
     final token = Provider.of<AuthProvider>(context, listen: false).getToken();
     final response = await http.get(
-      Uri.parse('http://127.0.0.1:8001/group_workouts/'),
+      Uri.parse('https://fitnivel-eba221a3a423.herokuapp.com/group_workouts/'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
@@ -84,7 +84,7 @@ class GroupWorkoutProvider with ChangeNotifier {
   Future<bool> createGroupWorkout(BuildContext context) async {
     final token = Provider.of<AuthProvider>(context, listen: false).getToken();
     final response = await http.post(
-      Uri.parse('http://127.0.0.1:8001/group_workouts/'),
+      Uri.parse('https://fitnivel-eba221a3a423.herokuapp.com/group_workouts/'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',

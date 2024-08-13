@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dashboard/const.dart';
+import 'package:fit_nivel/const.dart';
 
 class CustomCard extends StatelessWidget {
   final Widget child;

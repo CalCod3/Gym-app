@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dashboard/responsive.dart';
-import 'package:flutter_dashboard/const.dart';
-import 'package:flutter_dashboard/widgets/profile/widgets/scheduled.dart';
-import 'package:flutter_dashboard/widgets/profile/widgets/weightHeightBloodCard.dart';
+import 'package:fit_nivel/responsive.dart';
+import 'package:fit_nivel/const.dart';
+import 'package:fit_nivel/widgets/profile/widgets/scheduled.dart';
+import 'package:fit_nivel/widgets/profile/widgets/weightHeightBloodCard.dart';
 import 'package:provider/provider.dart';
 import '../../pages/payments/payment_plans.dart';
 import '../../providers/user_provider.dart';

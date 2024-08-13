@@ -1,7 +1,7 @@
 // pages/activity_details_card.dart
 import 'package:flutter/material.dart';
-import 'package:flutter_dashboard/providers/activity_provider.dart';
-import 'package:flutter_dashboard/widgets/custom_card.dart';
+import 'package:fit_nivel/providers/activity_provider.dart';
+import 'package:fit_nivel/widgets/custom_card.dart';
 import 'package:provider/provider.dart';
 import '../../../pages/home/activity_detail_screen.dart';
 import '../../../responsive.dart';

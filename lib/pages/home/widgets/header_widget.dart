@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dashboard/const.dart';
-import 'package:flutter_dashboard/responsive.dart';
+import 'package:fit_nivel/const.dart';
+import 'package:fit_nivel/responsive.dart';
 
 class Header extends StatelessWidget {
   const Header({
