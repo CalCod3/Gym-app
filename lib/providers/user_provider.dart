@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:fit_nivel/auth/auth_provider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class UserProvider with ChangeNotifier {
   AuthProvider? _authProvider;
@@ -17,6 +18,8 @@ class UserProvider with ChangeNotifier {
   List<UserWithPaymentStatus>? _members; // Updated to use the new model
 
   UserProvider(this._authProvider);
+
+  final String _baseUrl = dotenv.env['API_BASE_URL']!;
 
   void updateAuthProvider(AuthProvider authProvider) {
     _authProvider = authProvider;
@@ -47,7 +50,7 @@ class UserProvider with ChangeNotifier {
     }
 
     try {
-      final url = Uri.parse('https://fitnivel-eba221a3a423.herokuapp.com/users/me');
+      final url = Uri.parse('$_baseUrl/users/me');
       final response = await http.get(url, headers: {
         'Authorization': 'Bearer $token',
       });
@@ -75,7 +78,7 @@ class UserProvider with ChangeNotifier {
   }
 
   Future<void> fetchPaymentInfo(String token) async {
-    final url = Uri.parse('https://fitnivel-eba221a3a423.herokuapp.com/payments/');
+    final url = Uri.parse('$_baseUrl/payments/');
     try {
       final response = await http.get(url, headers: {
         'Authorization': 'Bearer $token',
@@ -123,7 +126,7 @@ class UserProvider with ChangeNotifier {
     }
 
     try {
-      final url = Uri.parse('https://fitnivel-eba221a3a423.herokuapp.com/admin/users/membership-status'); // Adjust URL if needed
+      final url = Uri.parse('$_baseUrl/admin/users/membership-status'); // Adjust URL if needed
       final response = await http.get(url, headers: {
         'Authorization': 'Bearer $token',
       });
