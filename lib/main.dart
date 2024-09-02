@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fit_nivel/providers/activity_provider.dart';
 import 'package:fit_nivel/providers/communications_provider.dart';
 import 'package:fit_nivel/services/api_service.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'providers/payment_plan_provider.dart';
 import 'providers/performance_provider.dart';
 import 'providers/post_provider.dart';
@@ -15,7 +16,8 @@ import 'providers/workout_provider.dart';
 import 'splash_screen.dart'; // Import the splash screen
 import 'providers/user_provider.dart'; // Import the UserProvider
 
-void main() {
+void main() async{
+  await dotenv.load();
   runApp(const MyApp());
 }
 

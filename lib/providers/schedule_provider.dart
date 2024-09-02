@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../model/schedule_model.dart';
 import '../model/group_workout_model.dart';
 
@@ -9,9 +10,11 @@ class ScheduleProvider with ChangeNotifier {
 
   List<Schedule> get schedules => _schedules;
 
+  final String _baseUrl = dotenv.env['API_BASE_URL']!;
+
   Future<void> fetchSchedules(String token) async {
     final response = await http.get(
-      Uri.parse('https://fitnivel-eba221a3a423.herokuapp.com/schedules/'),
+      Uri.parse('$_baseUrl/schedules/'),
       headers: {
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': 'Bearer $token',
@@ -32,7 +35,7 @@ class ScheduleProvider with ChangeNotifier {
 
   Future<void> fetchGroupWorkouts(String token) async {
     final response = await http.get(
-      Uri.parse('https://fitnivel-eba221a3a423.herokuapp.com/group_workouts/'),
+      Uri.parse('$_baseUrl/group_workouts/'),
       headers: {
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': 'Bearer $token',
@@ -63,7 +66,7 @@ class ScheduleProvider with ChangeNotifier {
     DateTime endTime,
   ) async {
     final response = await http.post(
-      Uri.parse('https://fitnivel-eba221a3a423.herokuapp.com/schedules/'),
+      Uri.parse('$_baseUrl/schedules/'),
       headers: {
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': 'Bearer $token',
@@ -94,7 +97,7 @@ class ScheduleProvider with ChangeNotifier {
     List<String> videoLinks,
   ) async {
     final response = await http.post(
-      Uri.parse('https://fitnivel-eba221a3a423.herokuapp.com/group_workouts/'),
+      Uri.parse('$_baseUrl/group_workouts/'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',

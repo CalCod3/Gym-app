@@ -1,11 +1,12 @@
 // ignore_for_file: avoid_print
 
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class PaymentPlanProvider with ChangeNotifier {
-  final String _baseUrl = 'https://fitnivel-eba221a3a423.herokuapp.com';
+  final String _baseUrl = dotenv.env['API_BASE_URL']!;
   bool _isLoading = false;
   List<Map<String, dynamic>> _paymentPlans = [];
 

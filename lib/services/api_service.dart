@@ -1,11 +1,12 @@
 // ignore_for_file: avoid_print
 
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../model/post_model.dart';
 
 class ApiService {
-  static const String baseUrl = 'https://fitnivel-eba221a3a423.herokuapp.com';
+  final String baseUrl = dotenv.env['API_BASE_URL']!;
   final String token;
 
   ApiService(this.token);

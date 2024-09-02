@@ -1,5 +1,6 @@
 // ignore_for_file: deprecated_member_use
 
+import 'package:fit_nivel/pages/schedule/classes.dart';
 import 'package:flutter/material.dart';
 import 'package:fit_nivel/pages/admin/communications.dart';
 import 'package:fit_nivel/pages/home/home_page.dart';
@@ -87,6 +88,12 @@ class _MenuState extends State<Menu> {
           title: "Coach",
           route: Container(), // Placeholder route for the dropdown
           children: [
+            MenuModel(
+              icon:
+                  'svg/classes.svg', // Provide an appropriate icon for classes
+              title: "Classes",
+              route: const AddClassScreen(),
+            ),
             MenuModel(
               icon:
                   'svg/groupworkouts.svg', // Provide an appropriate icon for Members

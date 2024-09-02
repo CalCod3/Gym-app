@@ -1,4 +1,4 @@
-// providers/group_workout_provider.dart
+// providers/workout_provider.dart
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
@@ -59,8 +59,7 @@ class GroupWorkoutProvider with ChangeNotifier {
   bool isValid() {
     return _title.isNotEmpty &&
         _description.isNotEmpty &&
-        _date != null &&
-        _videoLinks.every((link) => link.isNotEmpty);
+        _date != null;
   }
 
   Future<void> fetchGroupWorkouts(BuildContext context) async {

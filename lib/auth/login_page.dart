@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -5,7 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'auth_provider.dart';
 import '../dashboard.dart';
-import 'signup_page.dart';  // Make sure to import the signup page
+import 'signup_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -18,10 +20,15 @@ class LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  bool _isLoading = false;
 
   Future<void> _login() async {
+    setState(() {
+      _isLoading = true;
+    });
+
     final response = await http.post(
-      Uri.parse('https://fitnivel-eba221a3a423.herokuapp.com/auth/token'),  // Replace with your FastAPI endpoint
+      Uri.parse('https://fitnivel-eba221a3a423.herokuapp.com/auth/token'),
       headers: <String, String>{
         'Content-Type': 'application/x-www-form-urlencoded',
       },
@@ -31,10 +38,14 @@ class LoginPageState extends State<LoginPage> {
       },
     );
 
+    setState(() {
+      _isLoading = false;
+    });
+
     if (response.statusCode == 200) {
       final responseData = json.decode(response.body);
-      // ignore: use_build_context_synchronously
-      await Provider.of<AuthProvider>(context, listen: false).login(responseData['access_token']);
+      await Provider.of<AuthProvider>(context, listen: false)
+          .login(responseData['access_token']);
       if (mounted) {
         Navigator.pushReplacement(
           context,
@@ -42,7 +53,6 @@ class LoginPageState extends State<LoginPage> {
         );
       }
     } else {
-      // Show error message
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Login failed')),
@@ -63,7 +73,7 @@ class LoginPageState extends State<LoginPage> {
             padding: const EdgeInsets.all(16.0),
             child: Center(
               child: SizedBox(
-                width: 400, // Set a fixed width for the form container
+                width: 400,
                 child: Form(
                   key: _formKey,
                   child: Column(
@@ -81,7 +91,8 @@ class LoginPageState extends State<LoginPage> {
                       ),
                       TextFormField(
                         controller: _passwordController,
-                        decoration: const InputDecoration(labelText: 'Password'),
+                        decoration:
+                            const InputDecoration(labelText: 'Password'),
                         obscureText: true,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -91,21 +102,23 @@ class LoginPageState extends State<LoginPage> {
                         },
                       ),
                       const SizedBox(height: 20),
-                      ElevatedButton(
-                        onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            _login();
-                          }
-                        },
-                        child: const Text('Login'),
-                      ),
-                      const SizedBox(height: 20), // Add some spacing
-                      // Register link
+                      _isLoading
+                          ? const CircularProgressIndicator()
+                          : ElevatedButton(
+                              onPressed: () {
+                                if (_formKey.currentState!.validate()) {
+                                  _login();
+                                }
+                              },
+                              child: const Text('Login'),
+                            ),
+                      const SizedBox(height: 20),
                       TextButton(
                         onPressed: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => const SignupPage()), // Navigate to SignupPage
+                            MaterialPageRoute(
+                                builder: (context) => const SignupPage()),
                           );
                         },
                         child: const Text('Don\'t have an account? Register'),

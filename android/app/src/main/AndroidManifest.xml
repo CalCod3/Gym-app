@@ -1,7 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.dashboard.flutter.app.flutter_dashboard">
+
+    <uses-permission android:name="android.permission.INTERNET"/>
    <application
-        android:label="flutter_dashboard"
+        android:label="FitNível"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
         <activity

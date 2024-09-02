@@ -1,7 +1,7 @@
-// providers/performance_provider.dart
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../model/performance_model.dart';
 
 class PerformanceProvider with ChangeNotifier {
@@ -11,8 +11,10 @@ class PerformanceProvider with ChangeNotifier {
   List<Performance> get performances => _performances;
   List<Performance> get leaderboard => _leaderboard;
 
+  final String _baseUrl = dotenv.env['API_BASE_URL']!;
+
   Future<void> fetchPerformances() async {
-    final response = await http.get(Uri.parse('https://fitnivel-eba221a3a423.herokuapp.com/performances/'));
+    final response = await http.get(Uri.parse('$_baseUrl/performances/'));
     if (response.statusCode == 200) {
       List<dynamic> data = json.decode(response.body);
       _performances = data.map((json) => Performance.fromJson(json)).toList();
@@ -24,7 +26,7 @@ class PerformanceProvider with ChangeNotifier {
 
   Future<void> addPerformance(String category, int weight) async {
     final response = await http.post(
-      Uri.parse('https://fitnivel-eba221a3a423.herokuapp.com/performances/'),
+      Uri.parse('$_baseUrl/performances/'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -44,7 +46,7 @@ class PerformanceProvider with ChangeNotifier {
   }
 
   Future<void> fetchLeaderboard() async {
-    final response = await http.get(Uri.parse('https://fitnivel-eba221a3a423.herokuapp.com/leaderboard/'));
+    final response = await http.get(Uri.parse('$_baseUrl/leaderboard/'));
     if (response.statusCode == 200) {
       List<dynamic> data = json.decode(response.body);
       _leaderboard = data.map((json) => Performance.fromJson(json)).toList();

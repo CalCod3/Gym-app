@@ -1,5 +1,4 @@
-// screens/new_post_screen.dart
-// ignore_for_file: avoid_print
+// ignore_for_file: library_private_types_in_public_api, avoid_print
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -11,7 +10,6 @@ class NewPostScreen extends StatefulWidget {
   const NewPostScreen({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _NewPostScreenState createState() => _NewPostScreenState();
 }
 
@@ -44,16 +42,15 @@ class _NewPostScreenState extends State<NewPostScreen> {
                   content: _contentController.text,
                   userId: currentUserId!,
                   comments: [],
-                  userProfileImageUrl: '',
-                  userName: '',
+                  userProfileImageUrl: currentUserProfileImageUrl ?? 'assets/images/avatar.png',
+                  userName: currentUserName!,
                 );
-                Provider.of<PostProvider>(context, listen: false)
-                    .addPost(newPost);
+                Provider.of<PostProvider>(context, listen: false).addPost(newPost);
                 Navigator.pop(context);
               }
             },
             child: const Text(
-              'Tweet',
+              'Say Something',
               style: TextStyle(color: Colors.white),
             ),
           ),
@@ -67,7 +64,9 @@ class _NewPostScreenState extends State<NewPostScreen> {
             children: [
               ListTile(
                 leading: CircleAvatar(
-                  backgroundImage: NetworkImage(currentUserProfileImageUrl!),
+                  backgroundImage: NetworkImage(
+                    currentUserProfileImageUrl ?? 'assets/images/avatar.png',
+                  ),
                 ),
                 title: Text(currentUserName!),
               ),

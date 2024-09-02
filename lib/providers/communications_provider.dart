@@ -3,15 +3,18 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class CommunicationsProvider with ChangeNotifier {
   List<Article> _articles = [];
 
   List<Article> get articles => _articles;
 
+  final String _baseUrl = dotenv.env['API_BASE_URL']!;
+
   Future<void> fetchArticles() async {
     try {
-      final response = await http.get(Uri.parse('https://fitnivel-eba221a3a423.herokuapp.com/api/news'));
+      final response = await http.get(Uri.parse('$_baseUrl/api/news'));
 
       if (response.statusCode == 200) {
         List<dynamic> data = json.decode(response.body);
@@ -28,25 +31,25 @@ class CommunicationsProvider with ChangeNotifier {
   }
 
   Future<void> addArticle(Article article) async {
-  try {
-    final response = await http.post(
-      Uri.parse('https://fitnivel-eba221a3a423.herokuapp.com/admin/news/new'),
-      headers: {'Content-Type': 'application/json'},
-      body: json.encode(article.toJson()),
-    );
+    try {
+      final response = await http.post(
+        Uri.parse('$_baseUrl/admin/news/new'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode(article.toJson()),
+      );
 
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      // Fetch the updated list of articles
-      await fetchArticles();
-    } else {
-      // Handle non-201 responses
-      print('Failed to add article. Status code: ${response.statusCode}');
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        // Fetch the updated list of articles
+        await fetchArticles();
+      } else {
+        // Handle non-201 responses
+        print('Failed to add article. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      // Handle any exceptions
+      print('Error adding article: $e');
     }
-  } catch (e) {
-    // Handle any exceptions
-    print('Error adding article: $e');
   }
-}
 }
 
 class Article {
