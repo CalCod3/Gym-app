@@ -43,19 +43,7 @@ flutter:
   assets:
     - assets/images/
     - assets/icons/
-    - assets/svg/admin.svg
-    - assets/svg/members.svg
-    - assets/svg/events.svg
-    - assets/svg/communications.svg
-    - assets/svg/payments.svg
-    - assets/svg/coach.svg
-    - assets/svg/groupworkouts.svg
-    - assets/svg/home.svg
-    - assets/svg/profile.svg
-    - assets/svg/exercise.svg
-    - assets/svg/community.svg
-    - assets/svg/history.svg
-    - assets/svg/signout.svg
+    - assets/svg/
 
   fonts:
     - family: IBMPlexSans

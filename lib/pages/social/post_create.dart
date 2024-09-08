@@ -25,6 +25,17 @@ class _NewPostScreenState extends State<NewPostScreen> {
     final currentUserName = userProvider.name;
     final currentUserProfileImageUrl = userProvider.profileImageUrl;
 
+    if (currentUserId == null || currentUserName == null) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('New Post'),
+      ),
+      body: const Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+  }
+
     print(currentUserId);
     print(currentUserName);
     print(currentUserProfileImageUrl);

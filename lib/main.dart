@@ -8,16 +8,19 @@ import 'providers/performance_provider.dart';
 import 'providers/post_provider.dart';
 import 'package:provider/provider.dart';
 import 'auth/auth_provider.dart';
-import 'auth/login_page.dart';
-import 'auth/signup_page.dart';
 import 'const.dart';
 import 'providers/schedule_provider.dart';
 import 'providers/workout_provider.dart';
 import 'splash_screen.dart'; // Import the splash screen
 import 'providers/user_provider.dart'; // Import the UserProvider
 
-void main() async{
-  await dotenv.load();
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  try {
+    await dotenv.load(fileName: ".env");
+  } catch (e) {
+    print("Error loading .env file: $e");
+  }
   runApp(const MyApp());
 }
 
@@ -30,14 +33,22 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProxyProvider<AuthProvider, UserProvider>(
-          create: (_) => UserProvider(null),
-          update: (_, authProvider, previousUserProvider) =>
-              previousUserProvider!..updateAuthProvider(authProvider),
+          create: (context) => UserProvider(context.read<AuthProvider>()),
+          update: (context, authProvider, previousUserProvider) {
+            if (previousUserProvider != null) {
+              previousUserProvider.updateAuthProvider(authProvider);
+              return previousUserProvider;
+            } else {
+              return UserProvider(authProvider);
+            }
+          },
         ),
         ChangeNotifierProxyProvider<UserProvider, PostProvider>(
           create: (_) => PostProvider(ApiService('')),
-          update: (context, userProvider, previousPostProvider) =>
-              PostProvider(ApiService(userProvider.authProvider?.token ?? '')),
+          update: (context, userProvider, previousPostProvider) {
+            final token = userProvider.authProvider?.token ?? '';
+            return PostProvider(ApiService(token));
+          },
         ),
         ChangeNotifierProvider(create: (_) => ScheduleProvider()),
         ChangeNotifierProvider(create: (_) => PerformanceProvider()),
@@ -71,53 +82,6 @@ class MyApp extends StatelessWidget {
           brightness: Brightness.dark,
         ),
         home: const SplashScreen(), // Set the splash screen as the home
-      ),
-    );
-  }
-}
-
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('FitUp'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const LoginPage()),
-                    );
-                  },
-                  child: const Text('Login'),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const SignupPage()),
-                    );
-                  },
-                  child: const Text('Signup'),
-                ),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }

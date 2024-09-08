@@ -54,6 +54,12 @@ class _MenuState extends State<Menu> {
           children: [
             MenuModel(
               icon:
+                  'svg/box.svg', // Provide an appropriate icon for Box
+              title: "Box",
+              route: const MembersScreen(),
+            ),
+            MenuModel(
+              icon:
                   'svg/members.svg', // Provide an appropriate icon for Members
               title: "Members",
               route: const MembersScreen(),
