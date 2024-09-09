@@ -1,7 +1,10 @@
+// ignore_for_file: avoid_print
+
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart'; // Import flutter_dotenv
 
 class AuthProvider with ChangeNotifier {
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
@@ -18,7 +21,12 @@ class AuthProvider with ChangeNotifier {
   Future<void> login(String token) async {
     _token = token;
     await _storage.write(key: 'token', value: token);
-    await _fetchUserData(); // Fetch user data after storing the token
+    try {
+      await _fetchUserData(); // Fetch user data after storing the token
+    } catch (e) {
+      print('Error during login: $e');
+      _token = null; // Clear token if user data fetch fails
+    }
     notifyListeners();
   }
 
@@ -34,26 +42,44 @@ class AuthProvider with ChangeNotifier {
   Future<void> loadToken() async {
     _token = await _storage.read(key: 'token');
     if (_token != null) {
-      await _fetchUserData(); // Fetch user data when loading the token
+      try {
+        await _fetchUserData(); // Fetch user data when loading the token
+      } catch (e) {
+        print('Error loading token and fetching user data: $e');
+        _token = null; // Clear token if user data fetch fails
+      }
     }
     notifyListeners();
   }
 
   Future<void> _fetchUserData() async {
-    if (_token == null) return;
+    final token = _token;
+    final baseUrl = dotenv.env['API_BASE_URL'];
 
-    final url = Uri.parse('https://fitnivel-eba221a3a423.herokuapp.com/users/me');
-    final response = await http.get(url, headers: {
-      'Authorization': 'Bearer $_token',
-    });
+    if (token == null) {
+      throw Exception('Cannot fetch user data: Token is not available.');
+    }
+    if (baseUrl == null) {
+      throw Exception('Base URL is not configured in the environment.');
+    }
 
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      _userId = data['id']; // Assuming the response contains the user ID as 'id'
-      _isAdmin = data['is_staff']; // Assuming the response contains the is_staff field as 'is_staff'
-      _isCoach = data['is_coach'];
-    } else {
-      throw Exception('Failed to fetch user data: ${response.statusCode}');
+    try {
+      final url = Uri.parse('$baseUrl/users/me');
+      final response = await http.get(url, headers: {
+        'Authorization': 'Bearer $token',
+      });
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        _userId = data['id']; // Assuming the response contains the user ID as 'id'
+        _isAdmin = data['is_staff']; // Assuming the response contains the is_staff field as 'is_staff'
+        _isCoach = data['is_coach'];
+      } else {
+        throw Exception('Failed to fetch user data: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching user data: $e');
+      rethrow; // Rethrow to let the caller handle the error
     }
   }
 

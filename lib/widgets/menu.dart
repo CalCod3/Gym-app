@@ -33,6 +33,7 @@ class Menu extends StatefulWidget {
 class _MenuState extends State<Menu> {
   late List<MenuModel> menu;
   late AuthProvider _authProvider;
+  // ignore: unused_field
   final bool _isAdminExpanded = false;
 
   @override

@@ -1,12 +1,12 @@
-// ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously
+// pages/create_payment_plan_page.dart
+
+// ignore_for_file: use_build_context_synchronously, library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/payment_plan_provider.dart';
 import '../../auth/auth_provider.dart';
 import '../../providers/user_provider.dart';
-// ignore: unused_import
-import '../../pages/home/home_page.dart';
 
 class CreatePaymentPlanPage extends StatefulWidget {
   const CreatePaymentPlanPage({super.key});
@@ -115,12 +115,12 @@ class _CreatePaymentPlanPageState extends State<CreatePaymentPlanPage> {
                           _formKey.currentState!.save();
                           try {
                             await paymentPlanProvider.createPaymentPlan(
-                              _planId,
-                              boxId,
-                              _amount,
-                              _currency,
-                              token,
-                              _description,
+                              planId: _planId,
+                              boxId: boxId,
+                              amount: _amount,
+                              currency: _currency,
+                              token: token,
+                              description: _description,
                             );
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
@@ -131,6 +131,11 @@ class _CreatePaymentPlanPageState extends State<CreatePaymentPlanPage> {
                             Navigator.of(context).pop();
                           } catch (error) {
                             // Handle the error if needed
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Error: $error'),
+                              ),
+                            );
                           }
                         }
                       },

@@ -1,12 +1,13 @@
 // providers/workout_provider.dart
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, avoid_print
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:provider/provider.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart'; // Import flutter_dotenv
 import '../auth/auth_provider.dart';
-import 'schedule_provider.dart'; // Import AuthProvider
+import 'schedule_provider.dart'; // Import ScheduleProvider
 
 class GroupWorkoutProvider with ChangeNotifier {
   String _title = '';
@@ -64,52 +65,81 @@ class GroupWorkoutProvider with ChangeNotifier {
 
   Future<void> fetchGroupWorkouts(BuildContext context) async {
     final token = Provider.of<AuthProvider>(context, listen: false).getToken();
-    final response = await http.get(
-      Uri.parse('https://fitnivel-eba221a3a423.herokuapp.com/group_workouts/'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
-    );
-    if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
-      _groupWorkouts = data.map((json) => GroupWorkout.fromJson(json)).toList();
-      notifyListeners();
-    } else {
-      throw Exception('Failed to load group workouts');
+    final baseUrl = dotenv.env['API_BASE_URL'];
+
+    if (token == null) {
+      throw Exception('Authentication token is not available.');
+    }
+    if (baseUrl == null) {
+      throw Exception('Base URL is not configured in the environment.');
+    }
+
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/group_workouts/'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body);
+        _groupWorkouts = data.map((json) => GroupWorkout.fromJson(json)).toList();
+        notifyListeners();
+      } else {
+        throw Exception('Failed to load group workouts: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching group workouts: $e');
+      rethrow; // Rethrow to let the caller handle the error
     }
   }
 
   Future<bool> createGroupWorkout(BuildContext context) async {
     final token = Provider.of<AuthProvider>(context, listen: false).getToken();
-    final response = await http.post(
-      Uri.parse('https://fitnivel-eba221a3a423.herokuapp.com/group_workouts/'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
-      body: json.encode({
-        'name': _title,
-        'description': _description,
-        'date': _date?.toIso8601String(),
-        'video_links': _videoLinks,
-      }),
-    );
+    final baseUrl = dotenv.env['API_BASE_URL'];
 
-    if (response.statusCode == 201) {
-      // Successfully created
-      GroupWorkout groupWorkout = GroupWorkout.fromJson(json.decode(response.body));
-      Provider.of<ScheduleProvider>(context, listen: false).createAndAddGroupWorkout(
-        token!,
-        groupWorkout.name,
-        groupWorkout.description,
-        groupWorkout.date,
-        groupWorkout.videoLinks,
+    if (token == null) {
+      throw Exception('Authentication token is not available.');
+    }
+    if (baseUrl == null) {
+      throw Exception('Base URL is not configured in the environment.');
+    }
+
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/group_workouts/'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: json.encode({
+          'name': _title,
+          'description': _description,
+          'date': _date?.toIso8601String(),
+          'video_links': _videoLinks,
+        }),
       );
-      await fetchGroupWorkouts(context); // Refresh the list
-      return true;
-    } else {
-      return false;
+
+      if (response.statusCode == 201) {
+        // Successfully created
+        GroupWorkout groupWorkout = GroupWorkout.fromJson(json.decode(response.body));
+        Provider.of<ScheduleProvider>(context, listen: false).createAndAddGroupWorkout(
+          token,
+          groupWorkout.name,
+          groupWorkout.description,
+          groupWorkout.date,
+          groupWorkout.videoLinks,
+        );
+        await fetchGroupWorkouts(context); // Refresh the list
+        return true;
+      } else {
+        throw Exception('Failed to create group workout: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error creating group workout: $e');
+      return false; // Return false to indicate failure
     }
   }
 }

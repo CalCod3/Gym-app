@@ -51,10 +51,10 @@ class _NewPostScreenState extends State<NewPostScreen> {
                   id: DateTime.now().millisecondsSinceEpoch,
                   title: _titleController.text,
                   content: _contentController.text,
-                  userId: currentUserId!,
+                  userId: currentUserId,
                   comments: [],
                   userProfileImageUrl: currentUserProfileImageUrl ?? 'assets/images/avatar.png',
-                  userName: currentUserName!,
+                  userName: currentUserName,
                 );
                 Provider.of<PostProvider>(context, listen: false).addPost(newPost);
                 Navigator.pop(context);
@@ -79,7 +79,7 @@ class _NewPostScreenState extends State<NewPostScreen> {
                     currentUserProfileImageUrl ?? 'assets/images/avatar.png',
                   ),
                 ),
-                title: Text(currentUserName!),
+                title: Text(currentUserName),
               ),
               TextFormField(
                 controller: _titleController,

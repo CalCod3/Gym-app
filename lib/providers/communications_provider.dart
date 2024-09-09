@@ -10,44 +10,57 @@ class CommunicationsProvider with ChangeNotifier {
 
   List<Article> get articles => _articles;
 
-  final String _baseUrl = dotenv.env['API_BASE_URL']!;
+  final String _baseUrl;
 
+  CommunicationsProvider() : _baseUrl = dotenv.env['API_BASE_URL']! {
+    if (_baseUrl.isEmpty) {
+      throw Exception('API base URL is not set. Please check your .env file.');
+    }
+  }
+
+  // Fetch articles from the backend
   Future<void> fetchArticles() async {
     try {
       final response = await http.get(Uri.parse('$_baseUrl/api/news'));
 
       if (response.statusCode == 200) {
         List<dynamic> data = json.decode(response.body);
+
+        // Validate response data
+        if (data.isEmpty) {
+          throw Exception('No articles found');
+        }
+
         _articles = data.map((article) => Article.fromJson(article)).toList();
         notifyListeners();
       } else {
-        // Handle non-200 responses
-        print('Failed to load articles. Status code: ${response.statusCode}');
+        throw Exception('Failed to load articles: ${response.reasonPhrase}');
       }
     } catch (e) {
-      // Handle any exceptions
       print('Error fetching articles: $e');
+      throw Exception('An error occurred while fetching articles: $e');
     }
   }
 
+  // Add a new article
   Future<void> addArticle(Article article) async {
     try {
       final response = await http.post(
         Uri.parse('$_baseUrl/admin/news/new'),
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: json.encode(article.toJson()),
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        // Fetch the updated list of articles
-        await fetchArticles();
+        await fetchArticles(); // Refresh articles after successfully adding one
       } else {
-        // Handle non-201 responses
-        print('Failed to add article. Status code: ${response.statusCode}');
+        throw Exception('Failed to add article: ${response.reasonPhrase}');
       }
     } catch (e) {
-      // Handle any exceptions
       print('Error adding article: $e');
+      throw Exception('An error occurred while adding the article: $e');
     }
   }
 }
@@ -66,7 +79,7 @@ class Article {
   factory Article.fromJson(Map<String, dynamic> json) {
     return Article(
       title: json['title'],
-      body: json['body'], // Ensure this matches the response model
+      body: json['body'],
       date: json['date'],
     );
   }
@@ -74,7 +87,7 @@ class Article {
   Map<String, dynamic> toJson() {
     return {
       'title': title,
-      'body': body, // Ensure this matches the request model
+      'body': body,
       'date': date,
     };
   }

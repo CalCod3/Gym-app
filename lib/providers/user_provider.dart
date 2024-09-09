@@ -17,7 +17,11 @@ class UserProvider with ChangeNotifier {
   bool _isLoading = false;
   List<UserWithPaymentStatus>? _members; // Updated to use the new model
 
-  UserProvider(this._authProvider);
+  UserProvider(this._authProvider) {
+    if (dotenv.env['API_BASE_URL'] == null) {
+      throw Exception('API base URL is not set. Please check your .env file.');
+    }
+  }
 
   final String _baseUrl = dotenv.env['API_BASE_URL']!;
 
@@ -38,14 +42,12 @@ class UserProvider with ChangeNotifier {
 
   Future<void> fetchUserData() async {
     if (_isLoading) return;
-    _isLoading = true;
-    notifyListeners();
+    _setLoading(true);
 
     final token = _authProvider?.token;
 
     if (token == null) {
-      _isLoading = false;
-      notifyListeners();
+      _setLoading(false);
       throw Exception('Token not found');
     }
 
@@ -63,17 +65,14 @@ class UserProvider with ChangeNotifier {
         _profileImageUrl = data['profile_image'];
 
         await fetchPaymentInfo(token);
-        _isLoading = false;
-        notifyListeners();
       } else {
-        _isLoading = false;
-        notifyListeners();
-        throw Exception('Failed to load user data: ${response.statusCode}');
+        _handleErrorResponse(response);
       }
     } catch (e) {
-      _isLoading = false;
-      notifyListeners();
-      throw Exception('An error occurred: $e');
+      print('Error fetching user data: $e'); // Debug print
+      throw Exception('An error occurred while fetching user data: $e');
+    } finally {
+      _setLoading(false);
     }
   }
 
@@ -102,26 +101,23 @@ class UserProvider with ChangeNotifier {
         }
         notifyListeners();
       } else {
-        throw Exception('Failed to load payment data: ${response.statusCode}');
+        _handleErrorResponse(response);
       }
     } catch (e) {
       print('Error fetching payment info: $e'); // Debug print
-      throw Exception('An error occurred: $e');
+      throw Exception('An error occurred while fetching payment info: $e');
     }
   }
 
-
   Future<void> fetchMembers() async {
     if (_isLoading) return;
-    _isLoading = true;
-    notifyListeners();
+    _setLoading(true);
 
     final token = _authProvider?.token;
     final isAdmin = _authProvider?.isAdmin ?? false;
 
     if (token == null || !isAdmin) {
-      _isLoading = false;
-      notifyListeners();
+      _setLoading(false);
       throw Exception('Unauthorized or Token not found');
     }
 
@@ -136,15 +132,26 @@ class UserProvider with ChangeNotifier {
         _members = (data as List)
             .map((item) => UserWithPaymentStatus.fromJson(item))
             .toList();
+        notifyListeners();
       } else {
-        throw Exception('Failed to load members: ${response.statusCode}');
+        _handleErrorResponse(response);
       }
     } catch (e) {
-      throw Exception('An error occurred: $e');
+      print('Error fetching members: $e'); // Debug print
+      throw Exception('An error occurred while fetching members: $e');
     } finally {
-      _isLoading = false;
-      notifyListeners();
+      _setLoading(false);
     }
+  }
+
+  void _setLoading(bool value) {
+    _isLoading = value;
+    notifyListeners();
+  }
+
+  void _handleErrorResponse(http.Response response) {
+    print('Request failed: ${response.statusCode} - ${response.body}');
+    throw Exception('Request failed with status code ${response.statusCode}: ${response.body}');
   }
 }
 
