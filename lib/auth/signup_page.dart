@@ -6,7 +6,8 @@ import '../dashboard.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'auth_provider.dart';
-import 'login_page.dart'; // Make sure to import your login page
+import 'login_page.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart'; // Import dotenv for environment variables
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -38,12 +39,17 @@ class SignupPageState extends State<SignupPage> {
     });
 
     try {
+      // Use the environment variable for the base URL
+      final String? apiUrl = dotenv.env['API_BASE_URL'];
+
+      if (apiUrl == null) {
+        throw Exception('API_BASE_URL not set in .env file');
+      }
+
       final response = await http.post(
-        Uri.parse(
-            'https://fitnivel-eba221a3a423.herokuapp.com/auth'), // Replace with your FastAPI signup endpoint
+        Uri.parse('$apiUrl/auth/'), // Replace with your actual endpoint path
         headers: <String, String>{
-          'Content-Type':
-              'application/json', // Change the Content-Type to application/json
+          'Content-Type': 'application/json',
         },
         body: json.encode({
           'first_name': _firstNameController.text,
@@ -95,7 +101,7 @@ class SignupPageState extends State<SignupPage> {
             padding: const EdgeInsets.all(16.0),
             child: Center(
               child: SizedBox(
-                width: 400, // Set a fixed width for the form container
+                width: 400,
                 child: Form(
                   key: _formKey,
                   child: Column(

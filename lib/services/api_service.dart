@@ -32,7 +32,7 @@ class ApiService {
     try {
       final response = await http.get(
         Uri.parse('$baseUrl/posts/'),
-        headers: {'Authorization': 'Bearer $token!'},
+        headers: {'Authorization': 'Bearer $token'},
       );
 
       print('Raw response body: ${response.body}');
