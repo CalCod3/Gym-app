@@ -35,9 +35,7 @@ class HomePage extends StatelessWidget {
               height(context),
               const NewsSummaryCard(), // Add the news summary card here
               height(context),
-              LineChartCard(),
-              height(context),
-              BarGraphCard(),
+              const LineChartCard(),
               height(context),
             ],
           ),

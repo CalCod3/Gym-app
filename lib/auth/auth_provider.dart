@@ -18,18 +18,22 @@ class AuthProvider with ChangeNotifier {
   bool? get isAdmin => _isAdmin;
   bool? get isCoach => _isCoach;
 
+  /// Login method to save token and fetch user data.
   Future<void> login(String token) async {
     _token = token;
     await _storage.write(key: 'token', value: token);
     try {
-      await _fetchUserData(); // Fetch user data after storing the token
+      // Fetch user data after successfully saving the token
+      await _fetchUserData();
+      notifyListeners();
     } catch (e) {
       print('Error during login: $e');
       _token = null; // Clear token if user data fetch fails
+      notifyListeners();
     }
-    notifyListeners();
   }
 
+  /// Logout method to clear token and user data.
   Future<void> logout() async {
     _token = null;
     _userId = null;
@@ -39,19 +43,25 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  /// Load token from secure storage and attempt auto-login.
   Future<void> loadToken() async {
     _token = await _storage.read(key: 'token');
     if (_token != null) {
       try {
-        await _fetchUserData(); // Fetch user data when loading the token
+        // Fetch user data when loading the token to auto-login
+        await _fetchUserData();
+        notifyListeners();
       } catch (e) {
         print('Error loading token and fetching user data: $e');
-        _token = null; // Clear token if user data fetch fails
+        await logout(); // Clear token if user data fetch fails
       }
+    } else {
+      // Clear any previous login state
+      logout();
     }
-    notifyListeners();
   }
 
+  /// Fetch the logged-in user's data using the saved token.
   Future<void> _fetchUserData() async {
     final token = _token;
     final baseUrl = dotenv.env['API_BASE_URL'];
@@ -72,8 +82,12 @@ class AuthProvider with ChangeNotifier {
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         _userId = data['id']; // Assuming the response contains the user ID as 'id'
-        _isAdmin = data['is_staff']; // Assuming the response contains the is_staff field as 'is_staff'
+        _isAdmin = data['is_staff']; // Assuming the response contains 'is_staff'
         _isCoach = data['is_coach'];
+      } else if (response.statusCode == 401) {
+        // Token is invalid or expired, handle logout
+        await logout();
+        throw Exception('Token expired or invalid.');
       } else {
         throw Exception('Failed to fetch user data: ${response.statusCode}');
       }
@@ -83,7 +97,7 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  // New method to get the token
+  /// Optional method to manually retrieve the current token.
   String? getToken() {
     return _token;
   }

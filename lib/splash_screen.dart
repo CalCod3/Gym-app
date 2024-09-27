@@ -1,10 +1,9 @@
 // ignore_for_file: unused_field, unused_import
 
-import 'package:fit_nivel/auth/login_page.dart';
 import 'package:flutter/material.dart';
-import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:provider/provider.dart';
 import 'auth/auth_provider.dart';
+import 'auth/login_page.dart';
 import 'dashboard.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -35,12 +34,26 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
     );
 
     // Simulate loading by completing the future after a delay
-    Future.delayed(const Duration(seconds: 5), () {
+    Future.delayed(const Duration(seconds: 2), () async {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+      // Load the token from storage (if any)
+      await authProvider.loadToken();
+
+      // Ensure we're still in the correct context
+      if (!mounted) return;
+
+      // Navigate based on token validity
       if (authProvider.token == null) {
-        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const LoginPage()));
+        // Navigate to the login page if no valid token
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const LoginPage()),
+        );
       } else {
-        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => DashBoard()));
+        // Navigate to the dashboard if token is valid
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => DashBoard()),
+        );
       }
     });
   }
@@ -53,6 +66,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
 
   @override
   Widget build(BuildContext context) {
+    // Animated splash screen UI
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 185, 192, 252),
       body: Column(

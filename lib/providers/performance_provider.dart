@@ -10,8 +10,11 @@ class PerformanceProvider with ChangeNotifier {
   List<Performance> _performances = [];
   List<Performance> _leaderboard = [];
 
+  bool _isLoading = false; // Loading state
+
   List<Performance> get performances => _performances;
   List<Performance> get leaderboard => _leaderboard;
+  bool get isLoading => _isLoading;
 
   final String _baseUrl;
 
@@ -83,7 +86,11 @@ class PerformanceProvider with ChangeNotifier {
 
       if (response.statusCode == 200) {
         List<dynamic> data = json.decode(response.body);
-        _leaderboard = data.map((json) => Performance.fromJson(json)).toList();
+        if (data.isNotEmpty) {
+          _leaderboard = data.map((json) => Performance.fromJson(json)).toList();
+        } else {
+          _leaderboard = []; // No entries in the leaderboard
+        }
         notifyListeners();
       } else {
         _handleErrorResponse(response);
@@ -98,7 +105,7 @@ class PerformanceProvider with ChangeNotifier {
 
   // Set the loading state and notify listeners
   void _setLoading(bool value) {
-    // You can define your loading state variable and notify listeners here
+    _isLoading = value;
     notifyListeners();
   }
 

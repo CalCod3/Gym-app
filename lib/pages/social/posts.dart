@@ -5,6 +5,7 @@ import '../../providers/post_provider.dart';
 import 'post_create.dart';
 import 'post_detail.dart';
 import 'comment_create.dart'; // Import for CommentCreate screen
+import 'public_profile.dart'; // Import for PublicProfileScreen
 
 class PostsScreen extends StatelessWidget {
   const PostsScreen({super.key});
@@ -60,17 +61,45 @@ class PostsScreen extends StatelessWidget {
                                 padding: const EdgeInsets.all(8.0),
                                 child: Row(
                                   children: [
-                                    CircleAvatar(
-                                      backgroundImage: post.userProfileImageUrl.isNotEmpty
-                                          ? NetworkImage(post.userProfileImageUrl)
-                                          : const AssetImage('images/avatar.png') as ImageProvider,
+                                    GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => PublicProfileScreen(
+                                              userId: post.userId,
+                                              userName: post.userName,
+                                              userProfileImageUrl: post.userProfileImageUrl,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      child: CircleAvatar(
+                                        backgroundImage: post.userProfileImageUrl.isNotEmpty
+                                            ? NetworkImage(post.userProfileImageUrl)
+                                            : const AssetImage('images/avatar.png') as ImageProvider,
+                                      ),
                                     ),
                                     const SizedBox(width: 8.0),
                                     Expanded(
-                                      child: Text(
-                                        post.userName,
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => PublicProfileScreen(
+                                                userId: post.userId,
+                                                userName: post.userName,
+                                                userProfileImageUrl: post.userProfileImageUrl,
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                        child: Text(
+                                          post.userName,
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
                                       ),
                                     ),

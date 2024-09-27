@@ -29,7 +29,7 @@ class ActivityProvider with ChangeNotifier {
     _setLoading(true);
 
     try {
-      final response = await http.get(Uri.parse('$_baseUrl/activities'));
+      final response = await http.get(Uri.parse('$_baseUrl/activities/'));
 
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);

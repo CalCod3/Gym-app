@@ -61,7 +61,7 @@ class _NewPostScreenState extends State<NewPostScreen> {
               }
             },
             child: const Text(
-              'Say Something',
+              'Send',
               style: TextStyle(color: Colors.white),
             ),
           ),

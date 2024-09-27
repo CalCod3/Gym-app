@@ -25,6 +25,36 @@ class SignupPageState extends State<SignupPage> {
   final TextEditingController _confirmPasswordController =
       TextEditingController();
   bool _isSubmitting = false;
+  
+  // Add a variable to store the selected box and the list of available boxes
+  String? _selectedBox;
+  List<dynamic> _availableBoxes = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchBoxes();  // Fetch available boxes when the page is initialized
+  }
+
+  Future<void> _fetchBoxes() async {
+    try {
+      final String? apiUrl = dotenv.env['API_BASE_URL'];
+      if (apiUrl == null) {
+        throw Exception('API_BASE_URL not set in .env file');
+      }
+
+      final response = await http.get(Uri.parse('$apiUrl/api/boxes/')); // Replace with your actual endpoint for fetching boxes
+      if (response.statusCode == 200) {
+        setState(() {
+          _availableBoxes = json.decode(response.body);
+        });
+      } else {
+        print('Failed to fetch boxes: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching boxes: $e');
+    }
+  }
 
   Future<void> _signup() async {
     if (_passwordController.text != _confirmPasswordController.text) {
@@ -39,7 +69,6 @@ class SignupPageState extends State<SignupPage> {
     });
 
     try {
-      // Use the environment variable for the base URL
       final String? apiUrl = dotenv.env['API_BASE_URL'];
 
       if (apiUrl == null) {
@@ -56,6 +85,7 @@ class SignupPageState extends State<SignupPage> {
           'last_name': _lastNameController.text,
           'email': _emailController.text,
           'password': _passwordController.text,
+          'box_id': _selectedBox, // Pass the selected box ID
         }),
       );
 
@@ -159,6 +189,28 @@ class SignupPageState extends State<SignupPage> {
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please confirm your password';
+                          }
+                          return null;
+                        },
+                      ),
+                      // Add the DropdownButtonFormField for selecting the box
+                      DropdownButtonFormField<String>(
+                        value: _selectedBox,
+                        hint: const Text('Select Box'),
+                        items: _availableBoxes.map<DropdownMenuItem<String>>((box) {
+                          return DropdownMenuItem<String>(
+                            value: box['id'].toString(),
+                            child: Text(box['name']),
+                          );
+                        }).toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedBox = value;
+                          });
+                        },
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please select a box';
                           }
                           return null;
                         },

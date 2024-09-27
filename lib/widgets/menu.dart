@@ -57,13 +57,19 @@ class _MenuState extends State<Menu> {
               icon:
                   'svg/box.svg', // Provide an appropriate icon for Box
               title: "Box",
-              route: const MembersScreen(),
-            ),
-            MenuModel(
-              icon:
-                  'svg/members.svg', // Provide an appropriate icon for Members
-              title: "Members",
-              route: const MembersScreen(),
+              route: Container(),
+              children: [
+                MenuModel(
+                  icon:'svg/members.svg', // Provide an appropriate icon for Members
+                  title: "Members",
+                  route: const MembersScreen(),
+                  ),
+                MenuModel(
+                  icon:'svg/settings.svg', // Provide an appropriate icon for Members
+                  title: "Settings",
+                  route: Container(),
+                  ),
+              ]
             ),
             MenuModel(
               icon: 'svg/events.svg',
@@ -85,6 +91,11 @@ class _MenuState extends State<Menu> {
                   title: "Payment Plans",
                   route: const CreatePaymentPlanPage(),
                 ),
+                MenuModel(
+                  icon: 'svg/wage.svg',
+                  title: "Wages",
+                  route: Container(),
+                  ),
               ],
             ),
           ],
@@ -169,9 +180,7 @@ class _MenuState extends State<Menu> {
                 menu[i].children != null
                     ? ExpansionTile(
                         leading: SvgPicture.asset(
-                          menu[i].icon,
-                          color: selected == i ? const Color.fromARGB(255, 49, 49, 49) : Colors.grey,
-                        ),
+                          menu[i].icon),
                         title: Text(
                           menu[i].title,
                           style: TextStyle(
@@ -186,11 +195,7 @@ class _MenuState extends State<Menu> {
                           return child.children != null
                               ? ExpansionTile(
                                   leading: SvgPicture.asset(
-                                    child.icon,
-                                    color: selected == i
-                                        ? Colors.black
-                                        : Colors.grey,
-                                  ),
+                                    child.icon),
                                   title: Text(
                                     child.title,
                                     style: TextStyle(
@@ -206,11 +211,7 @@ class _MenuState extends State<Menu> {
                                   children: child.children!.map((subChild) {
                                     return ListTile(
                                       leading: SvgPicture.asset(
-                                        subChild.icon,
-                                        color: selected == i
-                                            ? Colors.black
-                                            : Colors.grey,
-                                      ),
+                                        subChild.icon),
                                       title: Text(
                                         subChild.title,
                                         style: TextStyle(
@@ -241,11 +242,7 @@ class _MenuState extends State<Menu> {
                                 )
                               : ListTile(
                                   leading: SvgPicture.asset(
-                                    child.icon,
-                                    color: selected == i
-                                        ? Colors.black
-                                        : Colors.grey,
-                                  ),
+                                    child.icon),
                                   title: Text(
                                     child.title,
                                     style: TextStyle(
@@ -302,11 +299,7 @@ class _MenuState extends State<Menu> {
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 13, vertical: 7),
                                 child: SvgPicture.asset(
-                                  menu[i].icon,
-                                  color: selected == i
-                                      ? Colors.black
-                                      : Colors.grey,
-                                ),
+                                  menu[i].icon),
                               ),
                               Text(
                                 menu[i].title,
