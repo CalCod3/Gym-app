@@ -26,7 +26,7 @@ class ActivityProvider with ChangeNotifier {
   }
 
   Future<void> fetchActivities() async {
-    _setLoading(true);
+    _setLoading(true);  // Show loading spinner
 
     try {
       final response = await http.get(Uri.parse('$_baseUrl/activities/'));
@@ -48,14 +48,15 @@ class ActivityProvider with ChangeNotifier {
       print('Error fetching activities: $e');
       throw Exception('An error occurred: $e');
     } finally {
-      _setLoading(false);
+      _setLoading(false);  // Hide loading spinner
     }
   }
 
   Future<void> createActivity(ActivityModel activity) async {
+    _setLoading(true);  // Show loading spinner
     try {
       final response = await http.post(
-        Uri.parse('$_baseUrl/admin/activities/'),
+        Uri.parse('$_baseUrl/admin/activities/new'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode(activity.toJson()),
       );
@@ -68,12 +69,16 @@ class ActivityProvider with ChangeNotifier {
     } catch (e) {
       print('Error creating activity: $e');
       throw Exception('An error occurred while creating activity: $e');
+    } finally {
+      _setLoading(false);  // Hide loading spinner
     }
   }
 
   Future<String?> uploadImage(File image) async {
+    _setLoading(true);  // Show loading spinner during upload
     final mimeType = lookupMimeType(image.path);
     if (mimeType == null) {
+      _setLoading(false);  // Hide loading spinner in case of an error
       throw Exception('Cannot determine the MIME type of the image.');
     }
 
@@ -101,16 +106,21 @@ class ActivityProvider with ChangeNotifier {
 
         // Validate response data
         if (decodedResponse['url'] == null) {
+          _setLoading(false);  // Hide loading spinner
           throw Exception('Failed to parse uploaded image URL from response.');
         }
 
         return decodedResponse['url'];
       } else {
+        _setLoading(false);  // Hide loading spinner
         throw Exception('Failed to upload image: ${response.reasonPhrase}');
       }
     } catch (e) {
       print('Error uploading image: $e');
+      _setLoading(false);  // Hide loading spinner
       throw Exception('An error occurred while uploading image: $e');
+    } finally {
+      _setLoading(false);  // Hide loading spinner
     }
   }
 

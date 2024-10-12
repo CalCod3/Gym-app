@@ -77,8 +77,8 @@ class Header extends StatelessWidget {
                   onTap: () => scaffoldKey.currentState!.openEndDrawer(),
                   child: CircleAvatar(
                     backgroundColor: Colors.transparent,
-                    child: Image.asset(
-                      "images/avatar.png",
+                    child: Image.network(
+                      "https://cdns.iconmonstr.com/wp-content/releases/preview/2012/240/iconmonstr-user-6.png",
                       width: 32,
                     ),
                   ),

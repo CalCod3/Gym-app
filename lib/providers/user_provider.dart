@@ -29,6 +29,7 @@ class UserProvider with ChangeNotifier {
     _authProvider = authProvider;
     notifyListeners();
   }
+  
 
   AuthProvider? get authProvider => _authProvider;
   int? get userId => _userId;

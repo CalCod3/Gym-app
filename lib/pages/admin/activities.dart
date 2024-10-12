@@ -81,11 +81,13 @@ class _ActivityCreateScreenState extends State<ActivityCreateScreen> {
 
   Future<void> _submitForm() async {
     if (_formKey.currentState!.validate() && _image != null) {
+      final activityProvider = Provider.of<ActivityProvider>(context, listen: false);
+
       // First, upload the image
-      final imageUrl = await Provider.of<ActivityProvider>(context, listen: false).uploadImage(_image!);
+      final imageUrl = await activityProvider.uploadImage(_image!);
 
       if (imageUrl != null) {
-        // Then, create the activity with the image URL
+        // Create the activity
         final newActivity = ActivityModel(
           image: imageUrl,
           value: _valueController.text,
@@ -93,8 +95,14 @@ class _ActivityCreateScreenState extends State<ActivityCreateScreen> {
           description: _descriptionController.text,
         );
 
-        await Provider.of<ActivityProvider>(context, listen: false).createActivity(newActivity);
-        Navigator.of(context).pop();
+        await activityProvider.createActivity(newActivity);
+
+        // Navigate to dashboard after submission
+        if (!activityProvider.isLoading) {
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => const ActivityCreateScreen()),
+          );
+        }
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -105,69 +113,73 @@ class _ActivityCreateScreenState extends State<ActivityCreateScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isLoading = Provider.of<ActivityProvider>(context).isLoading;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Create Activity'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: <Widget>[
-              GestureDetector(
-                onTap: _pickImage,
-                child: Container(
-                  height: 200,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey),
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                  child: _image == null
-                      ? const Center(child: Text('Tap to pick an image', style: TextStyle(color: Colors.grey)))
-                      : Image.file(_image!, fit: BoxFit.cover),
+        child: isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : Form(
+                key: _formKey,
+                child: ListView(
+                  children: <Widget>[
+                    GestureDetector(
+                      onTap: _pickImage,
+                      child: Container(
+                        height: 200,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        child: _image == null
+                            ? const Center(child: Text('Tap to pick an image', style: TextStyle(color: Colors.grey)))
+                            : Image.file(_image!, fit: BoxFit.cover),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    TextFormField(
+                      controller: _valueController,
+                      decoration: const InputDecoration(labelText: 'Value'),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter a value';
+                        }
+                        return null;
+                      },
+                    ),
+                    TextFormField(
+                      controller: _titleController,
+                      decoration: const InputDecoration(labelText: 'Title'),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter a title';
+                        }
+                        return null;
+                      },
+                    ),
+                    TextFormField(
+                      controller: _descriptionController,
+                      decoration: const InputDecoration(labelText: 'Description'),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter a description';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: _submitForm,
+                      child: const Text('Create Activity'),
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 20),
-              TextFormField(
-                controller: _valueController,
-                decoration: const InputDecoration(labelText: 'Value'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a value';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: _titleController,
-                decoration: const InputDecoration(labelText: 'Title'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a title';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: _descriptionController,
-                decoration: const InputDecoration(labelText: 'Description'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a description';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _submitForm,
-                child: const Text('Create Activity'),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }

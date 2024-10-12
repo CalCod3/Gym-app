@@ -47,7 +47,7 @@ class Profile extends StatelessWidget {
                         builder: (context, userProvider, child) {
                           return userProvider.profileImageUrl != null
                               ? Image.network(userProvider.profileImageUrl!)
-                              : Image.asset("assets/images/avatar.jpg");
+                              : Image.network("https://cdns.iconmonstr.com/wp-content/releases/preview/2012/240/iconmonstr-user-6.png");
                         },
                       ),
                       const SizedBox(height: 15),

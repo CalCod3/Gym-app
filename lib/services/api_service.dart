@@ -16,6 +16,7 @@ class ApiService {
     if (token == null || token!.isEmpty) {
       print('Warning: API token is not initialized.');
     }
+    print(token);
   }
 
   void updateToken(String newToken) {
@@ -34,6 +35,8 @@ class ApiService {
         Uri.parse('$baseUrl/posts/'),
         headers: {'Authorization': 'Bearer $token'},
       );
+
+      print(token);
 
       print('Raw response body: ${response.body}');
 
@@ -61,13 +64,15 @@ class ApiService {
         Uri.parse('$baseUrl/posts/'),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token!'
+          'Authorization': 'Bearer $token'
         },
         body: json.encode({
           'title': post.title,
           'content': post.content,
         }),
       );
+
+      print(response);
 
       if (response.statusCode == 201) {
         return Post.fromJson(json.decode(response.body));

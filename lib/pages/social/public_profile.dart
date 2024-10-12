@@ -29,7 +29,7 @@ class PublicProfileScreen extends StatelessWidget {
               radius: 50,
               backgroundImage: userProfileImageUrl.isNotEmpty
                   ? NetworkImage(userProfileImageUrl)
-                  : const AssetImage('images/avatar.png') as ImageProvider,
+                  : const NetworkImage("https://cdns.iconmonstr.com/wp-content/releases/preview/2012/240/iconmonstr-user-6.png") as ImageProvider,
             ),
             const SizedBox(height: 16),
             Text(

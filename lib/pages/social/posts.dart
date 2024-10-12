@@ -77,7 +77,7 @@ class PostsScreen extends StatelessWidget {
                                       child: CircleAvatar(
                                         backgroundImage: post.userProfileImageUrl.isNotEmpty
                                             ? NetworkImage(post.userProfileImageUrl)
-                                            : const AssetImage('images/avatar.png') as ImageProvider,
+                                            : const NetworkImage("https://cdns.iconmonstr.com/wp-content/releases/preview/2012/240/iconmonstr-user-6.png") as ImageProvider,
                                       ),
                                     ),
                                     const SizedBox(width: 8.0),

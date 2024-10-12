@@ -119,7 +119,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                     leading: CircleAvatar(
                       backgroundImage: userProvider.profileImageUrl != null
                           ? NetworkImage(userProvider.profileImageUrl!)
-                          : const AssetImage('images/avatar.png') as ImageProvider,
+                          : const NetworkImage("https://cdns.iconmonstr.com/wp-content/releases/preview/2012/240/iconmonstr-user-6.png") as ImageProvider,
                     ),
                     title: Text(comment.content),
                     subtitle: Text('User ID: ${comment.userId}'),

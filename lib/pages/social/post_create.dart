@@ -1,4 +1,4 @@
-// ignore_for_file: library_private_types_in_public_api, avoid_print
+// ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -17,49 +17,77 @@ class _NewPostScreenState extends State<NewPostScreen> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _contentController = TextEditingController();
+  bool _isLoading = false; // Loading state for async behavior
 
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context);
+    final postProvider = Provider.of<PostProvider>(context, listen: false);
+    
     final currentUserId = userProvider.authProvider?.userId;
     final currentUserName = userProvider.name;
     final currentUserProfileImageUrl = userProvider.profileImageUrl;
 
     if (currentUserId == null || currentUserName == null) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('New Post'),
-      ),
-      body: const Center(
-        child: CircularProgressIndicator(),
-      ),
-    );
-  }
-
-    print(currentUserId);
-    print(currentUserName);
-    print(currentUserProfileImageUrl);
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('New Post'),
+        ),
+        body: const Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('New Post'),
         actions: [
           TextButton(
-            onPressed: () {
-              if (_formKey.currentState!.validate()) {
-                final newPost = Post(
-                  id: DateTime.now().millisecondsSinceEpoch,
-                  title: _titleController.text,
-                  content: _contentController.text,
-                  userId: currentUserId,
-                  comments: [],
-                  userProfileImageUrl: currentUserProfileImageUrl ?? 'assets/images/avatar.png',
-                  userName: currentUserName,
-                );
-                Provider.of<PostProvider>(context, listen: false).addPost(newPost);
-                Navigator.pop(context);
-              }
-            },
+            onPressed: _isLoading
+                ? null // Disable button when loading
+                : () async {
+                    if (_formKey.currentState!.validate()) {
+                      setState(() {
+                        _isLoading = true; // Start loading
+                      });
+
+                      final newPost = Post(
+                        id: DateTime.now().millisecondsSinceEpoch,
+                        title: _titleController.text,
+                        content: _contentController.text,
+                        userId: currentUserId,
+                        comments: [],
+                        userProfileImageUrl: currentUserProfileImageUrl ??
+                            'assets/images/avatar.png',
+                        userName: currentUserName,
+                      );
+
+                      try {
+                        await postProvider.addPost(newPost);
+                        // Success: Show success message and navigate back
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Post created successfully!'),
+                            backgroundColor: Colors.green,
+                          ),
+                        );
+                        Navigator.pop(context);
+                      } catch (error) {
+                        // Error: Show error message
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Failed to create post: $error'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      } finally {
+                        setState(() {
+                          _isLoading = false; // End loading
+                        });
+                      }
+                    }
+                  },
             child: const Text(
               'Send',
               style: TextStyle(color: Colors.white),
@@ -73,10 +101,12 @@ class _NewPostScreenState extends State<NewPostScreen> {
           key: _formKey,
           child: Column(
             children: [
+              if (_isLoading)
+                const LinearProgressIndicator(), // Show progress indicator during post creation
               ListTile(
                 leading: CircleAvatar(
                   backgroundImage: NetworkImage(
-                    currentUserProfileImageUrl ?? 'assets/images/avatar.png',
+                    currentUserProfileImageUrl ?? 'https://cdns.iconmonstr.com/wp-content/releases/preview/2012/240/iconmonstr-user-6.png',
                   ),
                 ),
                 title: Text(currentUserName),
