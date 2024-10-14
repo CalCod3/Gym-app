@@ -81,7 +81,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
               return Transform.scale(
                 scale: value,
                 child: Image.asset(
-                  'assets/images/splash.png', // Replace with your actual image path
+                  'assets/images/wodbook.png', // Replace with your actual image path
                   fit: BoxFit.contain,
                 ),
               );
