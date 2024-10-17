@@ -1,10 +1,10 @@
 // ignore_for_file: avoid_print
 
-import 'package:fit_nivel/services/notification_service.dart';
+import 'package:WOD_Book/services/notification_service.dart';
 import 'package:flutter/material.dart';
-import 'package:fit_nivel/providers/activity_provider.dart';
-import 'package:fit_nivel/providers/communications_provider.dart';
-import 'package:fit_nivel/services/api_service.dart';
+import 'package:WOD_Book/providers/activity_provider.dart';
+import 'package:WOD_Book/providers/communications_provider.dart';
+import 'package:WOD_Book/services/api_service.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'auth/auth_provider.dart';
@@ -95,7 +95,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => BoxProvider()),  // BoxProvider added
       ],
       child: MaterialApp(
-        title: 'FitNivel',
+        title: 'WODBOOK',
         debugShowCheckedModeBanner: false,
         themeMode: ThemeMode.dark,
         theme: ThemeData(

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:fit_nivel/pages/home/widgets/header_widget.dart';
-import 'package:fit_nivel/responsive.dart';
-import 'package:fit_nivel/pages/home/widgets/activity_details_card.dart';
-import 'package:fit_nivel/pages/home/widgets/line_chart_card.dart';
+import 'package:WOD_Book/pages/home/widgets/header_widget.dart';
+import 'package:WOD_Book/responsive.dart';
+import 'package:WOD_Book/pages/home/widgets/activity_details_card.dart';
+import 'package:WOD_Book/pages/home/widgets/line_chart_card.dart';
 
 import 'widgets/news_summary_card.dart';
 

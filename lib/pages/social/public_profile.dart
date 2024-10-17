@@ -1,4 +1,4 @@
-import 'package:fit_nivel/pages/social/challenge.dart';
+import 'package:WOD_Book/pages/social/challenge.dart';
 import 'package:flutter/material.dart';
 
 class PublicProfileScreen extends StatelessWidget {

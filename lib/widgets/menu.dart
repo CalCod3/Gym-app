@@ -1,18 +1,18 @@
 // ignore_for_file: deprecated_member_use
 
-import 'package:fit_nivel/pages/schedule/classes.dart';
+import 'package:WOD_Book/pages/schedule/classes.dart';
 import 'package:flutter/material.dart';
-import 'package:fit_nivel/pages/admin/communications.dart';
-import 'package:fit_nivel/pages/home/home_page.dart';
-import 'package:fit_nivel/pages/social/posts.dart';
-import 'package:fit_nivel/responsive.dart';
-import 'package:fit_nivel/model/menu_modal.dart';
+import 'package:WOD_Book/pages/admin/communications.dart';
+import 'package:WOD_Book/pages/home/home_page.dart';
+import 'package:WOD_Book/pages/social/posts.dart';
+import 'package:WOD_Book/responsive.dart';
+import 'package:WOD_Book/model/menu_modal.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:fit_nivel/pages/leaderboard/leaderboard.dart';
-import 'package:fit_nivel/pages/schedule/schedule.dart';
-import 'package:fit_nivel/widgets/profile/profile.dart';
-import 'package:fit_nivel/auth/login_page.dart'; // Assume you handle signout via login page
-import 'package:fit_nivel/auth/auth_provider.dart';
+import 'package:WOD_Book/pages/leaderboard/leaderboard.dart';
+import 'package:WOD_Book/pages/schedule/schedule.dart';
+import 'package:WOD_Book/widgets/profile/profile.dart';
+import 'package:WOD_Book/auth/login_page.dart'; // Assume you handle signout via login page
+import 'package:WOD_Book/auth/auth_provider.dart';
 import 'package:provider/provider.dart';
 
 import '../pages/admin/activities.dart';

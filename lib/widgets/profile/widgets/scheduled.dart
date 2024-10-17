@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fit_nivel/widgets/custom_card.dart';
+import 'package:WOD_Book/widgets/custom_card.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import '../../../providers/schedule_provider.dart';

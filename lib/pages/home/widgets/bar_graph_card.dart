@@ -1,9 +1,9 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:fit_nivel/responsive.dart';
-import 'package:fit_nivel/model/bar_graph_model.dart';
-import 'package:fit_nivel/model/graph_model.dart';
-import 'package:fit_nivel/widgets/custom_card.dart';
+import 'package:WOD_Book/responsive.dart';
+import 'package:WOD_Book/model/bar_graph_model.dart';
+import 'package:WOD_Book/model/graph_model.dart';
+import 'package:WOD_Book/widgets/custom_card.dart';
 
 class BarGraphCard extends StatelessWidget {
   BarGraphCard({super.key});

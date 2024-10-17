@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fit_nivel/model/graph_model.dart';
+import 'package:WOD_Book/model/graph_model.dart';
 
 class BarGraphModel {
   String lable;

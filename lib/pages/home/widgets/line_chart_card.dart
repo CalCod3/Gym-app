@@ -1,10 +1,10 @@
 // ignore_for_file: library_private_types_in_public_api, avoid_print
 
-import 'package:fit_nivel/providers/attendance_provider.dart';
+import 'package:WOD_Book/providers/attendance_provider.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:fit_nivel/responsive.dart';
-import 'package:fit_nivel/widgets/custom_card.dart';
+import 'package:WOD_Book/responsive.dart';
+import 'package:WOD_Book/widgets/custom_card.dart';
 
 class LineChartCard extends StatefulWidget {
   const LineChartCard({super.key});

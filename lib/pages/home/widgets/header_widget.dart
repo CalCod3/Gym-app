@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:fit_nivel/const.dart';
-import 'package:fit_nivel/responsive.dart';
+import 'package:WOD_Book/const.dart';
+import 'package:WOD_Book/responsive.dart';
 
 class Header extends StatelessWidget {
   const Header({
