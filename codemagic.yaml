@@ -1,0 +1,6 @@
+workflows:
+  sample-workflow:
+    scripts:
+        - name: Create local .env file
+          script: | 
+            echo "API_BASE_URL=https://fitnivel-eba221a3a423.herokuapp.com" > .env
