@@ -52,27 +52,40 @@ class ActivityProvider with ChangeNotifier {
     }
   }
 
-  Future<void> createActivity(ActivityModel activity) async {
-    _setLoading(true);  // Show loading spinner
-    try {
-      final response = await http.post(
-        Uri.parse('$_baseUrl/admin/activities/new'),
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode(activity.toJson()),
-      );
+  Future<void> createActivity(ActivityModel activity, File image) async {
+  _setLoading(true); // Show loading spinner
 
-      if (response.statusCode == 201) {
-        await fetchActivities(); // Refresh activities after creation
-      } else {
-        throw Exception('Failed to create activity: ${response.reasonPhrase}');
-      }
-    } catch (e) {
-      print('Error creating activity: $e');
-      throw Exception('An error occurred while creating activity: $e');
-    } finally {
-      _setLoading(false);  // Hide loading spinner
+  try {
+    // Step 1: Upload the image and get the image URL
+    String? imageUrl = await uploadImage(image);
+    
+    if (imageUrl == null) {
+      throw Exception('Failed to upload image.');
     }
+
+    // Step 2: Include the image URL in the activity model
+    activity.image = imageUrl;
+
+    // Step 3: Create the activity with the image URL
+    final response = await http.post(
+      Uri.parse('$_baseUrl/admin/activities/new'),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode(activity.toJson()),  // Include image URL in the activity data
+    );
+
+    if (response.statusCode == 201) {
+      await fetchActivities();  // Refresh activities after creation
+    } else {
+      throw Exception('Failed to create activity: ${response.reasonPhrase}');
+    }
+  } catch (e) {
+    print('Error creating activity: $e');
+    throw Exception('An error occurred while creating activity: $e');
+  } finally {
+    _setLoading(false); // Hide loading spinner
   }
+}
+
 
   Future<String?> uploadImage(File image) async {
     _setLoading(true);  // Show loading spinner during upload

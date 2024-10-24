@@ -78,7 +78,7 @@ class _ActivityCreateScreenState extends State<ActivityCreateScreen> {
       }
     });
   }
-
+  
   Future<void> _submitForm() async {
     if (_formKey.currentState!.validate() && _image != null) {
       final activityProvider = Provider.of<ActivityProvider>(context, listen: false);
@@ -95,7 +95,7 @@ class _ActivityCreateScreenState extends State<ActivityCreateScreen> {
           description: _descriptionController.text,
         );
 
-        await activityProvider.createActivity(newActivity);
+        await activityProvider.createActivity(newActivity, _image!);
 
         // Navigate to dashboard after submission
         if (!activityProvider.isLoading) {

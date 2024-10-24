@@ -1,6 +1,6 @@
 // model/activity_model.dart
 class ActivityModel {
-  final String image;
+  String image;
   final String value;
   final String title;
   final String description;

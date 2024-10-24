@@ -6,8 +6,8 @@ class Post {
   final String title;
   final String content;
   final int userId;
-  final String userProfileImageUrl; // Add this field
-  final String userName; // Add this field
+  final String userProfileImageUrl; // Stores profile image URL
+  final String userName; // Stores user first name
   late final List<Comment> comments;
   int likesCount;
 
@@ -29,9 +29,9 @@ class Post {
       id: json['id'] ?? 0,
       title: json['title'] ?? '',
       content: json['content'] ?? '',
-      userId: json['user_id'] ?? 0,
-      userProfileImageUrl: json['user_profile_image_url'] ?? '', // Parse this field
-      userName: json['user_name'] ?? '', // Parse this field
+      userId: json['user']['id'] ?? 0, // Access user_id from nested user object
+      userProfileImageUrl: json['user']['profile_image'] ?? '', // Fetch profile image from nested user object
+      userName: json['user']['first_name'] ?? '', // Fetch user first name from nested user object
       comments: (json['comments'] as List<dynamic>?)
           ?.map((i) => Comment.fromJson(i as Map<String, dynamic>))
           .toList() ?? [],
@@ -52,7 +52,6 @@ class Post {
     };
   }
 }
-
 
 // models/comment.dart
 class Comment {
