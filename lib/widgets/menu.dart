@@ -201,7 +201,7 @@ class _MenuState extends State<Menu> {
                                     style: TextStyle(
                                       fontSize: 16,
                                       color: selected == i
-                                          ? Colors.black
+                                          ? const Color.fromARGB(255, 255, 255, 255)
                                           : Colors.grey,
                                       fontWeight: selected == i
                                           ? FontWeight.w600
