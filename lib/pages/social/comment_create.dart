@@ -1,7 +1,9 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/post_provider.dart';
-import '../../providers/user_provider.dart'; // Import UserProvider
+import '../../providers/user_provider.dart';
 import '../../model/post_model.dart';
 
 class CommentCreateScreen extends StatefulWidget {
@@ -17,6 +19,24 @@ class CommentCreateScreen extends StatefulWidget {
 class _CommentCreateScreenState extends State<CommentCreateScreen> {
   final _commentController = TextEditingController();
   bool _isSubmitting = false;
+  int? currentUserId;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Check if the user is logged in before building the widget
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    currentUserId = userProvider.userId;
+    if (currentUserId == null) {
+      // If user is not logged in, display a snackbar and return to the previous screen
+      Future.microtask(() {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('User not logged in')),
+        );
+        Navigator.pop(context);
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +54,7 @@ class _CommentCreateScreenState extends State<CommentCreateScreen> {
                 labelText: 'Enter your comment',
                 border: OutlineInputBorder(),
               ),
-              maxLines: null, // Allows for multiple lines
+              maxLines: null,
             ),
             const SizedBox(height: 16.0),
             _isSubmitting
@@ -72,8 +92,6 @@ class _CommentCreateScreenState extends State<CommentCreateScreen> {
 
   Future<void> _submitComment() async {
     final commentContent = _commentController.text.trim();
-    final userProvider = Provider.of<UserProvider>(context, listen: false);
-    final currentUserId = userProvider.userId;
 
     if (commentContent.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -93,25 +111,22 @@ class _CommentCreateScreenState extends State<CommentCreateScreen> {
       _isSubmitting = true;
     });
 
-    // Capture the context before entering the async gap
     final navigator = Navigator.of(context);
 
     try {
       final postProvider = Provider.of<PostProvider>(context, listen: false);
       final newComment = Comment(
-        id: 0, // ID will be assigned by backend
+        id: 0,
         content: commentContent,
         postId: widget.postId,
-        userId: currentUserId,
+        userId: currentUserId!,
       );
 
       await postProvider.addComment(widget.postId, newComment);
 
-      // Use the captured context for navigation
-      await _fetchComments(); // Refresh the comments
+      await _fetchComments();
       navigator.pop();
     } catch (e) {
-      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to add comment: $e')),
       );
@@ -124,6 +139,6 @@ class _CommentCreateScreenState extends State<CommentCreateScreen> {
 
   Future<void> _fetchComments() async {
     final postProvider = Provider.of<PostProvider>(context, listen: false);
-    await postProvider.fetchPosts(); // Or call any method that refreshes the post and comments
+    await postProvider.fetchPosts();
   }
 }

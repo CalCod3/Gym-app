@@ -1,4 +1,3 @@
-// providers/post_provider.dart
 // ignore_for_file: avoid_print
 
 import 'package:collection/collection.dart';
@@ -19,11 +18,20 @@ class PostProvider with ChangeNotifier {
 
   // Initialize the provider, perform checks before using ApiService
   void _initializeProvider() {
-    if (_apiService.token!.isEmpty) {
+    if (_apiService.token == null || _apiService.token!.isEmpty) {
       print('Error: API token is not initialized.');
       return;
     }
     _isInitialized = true;
+  }
+
+  // Helper function to check initialization
+  bool _checkInitialization(String methodName) {
+    if (!_isInitialized) {
+      print('Error: PostProvider is not initialized. $methodName cannot proceed.');
+      return false;
+    }
+    return true;
   }
 
   // Update the API token (defensive programming)
@@ -37,10 +45,7 @@ class PostProvider with ChangeNotifier {
   }
 
   Future<void> fetchPosts() async {
-    if (!_isInitialized) {
-      print('Error: PostProvider is not initialized. FetchPosts cannot proceed.');
-      return;
-    }
+    if (!_checkInitialization('fetchPosts')) return;
 
     try {
       print('Fetching posts...');
@@ -49,15 +54,12 @@ class PostProvider with ChangeNotifier {
       notifyListeners();
     } catch (e) {
       print('Error fetching posts: $e');
-      throw Exception('Failed to load posts');
+      throw Exception('Failed to load posts: $e');
     }
   }
 
   Future<void> addPost(Post post) async {
-    if (!_isInitialized) {
-      print('Error: PostProvider is not initialized. AddPost cannot proceed.');
-      return;
-    }
+    if (!_checkInitialization('addPost')) return;
 
     try {
       final newPost = await _apiService.createPost(post);
@@ -65,15 +67,12 @@ class PostProvider with ChangeNotifier {
       notifyListeners();
     } catch (e) {
       print('Error creating post: $e');
-      throw Exception('Failed to create post');
+      throw Exception('Failed to create post: $e');
     }
   }
 
   Future<void> addComment(int postId, Comment comment) async {
-    if (!_isInitialized) {
-      print('Error: PostProvider is not initialized. AddComment cannot proceed.');
-      return;
-    }
+    if (!_checkInitialization('addComment')) return;
 
     try {
       final newComment = await _apiService.createComment(postId, comment);
@@ -84,15 +83,12 @@ class PostProvider with ChangeNotifier {
       }
     } catch (e) {
       print('Error adding comment: $e');
-      throw Exception('Failed to add comment');
+      throw Exception('Failed to add comment: $e');
     }
   }
 
   Future<void> deleteComment(int postId, int commentId) async {
-    if (!_isInitialized) {
-      print('Error: PostProvider is not initialized. DeleteComment cannot proceed.');
-      return;
-    }
+    if (!_checkInitialization('deleteComment')) return;
 
     try {
       await _apiService.deleteComment(postId, commentId);
@@ -103,18 +99,15 @@ class PostProvider with ChangeNotifier {
       }
     } catch (e) {
       print('Error deleting comment: $e');
-      throw Exception('Failed to delete comment');
+      throw Exception('Failed to delete comment: $e');
     }
   }
 
   Future<void> addLike(int postId) async {
-    if (!_isInitialized) {
-      print('Error: PostProvider is not initialized. AddLike cannot proceed.');
-      return;
-    }
+    if (!_checkInitialization('addLike')) return;
 
     try {
-      await _apiService.addLike(postId); // Ensure this method is implemented in ApiService
+      await _apiService.addLike(postId);
       final postIndex = _posts.indexWhere((post) => post.id == postId);
       if (postIndex != -1) {
         _posts[postIndex].likesCount += 1; // Increment the like count
@@ -122,23 +115,17 @@ class PostProvider with ChangeNotifier {
       }
     } catch (e) {
       print('Error adding like: $e');
-      throw Exception('Failed to add like');
+      throw Exception('Failed to add like: $e');
     }
   }
 
   Post? getPostById(int postId) {
-    if (!_isInitialized) {
-      print('Error: PostProvider is not initialized. GetPostById cannot proceed.');
-      return null;
-    }
+    if (!_checkInitialization('getPostById')) return null;
     return _posts.firstWhereOrNull((post) => post.id == postId);
   }
 
   Future<void> fetchComments(int postId) async {
-    if (!_isInitialized) {
-      print('Error: PostProvider is not initialized. FetchComments cannot proceed.');
-      return;
-    }
+    if (!_checkInitialization('fetchComments')) return;
 
     try {
       final comments = await _apiService.getComments(postId);
@@ -149,7 +136,7 @@ class PostProvider with ChangeNotifier {
       }
     } catch (e) {
       print('Error fetching comments: $e');
-      throw Exception('Failed to load comments');
+      throw Exception('Failed to load comments: $e');
     }
   }
 }

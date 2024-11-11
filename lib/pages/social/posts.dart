@@ -4,8 +4,8 @@ import '../../const.dart';
 import '../../providers/post_provider.dart';
 import 'post_create.dart';
 import 'post_detail.dart';
-import 'comment_create.dart'; // Import for CommentCreate screen
-import 'public_profile.dart'; // Import for PublicProfileScreen
+import 'comment_create.dart';
+import 'public_profile.dart';
 
 class PostsScreen extends StatelessWidget {
   const PostsScreen({super.key});
@@ -49,7 +49,7 @@ class PostsScreen extends StatelessWidget {
                               BoxShadow(
                                 spreadRadius: 2,
                                 blurRadius: 5,
-                                offset: Offset(0, 3), // changes position of shadow
+                                offset: Offset(0, 3),
                               ),
                             ],
                           ),
@@ -120,10 +120,14 @@ class PostsScreen extends StatelessWidget {
                                 padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
                                 child: Row(
                                   children: [
-                                    IconButton(
-                                      icon: const Icon(Icons.thumb_up_outlined),
-                                      onPressed: () {
-                                        postProvider.addLike(post.id);
+                                    Consumer<PostProvider>(
+                                      builder: (context, postProvider, child) {
+                                        return IconButton(
+                                          icon: const Icon(Icons.thumb_up_outlined),
+                                          onPressed: () {
+                                            postProvider.addLike(post.id);
+                                          },
+                                        );
                                       },
                                     ),
                                     Text('${post.likesCount}'),

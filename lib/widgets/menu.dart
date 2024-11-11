@@ -64,12 +64,7 @@ class _MenuState extends State<Menu> {
                   title: "Members",
                   route: const MembersScreen(),
                   ),
-                MenuModel(
-                  icon:'svg/settings.svg', // Provide an appropriate icon for Members
-                  title: "Settings",
-                  route: Container(),
-                  ),
-              ]
+                ]
             ),
             MenuModel(
               icon: 'svg/events.svg',
@@ -91,11 +86,6 @@ class _MenuState extends State<Menu> {
                   title: "Payment Plans",
                   route: const CreatePaymentPlanPage(),
                 ),
-                MenuModel(
-                  icon: 'svg/wage.svg',
-                  title: "Wages",
-                  route: Container(),
-                  ),
               ],
             ),
           ],
