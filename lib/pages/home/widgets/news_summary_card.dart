@@ -48,7 +48,11 @@ class _NewsSummaryCardState extends State<NewsSummaryCard> {
   Widget build(BuildContext context) {
     return Consumer<CommunicationsProvider>(
       builder: (context, provider, child) {
-        final articles = provider.articles.take(5).toList();
+        // Sort articles by timestamp in descending order and take the latest 5
+        final articles = provider.articles
+            .toList()
+            ..sort((a, b) => b.date.compareTo(a.date));
+        final latestArticles = articles.take(5).toList();
 
         return SizedBox(
           width: double.infinity, // Ensures the card takes the full width of its parent
@@ -71,7 +75,7 @@ class _NewsSummaryCardState extends State<NewsSummaryCard> {
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
                     const SizedBox(height: 10),
-                    ...articles.map((article) => Padding(
+                    ...latestArticles.map((article) => Padding(
                           padding: const EdgeInsets.only(bottom: 12),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,

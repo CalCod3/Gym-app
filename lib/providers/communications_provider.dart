@@ -55,12 +55,39 @@ class CommunicationsProvider with ChangeNotifier {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         await fetchArticles(); // Refresh articles after successfully adding one
+        await sendNotification(article); // Send notification with article details
       } else {
         throw Exception('Failed to add article: ${response.reasonPhrase}');
       }
     } catch (e) {
       print('Error adding article: $e');
       throw Exception('An error occurred while adding the article: $e');
+    }
+  }
+  
+  // Send notification to all users about the new article
+  Future<void> sendNotification(Article article) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$_baseUrl/api/notifications'),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: json.encode({
+          'title': 'New Article: ${article.title}',
+          'message': 'Check out the latest article: ${article.title}',
+          'preview': article.body.substring(0, 50), // Short preview of the article
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        print('Notification sent successfully');
+      } else {
+        throw Exception('Failed to send notification: ${response.reasonPhrase}');
+      }
+    } catch (e) {
+      print('Error sending notification: $e');
+      throw Exception('An error occurred while sending notification: $e');
     }
   }
 }
