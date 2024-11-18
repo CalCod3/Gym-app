@@ -1,3 +1,4 @@
+import 'package:WOD_Book/pages/schedule/calendar.dart';
 import 'package:flutter/material.dart';
 import 'package:WOD_Book/widgets/custom_card.dart';
 import 'package:flutter_svg/svg.dart';
@@ -75,7 +76,7 @@ class Scheduled extends StatelessWidget {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const ScheduleScreen()),
+                        MaterialPageRoute(builder: (context) => const CalendarScreen()),
                       );
                     },
                     child: const Text("More"),

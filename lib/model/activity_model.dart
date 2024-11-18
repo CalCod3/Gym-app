@@ -1,15 +1,17 @@
 // model/activity_model.dart
 class ActivityModel {
-  String image;
+  String? image;
   final String value;
   final String title;
   final String description;
+  final String type;
 
   ActivityModel({
-    required this.image,
+    this.image,
     required this.value,
     required this.title,
     required this.description,
+    required this.type
   });
 
   factory ActivityModel.fromJson(Map<String, dynamic> json) {
@@ -18,6 +20,7 @@ class ActivityModel {
       value: json['value'],
       title: json['title'],
       description: json['description'],
+      type: json['type'],
     );
   }
 
@@ -27,6 +30,7 @@ class ActivityModel {
       'value': value,
       'title': title,
       'description': description,
+      'type': type,
     };
   }
 }

@@ -1,5 +1,6 @@
 // ignore_for_file: deprecated_member_use
 
+import 'package:WOD_Book/pages/schedule/calendar.dart';
 import 'package:WOD_Book/pages/schedule/classes.dart';
 import 'package:flutter/material.dart';
 import 'package:WOD_Book/pages/admin/communications.dart';
@@ -123,7 +124,7 @@ class _MenuState extends State<Menu> {
       MenuModel(
         icon: 'svg/exercise.svg',
         title: "Exercise Schedule",
-        route: const ScheduleScreen(),
+        route: const CalendarScreen(),
       ),
       MenuModel(
         icon: 'svg/community.svg',

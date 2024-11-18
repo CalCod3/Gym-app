@@ -29,8 +29,16 @@ class PublicProfileScreen extends StatelessWidget {
               radius: 50,
               backgroundImage: userProfileImageUrl.isNotEmpty
                   ? NetworkImage(userProfileImageUrl)
-                  : const NetworkImage("https://cdns.iconmonstr.com/wp-content/releases/preview/2012/240/iconmonstr-user-6.png") as ImageProvider,
+                  : null, // If userProfileImageUrl is not empty, use it as the background image
+              child: userProfileImageUrl.isEmpty
+                  ? Icon(
+                      Icons.account_circle_outlined, // Show the icon when the image URL is empty
+                      size: 40.0, // Adjust size as needed
+                      color: Colors.grey, // Customize the color if necessary
+                    )
+                  : null, // Don't show the icon when there is an image URL
             ),
+
             const SizedBox(height: 16),
             Text(
               userName,
@@ -55,7 +63,8 @@ class PublicProfileScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ChallengeScreen(userId: userId, userName: userName),
+                    builder: (context) =>
+                        ChallengeScreen(userId: userId, userName: userName),
                   ),
                 );
               },

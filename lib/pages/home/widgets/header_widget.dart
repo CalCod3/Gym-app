@@ -76,12 +76,12 @@ class Header extends StatelessWidget {
                 InkWell(
                   onTap: () => scaffoldKey.currentState!.openEndDrawer(),
                   child: CircleAvatar(
-                    backgroundColor: Colors.transparent,
-                    child: Image.network(
-                      "https://cdns.iconmonstr.com/wp-content/releases/preview/2012/240/iconmonstr-user-6.png",
-                      width: 32,
-                    ),
-                  ),
+                      backgroundColor: Colors.transparent,
+                      child: Icon(
+                        Icons.account_circle_outlined, // Use the account_circle_outlined icon
+                        size:32.0, // Set the size of the icon (you can adjust it as needed)
+                        color: Colors.grey, // Set the color of the icon (you can adjust it as needed)
+                      )),
                 )
               ],
             ),

@@ -5,6 +5,7 @@ class GroupWorkout {
   final String description;
   final DateTime date;
   final List<String> videoLinks;
+  final String type;
 
   GroupWorkout({
     required this.id,
@@ -12,6 +13,7 @@ class GroupWorkout {
     required this.description,
     required this.date,
     required this.videoLinks,
+    required this.type,
   });
 
   factory GroupWorkout.fromJson(Map<String, dynamic> json) {
@@ -20,7 +22,8 @@ class GroupWorkout {
       name: json['name'],
       description: json['description'],
       date: DateTime.parse(json['date']),
-      videoLinks: List<String>.from(json['video_links']),
+      videoLinks: List<String>.from(json['video_links']), 
+      type: json['type'],
     );
   }
 
@@ -31,6 +34,7 @@ class GroupWorkout {
       'description': description,
       'date': date.toIso8601String(),
       'video_links': videoLinks,
+      'type': type,
     };
   }
 }

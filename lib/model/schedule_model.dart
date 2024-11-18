@@ -4,13 +4,15 @@ class Schedule {
   final String description;
   final DateTime startTime;
   final DateTime endTime;
+  final String type;
 
   Schedule({
     required int id,
     required this.title,
     required this.description,
     required this.startTime,
-    required this.endTime
+    required this.endTime, 
+    required this.type
   });
 
   factory Schedule.fromJson(Map<String, dynamic> json) {
@@ -19,7 +21,8 @@ class Schedule {
       title: json['title'],
       description: json['description'],
       startTime: DateTime.parse(json['start_time']),
-      endTime: DateTime.parse(json['end_time']),
+      endTime: DateTime.parse(json['end_time']), 
+      type: json['type'],
     );
   }
 
@@ -29,6 +32,7 @@ class Schedule {
       'description': description,
       'start_time': startTime.toIso8601String(),
       'end_time': endTime.toIso8601String(),
+      'type': type,
     };
   }
 }

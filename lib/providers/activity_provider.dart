@@ -19,7 +19,7 @@ class ActivityProvider with ChangeNotifier {
 
   final String _baseUrl;
 
-  ActivityProvider() : _baseUrl = dotenv.env['API_BASE_URL']! {
+  ActivityProvider() : _baseUrl = dotenv.env['API_BASE_URL'] ?? '' {
     if (_baseUrl.isEmpty) {
       throw Exception('API base URL is not set. Check your .env file.');
     }

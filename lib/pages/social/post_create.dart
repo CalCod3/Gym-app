@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -23,7 +23,7 @@ class _NewPostScreenState extends State<NewPostScreen> {
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context);
     final postProvider = Provider.of<PostProvider>(context, listen: false);
-    
+
     final currentUserId = userProvider.authProvider?.userId;
     final currentUserName = userProvider.name;
     final currentUserProfileImageUrl = userProvider.profileImageUrl;
@@ -105,9 +105,17 @@ class _NewPostScreenState extends State<NewPostScreen> {
                 const LinearProgressIndicator(), // Show progress indicator during post creation
               ListTile(
                 leading: CircleAvatar(
-                  backgroundImage: NetworkImage(
-                    currentUserProfileImageUrl ?? 'https://cdns.iconmonstr.com/wp-content/releases/preview/2012/240/iconmonstr-user-6.png',
-                  ),
+                  backgroundImage: currentUserProfileImageUrl != null
+                      ? NetworkImage(currentUserProfileImageUrl!)
+                      : null, // If URL is null, we will use the icon
+                  child: currentUserProfileImageUrl == null
+                      ? Icon(
+                          Icons
+                              .account_circle_outlined, // The icon to display when the image is null
+                          size: 30.0, // Adjust the size as needed
+                          color: Colors.grey, // Customize the color as needed
+                        )
+                      : null, // If the image is not null, we don't display the icon
                 ),
                 title: Text(currentUserName),
               ),

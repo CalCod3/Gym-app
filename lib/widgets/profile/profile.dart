@@ -32,8 +32,10 @@ class Profile extends StatelessWidget {
               height: MediaQuery.of(context).size.height,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(Responsive.isMobile(context) ? 10 : 30.0),
-                  topLeft: Radius.circular(Responsive.isMobile(context) ? 10 : 30.0),
+                  bottomLeft:
+                      Radius.circular(Responsive.isMobile(context) ? 10 : 30.0),
+                  topLeft:
+                      Radius.circular(Responsive.isMobile(context) ? 10 : 30.0),
                 ),
                 color: cardBackgroundColor,
               ),
@@ -47,7 +49,11 @@ class Profile extends StatelessWidget {
                         builder: (context, userProvider, child) {
                           return userProvider.profileImageUrl != null
                               ? Image.network(userProvider.profileImageUrl!)
-                              : Image.network("https://cdns.iconmonstr.com/wp-content/releases/preview/2012/240/iconmonstr-user-6.png");
+                              : Icon(
+                                  Icons.account_circle_outlined, // Use the account_circle_outlined icon
+                                  size:50.0, // Set the size of the icon (you can adjust it as needed)
+                                  color: Colors.grey, // Set the color of the icon (you can adjust it as needed)
+                                );
                         },
                       ),
                       const SizedBox(height: 15),
@@ -55,7 +61,8 @@ class Profile extends StatelessWidget {
                         builder: (context, userProvider, child) {
                           return Text(
                             userProvider.name ?? "Unknown",
-                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                            style: const TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w600),
                           );
                         },
                       ),
@@ -68,7 +75,8 @@ class Profile extends StatelessWidget {
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.all(Responsive.isMobile(context) ? 15 : 20.0),
+                        padding: EdgeInsets.all(
+                            Responsive.isMobile(context) ? 15 : 20.0),
                         child: const WeightHeightBloodCard(),
                       ),
                       const SizedBox(height: 20),
@@ -84,7 +92,8 @@ class Profile extends StatelessWidget {
                         builder: (context, userProvider, child) {
                           return Text(
                             userProvider.name ?? "Unknown",
-                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                            style: const TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w600),
                           );
                         },
                       ),
@@ -99,7 +108,8 @@ class Profile extends StatelessWidget {
     );
   }
 
-  Widget _buildMembershipStatus(BuildContext context, UserProvider userProvider) {
+  Widget _buildMembershipStatus(
+      BuildContext context, UserProvider userProvider) {
     String membershipStatus = userProvider.isMembershipActive
         ? 'Membership Status: Active'
         : 'Membership Status: Inactive';

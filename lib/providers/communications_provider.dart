@@ -55,7 +55,8 @@ class CommunicationsProvider with ChangeNotifier {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         await fetchArticles(); // Refresh articles after successfully adding one
-        await sendNotification(article); // Send notification with article details
+        await sendNotification(
+            article); // Send notification with article details
       } else {
         throw Exception('Failed to add article: ${response.reasonPhrase}');
       }
@@ -64,10 +65,13 @@ class CommunicationsProvider with ChangeNotifier {
       throw Exception('An error occurred while adding the article: $e');
     }
   }
-  
-  // Send notification to all users about the new article
+
   Future<void> sendNotification(Article article) async {
     try {
+      String preview = article.body.length > 50
+          ? article.body.substring(0, 50)
+          : article.body;
+
       final response = await http.post(
         Uri.parse('$_baseUrl/api/notifications'),
         headers: {
@@ -76,14 +80,22 @@ class CommunicationsProvider with ChangeNotifier {
         body: json.encode({
           'title': 'New Article: ${article.title}',
           'message': 'Check out the latest article: ${article.title}',
-          'preview': article.body.substring(0, 50), // Short preview of the article
+          'preview': preview, // Safe preview of the article
+          'type': 'news', // Example type, adjust based on your use case
+          'recipient_ids': [],// No need for recipient_ids, as the backend will handle broadcasting
         }),
       );
 
       if (response.statusCode == 200) {
         print('Notification sent successfully');
       } else {
-        throw Exception('Failed to send notification: ${response.reasonPhrase}');
+        // Log the error details from the response body
+        print(
+            'Failed to send notification. Status code: ${response.statusCode}');
+        print(
+            'Response body: ${response.body}'); // Log the response body to understand the error
+        throw Exception(
+            'Failed to send notification: ${response.reasonPhrase}');
       }
     } catch (e) {
       print('Error sending notification: $e');

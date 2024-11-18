@@ -31,13 +31,15 @@ class PostsScreen extends StatelessWidget {
                   itemBuilder: (context, index) {
                     final post = postProvider.posts[index];
                     return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 8.0, horizontal: 16.0),
                       child: GestureDetector(
                         onTap: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => PostDetailScreen(post: post),
+                              builder: (context) =>
+                                  PostDetailScreen(post: post),
                             ),
                           );
                         },
@@ -66,18 +68,29 @@ class PostsScreen extends StatelessWidget {
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                            builder: (context) => PublicProfileScreen(
+                                            builder: (context) =>
+                                                PublicProfileScreen(
                                               userId: post.userId,
                                               userName: post.userName,
-                                              userProfileImageUrl: post.userProfileImageUrl,
+                                              userProfileImageUrl:
+                                                  post.userProfileImageUrl,
                                             ),
                                           ),
                                         );
                                       },
                                       child: CircleAvatar(
-                                        backgroundImage: post.userProfileImageUrl.isNotEmpty
-                                            ? NetworkImage(post.userProfileImageUrl)
-                                            : const NetworkImage("https://cdns.iconmonstr.com/wp-content/releases/preview/2012/240/iconmonstr-user-6.png") as ImageProvider,
+                                        backgroundImage: post
+                                                .userProfileImageUrl.isNotEmpty
+                                            ? NetworkImage(
+                                                post.userProfileImageUrl)
+                                            : null, // If userProfileImageUrl is not empty, use it as the background image
+                                        child: post.userProfileImageUrl.isEmpty
+                                            ? Icon(
+                                                Icons.account_circle_outlined, // Show the icon when the image URL is empty
+                                                size: 30.0, // Adjust size as needed
+                                                color: Colors.grey, // Customize the color if necessary
+                                              )
+                                            : null, // Don't show the icon when there is an image URL
                                       ),
                                     ),
                                     const SizedBox(width: 8.0),
@@ -87,10 +100,12 @@ class PostsScreen extends StatelessWidget {
                                           Navigator.push(
                                             context,
                                             MaterialPageRoute(
-                                              builder: (context) => PublicProfileScreen(
+                                              builder: (context) =>
+                                                  PublicProfileScreen(
                                                 userId: post.userId,
                                                 userName: post.userName,
-                                                userProfileImageUrl: post.userProfileImageUrl,
+                                                userProfileImageUrl:
+                                                    post.userProfileImageUrl,
                                               ),
                                             ),
                                           );
@@ -108,7 +123,8 @@ class PostsScreen extends StatelessWidget {
                               ),
                               // Post content
                               Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8.0),
                                 child: Text(
                                   post.content,
                                   style: const TextStyle(fontSize: 16.0),
@@ -117,13 +133,15 @@ class PostsScreen extends StatelessWidget {
                               const SizedBox(height: 8.0),
                               // Interaction buttons
                               Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8.0, vertical: 4.0),
                                 child: Row(
                                   children: [
                                     Consumer<PostProvider>(
                                       builder: (context, postProvider, child) {
                                         return IconButton(
-                                          icon: const Icon(Icons.thumb_up_outlined),
+                                          icon: const Icon(
+                                              Icons.thumb_up_outlined),
                                           onPressed: () {
                                             postProvider.addLike(post.id);
                                           },
@@ -138,7 +156,9 @@ class PostsScreen extends StatelessWidget {
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                            builder: (context) => CommentCreateScreen(postId: post.id),
+                                            builder: (context) =>
+                                                CommentCreateScreen(
+                                                    postId: post.id),
                                           ),
                                         );
                                       },

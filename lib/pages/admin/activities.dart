@@ -8,7 +8,6 @@ import '../../providers/activity_provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
-
 class ActivityListScreen extends StatelessWidget {
   const ActivityListScreen({super.key});
 
@@ -27,12 +26,19 @@ class ActivityListScreen extends StatelessWidget {
               itemBuilder: (ctx, i) {
                 final activity = activityProvider.activities[i];
                 return ListTile(
-                  leading: Image.network(
-                    activity.image,
-                    width: 50,
-                    height: 50,
-                    fit: BoxFit.cover,
-                  ),
+                  leading: activity.image != null
+                      ? Image.network(
+                          activity.image!,
+                          width: 50,
+                          height: 50,
+                          fit: BoxFit.cover,
+                        )
+                      : Image.asset(
+                          'assets/images/activity_placeholder.png',
+                          width: 50,
+                          height: 50,
+                          fit: BoxFit.cover,
+                        ),
                   title: Text(activity.value),
                   subtitle: Text(activity.title),
                   onTap: () {
@@ -52,7 +58,6 @@ class ActivityListScreen extends StatelessWidget {
     );
   }
 }
-
 
 class ActivityCreateScreen extends StatefulWidget {
   const ActivityCreateScreen({super.key});
@@ -78,35 +83,35 @@ class _ActivityCreateScreenState extends State<ActivityCreateScreen> {
       }
     });
   }
-  
+
   Future<void> _submitForm() async {
-    if (_formKey.currentState!.validate() && _image != null) {
+    if (_formKey.currentState!.validate()) {
       final activityProvider = Provider.of<ActivityProvider>(context, listen: false);
 
-      // First, upload the image
-      final imageUrl = await activityProvider.uploadImage(_image!);
+      String? imageUrl;
+      if (_image != null) {
+        // Upload the image if available
+        imageUrl = await activityProvider.uploadImage(_image!);
+      }
 
-      if (imageUrl != null) {
-        // Create the activity
-        final newActivity = ActivityModel(
-          image: imageUrl,
-          value: _valueController.text,
-          title: _titleController.text,
-          description: _descriptionController.text,
-        );
+      // Create the activity
+      final newActivity = ActivityModel(
+        image: imageUrl,
+        value: _valueController.text,
+        title: _titleController.text,
+        description: _descriptionController.text,
+        type: 'activity',
+      );
 
-        await activityProvider.createActivity(newActivity, _image!);
+      await activityProvider.createActivity(newActivity, _image!);
 
-        // Navigate to dashboard after submission
-        if (!activityProvider.isLoading) {
-          Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => const ActivityCreateScreen()),
-          );
-        }
+      // Navigate back to activity list after submission
+      if (!activityProvider.isLoading) {
+        Navigator.of(context).pop(); // Pop back to the activity list
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please complete the form and pick an image.')),
+        const SnackBar(content: Text('Please complete the form.')),
       );
     }
   }
@@ -137,7 +142,9 @@ class _ActivityCreateScreenState extends State<ActivityCreateScreen> {
                           borderRadius: BorderRadius.circular(8.0),
                         ),
                         child: _image == null
-                            ? const Center(child: Text('Tap to pick an image', style: TextStyle(color: Colors.grey)))
+                            ? const Center(
+                                child: Text('Tap to pick an image', style: TextStyle(color: Colors.grey)),
+                              )
                             : Image.file(_image!, fit: BoxFit.cover),
                       ),
                     ),

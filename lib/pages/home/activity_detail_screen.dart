@@ -19,10 +19,17 @@ class ActivityDetailScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Image.network(
-              activity.image,
+              activity.image ?? '', // Handle null safety for image URL
               width: 100,
               height: 100,
               fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return const Icon(
+                  Icons.image_not_supported,
+                  color: Colors.grey,
+                  size: 100,
+                );
+              },
             ),
             const SizedBox(height: 20),
             Text(
@@ -31,7 +38,7 @@ class ActivityDetailScreen extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             Text(
-              activity.description,
+              activity.description, // Default message for null description
               style: const TextStyle(fontSize: 16),
             ),
           ],

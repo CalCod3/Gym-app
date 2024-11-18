@@ -20,13 +20,10 @@ class ScheduleProvider with ChangeNotifier {
     }
   }
 
-  // Fetch schedules from the server
-  Future<void> fetchSchedules(String token) async {
-    _setLoading(true);
-
+  Future<void> fetchAllCalendarItems(String token) async {
     try {
       final response = await http.get(
-        Uri.parse('$_baseUrl/schedules/'),
+        Uri.parse('$_baseUrl/calendar_data/'),
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',
           'Authorization': 'Bearer $token',
@@ -35,21 +32,68 @@ class ScheduleProvider with ChangeNotifier {
 
       if (response.statusCode == 200) {
         List<dynamic> data = json.decode(response.body);
-        _schedules = data.map((json) => Schedule.fromJson(json)).toList();
+
+        _schedules = data.map((json) {
+          String type = json['type'];
+          return Schedule(
+            id: json['id'],
+            title: json['title'],
+            description: json['description'],
+            startTime: DateTime.parse(json['start_time']),
+            endTime: DateTime.parse(json['end_time']),
+            type: type,
+          );
+        }).toList();
+
         notifyListeners();
       } else {
         _handleErrorResponse(response);
       }
-
-      // Fetch group workouts and add to schedules
-      await fetchGroupWorkouts(token);
     } catch (e) {
-      print('Error fetching schedules: $e');
-      throw Exception('An error occurred while fetching schedules: $e');
-    } finally {
-      _setLoading(false);
+      print('Error fetching calendar items: $e');
+      throw Exception('An error occurred while fetching calendar items.');
     }
   }
+
+  List<Schedule> fetchSchedulesForDay(DateTime day) {
+    return _schedules.where((schedule) {
+      // Check if the schedule's start date is the same as the desired day
+      final scheduleDay = DateTime(schedule.startTime.year, schedule.startTime.month, schedule.startTime.day);
+      final targetDay = DateTime(day.year, day.month, day.day);
+      return scheduleDay.isAtSameMomentAs(targetDay);
+    }).toList();
+  }
+  
+  // Fetch schedules from the server
+  // Future<void> fetchSchedules(String token) async {
+  //   _setLoading(true);
+
+  //   try {
+  //     final response = await http.get(
+  //       Uri.parse('$_baseUrl/schedules/'),
+  //       headers: {
+  //         'Content-Type': 'application/json; charset=UTF-8',
+  //         'Authorization': 'Bearer $token',
+  //       },
+  //     );
+
+  //     if (response.statusCode == 200) {
+  //       List<dynamic> data = json.decode(response.body);
+  //       _schedules = data.map((json) => Schedule.fromJson(json)).toList();
+  //       notifyListeners();
+  //     } else {
+  //       _handleErrorResponse(response);
+  //     }
+
+  //     // Fetch group workouts and add to schedules
+  //     await fetchGroupWorkouts(token);
+  //   } catch (e) {
+  //     print('Error fetching schedules: $e');
+  //     throw Exception('An error occurred while fetching schedules: $e');
+  //   } finally {
+  //     _setLoading(false);
+  //   }
+  // }
 
   // Fetch group workouts from the server
   Future<void> fetchGroupWorkouts(String token) async {
@@ -64,14 +108,17 @@ class ScheduleProvider with ChangeNotifier {
 
       if (response.statusCode == 200) {
         List<dynamic> data = json.decode(response.body);
-        List<GroupWorkout> groupWorkouts = data.map((json) => GroupWorkout.fromJson(json)).toList();
+        List<GroupWorkout> groupWorkouts =
+            data.map((json) => GroupWorkout.fromJson(json)).toList();
         _schedules.addAll(groupWorkouts.map((gw) => Schedule(
-          id: gw.id,
-          title: gw.name,
-          description: gw.description,
-          startTime: gw.date,
-          endTime: gw.date, // Assuming the end time is the same as the start time for simplicity
-        )));
+              id: gw.id,
+              title: gw.name,
+              description: gw.description,
+              startTime: gw.date,
+              endTime: gw.date,
+              type: gw
+                  .type, // Assuming the end time is the same as the start time for simplicity
+            )));
         notifyListeners();
       } else {
         _handleErrorResponse(response);
@@ -150,7 +197,8 @@ class ScheduleProvider with ChangeNotifier {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        final newGroupWorkout = GroupWorkout.fromJson(json.decode(response.body));
+        final newGroupWorkout =
+            GroupWorkout.fromJson(json.decode(response.body));
         addGroupWorkoutToSchedule(newGroupWorkout);
         return true;
       } else {
@@ -172,7 +220,9 @@ class ScheduleProvider with ChangeNotifier {
       title: groupWorkout.name,
       description: groupWorkout.description,
       startTime: groupWorkout.date,
-      endTime: groupWorkout.date, // Assuming end time is the same as start time for simplicity
+      endTime: groupWorkout.date,
+      type: groupWorkout
+          .type, // Assuming end time is the same as start time for simplicity
     ));
     notifyListeners();
   }
@@ -186,6 +236,7 @@ class ScheduleProvider with ChangeNotifier {
   // Handle non-200/201 error responses
   void _handleErrorResponse(http.Response response) {
     print('Request failed: ${response.statusCode} - ${response.body}');
-    throw Exception('Failed request with status code ${response.statusCode}: ${response.body}');
+    throw Exception(
+        'Failed request with status code ${response.statusCode}: ${response.body}');
   }
 }

@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../model/post_model.dart';
@@ -22,7 +24,8 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     _commentController = TextEditingController();
     // Optionally fetch comments if not already done
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<PostProvider>(context, listen: false).fetchComments(widget.post.id);
+      Provider.of<PostProvider>(context, listen: false)
+          .fetchComments(widget.post.id);
     });
   }
 
@@ -44,12 +47,14 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
       userId: currentUserId,
     );
 
-    Provider.of<PostProvider>(context, listen: false).addComment(widget.post.id, newComment)
-      .then((_) {
-        _commentController.clear();
-        // Optionally refresh comments if needed
-        Provider.of<PostProvider>(context, listen: false).fetchComments(widget.post.id);
-      });
+    Provider.of<PostProvider>(context, listen: false)
+        .addComment(widget.post.id, newComment)
+        .then((_) {
+      _commentController.clear();
+      // Optionally refresh comments if needed
+      Provider.of<PostProvider>(context, listen: false)
+          .fetchComments(widget.post.id);
+    });
   }
 
   @override
@@ -119,7 +124,14 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                     leading: CircleAvatar(
                       backgroundImage: userProvider.profileImageUrl != null
                           ? NetworkImage(userProvider.profileImageUrl!)
-                          : const NetworkImage("https://cdns.iconmonstr.com/wp-content/releases/preview/2012/240/iconmonstr-user-6.png") as ImageProvider,
+                          : null, // If the profile image is null, don't set the background image
+                      child: userProvider.profileImageUrl == null
+                          ? Icon(
+                              Icons.account_circle_outlined, // Display the icon when no profile image
+                              size: 30.0, // Adjust the size as needed
+                              color: Colors.grey, // Customize the color if necessary
+                            )
+                          : null, // If there's a profile image, don't show the icon
                     ),
                     title: Text(comment.content),
                     subtitle: Text('User ID: ${comment.userId}'),
