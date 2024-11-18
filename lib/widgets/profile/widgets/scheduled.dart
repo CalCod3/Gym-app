@@ -4,7 +4,6 @@ import 'package:WOD_Book/widgets/custom_card.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import '../../../providers/schedule_provider.dart';
-import '../../../pages/schedule/schedule.dart';
 
 class Scheduled extends StatelessWidget {
   const Scheduled({super.key});

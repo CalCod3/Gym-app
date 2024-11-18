@@ -106,7 +106,7 @@ class _NewPostScreenState extends State<NewPostScreen> {
               ListTile(
                 leading: CircleAvatar(
                   backgroundImage: currentUserProfileImageUrl != null
-                      ? NetworkImage(currentUserProfileImageUrl!)
+                      ? NetworkImage(currentUserProfileImageUrl)
                       : null, // If URL is null, we will use the icon
                   child: currentUserProfileImageUrl == null
                       ? Icon(

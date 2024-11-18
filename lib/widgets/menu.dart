@@ -10,7 +10,6 @@ import 'package:WOD_Book/responsive.dart';
 import 'package:WOD_Book/model/menu_modal.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:WOD_Book/pages/leaderboard/leaderboard.dart';
-import 'package:WOD_Book/pages/schedule/schedule.dart';
 import 'package:WOD_Book/widgets/profile/profile.dart';
 import 'package:WOD_Book/auth/login_page.dart'; // Assume you handle signout via login page
 import 'package:WOD_Book/auth/auth_provider.dart';

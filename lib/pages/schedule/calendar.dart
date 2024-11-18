@@ -126,24 +126,54 @@ class _CalendarScreenState extends State<CalendarScreen> {
             child: ListView(
               children: [
                 _buildEventSection(
-                    'Scheduled Activities', scheduleProvider, 'schedule'),
-                _buildEventSection('Activities', scheduleProvider, 'activity'),
+                  'Scheduled Activities',
+                  scheduleProvider,
+                  'schedule',
+                  _selectedDay, // Pass the selected day here
+                ),
                 _buildEventSection(
-                    'Group Workouts', scheduleProvider, 'group_workout'),
+                  'Activities',
+                  scheduleProvider,
+                  'activity',
+                  _selectedDay, // Pass the selected day here
+                ),
+                _buildEventSection(
+                  'Group Workouts',
+                  scheduleProvider,
+                  'group_workout',
+                  _selectedDay, // Pass the selected day here
+                ),
               ],
             ),
-          ),
+          )
         ],
       ),
     );
   }
 
   Widget _buildEventSection(
-      String title, ScheduleProvider scheduleProvider, String eventType) {
-    final events =
-        scheduleProvider.schedules.where((e) => e.type == eventType).toList();
+    String title,
+    ScheduleProvider scheduleProvider,
+    String eventType,
+    DateTime
+        selectedDay, // Add selectedDay to filter events for that specific day
+  ) {
+    // Fetch events for the selected day using the ScheduleProvider's fetchSchedulesForDay method
+    final events = scheduleProvider
+        .fetchSchedulesForDay(selectedDay)
+        .where((e) => e.type == eventType)
+        .toList();
 
-    if (events.isEmpty) return SizedBox.shrink();
+    if (events.isEmpty) {
+      // If there are no events for that day, show a message indicating that
+      return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text(
+          'Nothing is scheduled for this day.',
+          style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
+        ),
+      );
+    }
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -152,14 +182,14 @@ class _CalendarScreenState extends State<CalendarScreen> {
         children: [
           Text(title, style: Theme.of(context).textTheme.titleLarge),
           ...events.map((e) => ListTile(
-              title: Text(e.title),
-              subtitle: Text(
-                // Format the start and end time
-                '${DateFormat('MMM dd, yyyy').format(e.startTime)} - ${DateFormat('h:mm a').format(e.startTime)} to ${DateFormat('h:mm a').format(e.endTime)}',
-                style: TextStyle(fontSize: 12), // Make subtitle smaller
-              ),
-              tileColor: _getEventColor(eventType),
-            ))
+                title: Text(e.title),
+                subtitle: Text(
+                  // Format the start and end time for the selected day
+                  '${DateFormat('MMM dd, yyyy').format(e.startTime)} - ${DateFormat('h:mm a').format(e.startTime)} to ${DateFormat('h:mm a').format(e.endTime)}',
+                  style: TextStyle(fontSize: 12), // Make subtitle smaller
+                ),
+                tileColor: _getEventColor(eventType),
+              )),
         ],
       ),
     );
