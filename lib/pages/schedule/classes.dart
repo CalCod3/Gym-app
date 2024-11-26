@@ -21,6 +21,8 @@ class _AddClassScreenState extends State<AddClassScreen> {
   DateTime _selectedDate = DateTime.now();
   TimeOfDay _startTime = const TimeOfDay(hour: 9, minute: 0);
   TimeOfDay _endTime = const TimeOfDay(hour: 10, minute: 0);
+  String? _feedbackMessage;
+  bool _isSuccess = false;
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -53,47 +55,69 @@ class _AddClassScreenState extends State<AddClassScreen> {
   }
 
   void _submitForm() async {
-  if (_formKey.currentState!.validate()) {
-    _formKey.currentState!.save();
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
 
-    final startDateTime = DateTime(
-      _selectedDate.year,
-      _selectedDate.month,
-      _selectedDate.day,
-      _startTime.hour,
-      _startTime.minute,
-    );
-
-    final endDateTime = DateTime(
-      _selectedDate.year,
-      _selectedDate.month,
-      _selectedDate.day,
-      _endTime.hour,
-      _endTime.minute,
-    );
-
-    final token = Provider.of<AuthProvider>(context, listen: false).getToken();
-    if (token != null) {
-      // Correctly passing all required parameters
-      final success = await Provider.of<ScheduleProvider>(context, listen: false).addSchedule(
-        token,
-        _title,
-        _description,
-        startDateTime,
-        endDateTime,
+      final startDateTime = DateTime(
+        _selectedDate.year,
+        _selectedDate.month,
+        _selectedDate.day,
+        _startTime.hour,
+        _startTime.minute,
       );
 
-      if (success) {
-          Navigator.pop(context, true);
-        } else {
-          // Handle error
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Failed to add class. Please try again.'),
-              backgroundColor: Colors.red,
-            ),
+      final endDateTime = DateTime(
+        _selectedDate.year,
+        _selectedDate.month,
+        _selectedDate.day,
+        _endTime.hour,
+        _endTime.minute,
+      );
+
+      final token = Provider.of<AuthProvider>(context, listen: false).getToken();
+      if (token != null) {
+        setState(() {
+          _feedbackMessage = null; // Clear previous feedback
+        });
+
+        try {
+          final success = await Provider.of<ScheduleProvider>(context, listen: false).addSchedule(
+            token,
+            _title,
+            _description,
+            startDateTime,
+            endDateTime,
           );
+
+          if (success) {
+            setState(() {
+              _isSuccess = true;
+              _feedbackMessage = 'Class added successfully!';
+            });
+
+            // Navigate to dashboard after a short delay
+            Future.delayed(const Duration(seconds: 1), () {
+              Navigator.popUntil(context, ModalRoute.withName('/dashboard'));
+            });
+          } else {
+            setState(() {
+              _isSuccess = false;
+              _feedbackMessage =
+                  'Failed to add class. Please check your input.';
+            });
+          }
+        } catch (e) {
+          setState(() {
+            _isSuccess = false;
+            _feedbackMessage = 'An error occurred: $e';
+          });
         }
+      } else {
+        setState(() {
+          _isSuccess = false;
+          _feedbackMessage =
+              'Authentication token is missing. Please log in again.';
+        });
       }
     }
   }
@@ -109,6 +133,7 @@ class _AddClassScreenState extends State<AddClassScreen> {
         child: Form(
           key: _formKey,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               TextFormField(
                 decoration: const InputDecoration(labelText: 'Class Title'),
@@ -162,6 +187,15 @@ class _AddClassScreenState extends State<AddClassScreen> {
                   ),
                 ],
               ),
+              const SizedBox(height: 16.0),
+              if (_feedbackMessage != null)
+                Text(
+                  _feedbackMessage!,
+                  style: TextStyle(
+                    color: _isSuccess ? Colors.green : Colors.red,
+                    fontSize: 16.0,
+                  ),
+                ),
               const SizedBox(height: 16.0),
               ElevatedButton(
                 onPressed: _submitForm,

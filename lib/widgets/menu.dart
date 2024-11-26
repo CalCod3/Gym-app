@@ -1,4 +1,4 @@
-// ignore_for_file: deprecated_member_use
+// ignore_for_file: deprecated_member_use, unused_field
 
 import 'package:WOD_Book/pages/schedule/calendar.dart';
 import 'package:WOD_Book/pages/schedule/classes.dart';
@@ -8,7 +8,6 @@ import 'package:WOD_Book/pages/home/home_page.dart';
 import 'package:WOD_Book/pages/social/posts.dart';
 import 'package:WOD_Book/responsive.dart';
 import 'package:WOD_Book/model/menu_modal.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:WOD_Book/pages/leaderboard/leaderboard.dart';
 import 'package:WOD_Book/widgets/profile/profile.dart';
 import 'package:WOD_Book/auth/login_page.dart'; // Assume you handle signout via login page
@@ -33,7 +32,6 @@ class Menu extends StatefulWidget {
 class _MenuState extends State<Menu> {
   late List<MenuModel> menu;
   late AuthProvider _authProvider;
-  // ignore: unused_field
   final bool _isAdminExpanded = false;
 
   @override
@@ -49,40 +47,39 @@ class _MenuState extends State<Menu> {
     menu = [
       if (_authProvider.isAdmin ?? false)
         MenuModel(
-          icon: 'svg/admin.svg',
+          icon: Icons.admin_panel_settings,
           title: "Admin",
           route: Container(), // Placeholder route for the dropdown
           children: [
             MenuModel(
-              icon:
-                  'svg/box.svg', // Provide an appropriate icon for Box
+              icon: Icons.corporate_fare,
               title: "Box",
               route: Container(),
               children: [
                 MenuModel(
-                  icon:'svg/members.svg', // Provide an appropriate icon for Members
+                  icon: Icons.people,
                   title: "Members",
                   route: const MembersScreen(),
-                  ),
-                ]
+                ),
+              ],
             ),
             MenuModel(
-              icon: 'svg/events.svg',
+              icon: Icons.event,
               title: "Activities",
               route: const ActivityListScreen(),
             ),
             MenuModel(
-              icon: 'svg/communications.svg',
+              icon: Icons.message,
               title: "Communications Center",
               route: const CommunicationsScreen(),
             ),
             MenuModel(
-              icon: 'svg/payments.svg',
+              icon: Icons.payments,
               title: "Finance Manager",
               route: Container(), // Placeholder for the nested dropdown
               children: [
                 MenuModel(
-                  icon: 'svg/plan.svg',
+                  icon: Icons.account_balance_wallet,
                   title: "Payment Plans",
                   route: const CreatePaymentPlanPage(),
                 ),
@@ -92,51 +89,49 @@ class _MenuState extends State<Menu> {
         ),
       if (_authProvider.isCoach ?? false)
         MenuModel(
-          icon: 'svg/coach.svg',
+          icon: Icons.co_present,
           title: "Coach",
           route: Container(), // Placeholder route for the dropdown
           children: [
             MenuModel(
-              icon:
-                  'svg/classes.svg', // Provide an appropriate icon for classes
+              icon: Icons.class_,
               title: "Classes",
               route: const AddClassScreen(),
             ),
             MenuModel(
-              icon:
-                  'svg/groupworkouts.svg', // Provide an appropriate icon for Members
+              icon: Icons.fitness_center,
               title: "Group Workouts",
               route: const GroupWorkoutsListScreen(),
             ),
           ],
         ),
       MenuModel(
-        icon: 'svg/home.svg',
+        icon: Icons.dashboard,
         title: "Dashboard",
         route: HomePage(scaffoldKey: widget.scaffoldKey),
       ),
       MenuModel(
-        icon: 'svg/profile.svg',
+        icon: Icons.person,
         title: "Profile",
         route: Profile(),
       ),
       MenuModel(
-        icon: 'svg/exercise.svg',
+        icon: Icons.calendar_today,
         title: "Exercise Schedule",
         route: const CalendarScreen(),
       ),
       MenuModel(
-        icon: 'svg/community.svg',
+        icon: Icons.group,
         title: "Community",
         route: const PostsScreen(),
       ),
       MenuModel(
-        icon: 'svg/history.svg',
+        icon: Icons.leaderboard,
         title: "Leaderboard",
         route: const LeaderboardScreen(),
       ),
       MenuModel(
-        icon: 'svg/signout.svg',
+        icon: Icons.logout,
         title: "Signout",
         route: const LoginPage(),
       ),
@@ -169,143 +164,75 @@ class _MenuState extends State<Menu> {
               for (var i = 0; i < menu.length; i++)
                 menu[i].children != null
                     ? ExpansionTile(
-                        leading: SvgPicture.asset(
-                          menu[i].icon),
+                        leading: Icon(
+                          menu[i].icon,
+                          color: Colors.white,
+                        ),
                         title: Text(
                           menu[i].title,
                           style: TextStyle(
                             fontSize: 16,
-                            color: selected == i ? const Color.fromARGB(255, 255, 255, 255) : Colors.grey,
+                            color: selected == i ? Colors.white : Colors.grey,
                             fontWeight: selected == i
                                 ? FontWeight.w600
                                 : FontWeight.normal,
                           ),
                         ),
                         children: menu[i].children!.map((child) {
-                          return child.children != null
-                              ? ExpansionTile(
-                                  leading: SvgPicture.asset(
-                                    child.icon),
-                                  title: Text(
-                                    child.title,
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: selected == i
-                                          ? const Color.fromARGB(255, 255, 255, 255)
-                                          : Colors.grey,
-                                      fontWeight: selected == i
-                                          ? FontWeight.w600
-                                          : FontWeight.normal,
-                                    ),
-                                  ),
-                                  children: child.children!.map((subChild) {
-                                    return ListTile(
-                                      leading: SvgPicture.asset(
-                                        subChild.icon),
-                                      title: Text(
-                                        subChild.title,
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          color: selected == i
-                                              ? const Color.fromARGB(255, 255, 255, 255)
-                                              : Colors.grey,
-                                          fontWeight: selected == i
-                                              ? FontWeight.w600
-                                              : FontWeight.normal,
-                                        ),
-                                      ),
-                                      onTap: () {
-                                        setState(() {
-                                          selected = i;
-                                        });
-                                        widget.scaffoldKey.currentState!
-                                            .closeDrawer();
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  subChild.route),
-                                        );
-                                      },
-                                    );
-                                  }).toList(),
-                                )
-                              : ListTile(
-                                  leading: SvgPicture.asset(
-                                    child.icon),
-                                  title: Text(
-                                    child.title,
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: selected == i
-                                          ? const Color.fromARGB(255, 255, 255, 255)
-                                          : Colors.grey,
-                                      fontWeight: selected == i
-                                          ? FontWeight.w600
-                                          : FontWeight.normal,
-                                    ),
-                                  ),
-                                  onTap: () {
-                                    setState(() {
-                                      selected = i;
-                                    });
-                                    widget.scaffoldKey.currentState!
-                                        .closeDrawer();
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => child.route),
-                                    );
-                                  },
-                                );
+                          return ListTile(
+                            leading: Icon(
+                              child.icon,
+                              color: Colors.white,
+                            ),
+                            title: Text(
+                              child.title,
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.grey,
+                              ),
+                            ),
+                            onTap: () {
+                              setState(() {
+                                selected = i;
+                              });
+                              widget.scaffoldKey.currentState!.closeDrawer();
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => child.route),
+                              );
+                            },
+                          );
                         }).toList(),
                       )
-                    : Container(
-                        width: MediaQuery.of(context).size.width,
-                        margin: const EdgeInsets.symmetric(vertical: 5),
-                        decoration: BoxDecoration(
-                          borderRadius: const BorderRadius.all(
-                            Radius.circular(6.0),
-                          ),
+                    : ListTile(
+                        leading: Icon(
+                          menu[i].icon,
                           color: selected == i
                               ? Theme.of(context).primaryColor
-                              : Colors.transparent,
+                              : Colors.white,
                         ),
-                        child: InkWell(
-                          onTap: () {
-                            setState(() {
-                              selected = i;
-                            });
-                            widget.scaffoldKey.currentState!.closeDrawer();
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => menu[i].route),
-                            );
-                          },
-                          child: Row(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 13, vertical: 7),
-                                child: SvgPicture.asset(
-                                  menu[i].icon),
-                              ),
-                              Text(
-                                menu[i].title,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: selected == i
-                                      ? const Color.fromARGB(255, 255, 255, 255)
-                                      : Colors.grey,
-                                  fontWeight: selected == i
-                                      ? FontWeight.w600
-                                      : FontWeight.normal,
-                                ),
-                              ),
-                            ],
+                        title: Text(
+                          menu[i].title,
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: selected == i ? Colors.white : Colors.grey,
+                            fontWeight: selected == i
+                                ? FontWeight.w600
+                                : FontWeight.normal,
                           ),
                         ),
+                        onTap: () {
+                          setState(() {
+                            selected = i;
+                          });
+                          widget.scaffoldKey.currentState!.closeDrawer();
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => menu[i].route),
+                          );
+                        },
                       ),
             ],
           ),

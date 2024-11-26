@@ -58,12 +58,13 @@ class ScheduleProvider with ChangeNotifier {
   List<Schedule> fetchSchedulesForDay(DateTime day) {
     return _schedules.where((schedule) {
       // Check if the schedule's start date is the same as the desired day
-      final scheduleDay = DateTime(schedule.startTime.year, schedule.startTime.month, schedule.startTime.day);
+      final scheduleDay = DateTime(schedule.startTime.year,
+          schedule.startTime.month, schedule.startTime.day);
       final targetDay = DateTime(day.year, day.month, day.day);
       return scheduleDay.isAtSameMomentAs(targetDay);
     }).toList();
   }
-  
+
   // Fetch schedules from the server
   // Future<void> fetchSchedules(String token) async {
   //   _setLoading(true);
@@ -149,23 +150,30 @@ class ScheduleProvider with ChangeNotifier {
         body: jsonEncode({
           'title': title,
           'description': description,
-          'start_time': startTime.toIso8601String(),
-          'end_time': endTime.toIso8601String(),
+          'start_time': startTime.toIso8601String().split('Z').first,
+          'end_time': endTime.toIso8601String().split('Z').first,
         }),
       );
+
+      print(response.body);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final newSchedule = Schedule.fromJson(json.decode(response.body));
         _schedules.add(newSchedule);
         notifyListeners();
         return true;
+      } else if (response.statusCode == 400) {
+        // Handle client-side errors (e.g., validation errors)
+        final errorData = jsonDecode(response.body);
+        print('Client-side error: ${errorData['detail']}');
+        return false;
       } else {
-        _handleErrorResponse(response);
+        print('Unexpected response status: ${response.statusCode}');
         return false;
       }
     } catch (e) {
       print('Error adding schedule: $e');
-      throw Exception('An error occurred while adding schedule: $e');
+      return false; // Ensure the UI gets feedback on failure
     } finally {
       _setLoading(false);
     }

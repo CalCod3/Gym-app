@@ -76,7 +76,7 @@ class GroupWorkoutProvider with ChangeNotifier {
 
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl/group_workouts/'),
+        Uri.parse('$baseUrl/api/group_workouts/'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
@@ -109,7 +109,7 @@ class GroupWorkoutProvider with ChangeNotifier {
 
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl/group_workouts/'),
+        Uri.parse('$baseUrl/api/group_workouts/'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
