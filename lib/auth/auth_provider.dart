@@ -12,11 +12,13 @@ class AuthProvider with ChangeNotifier {
   int? _userId;
   bool? _isAdmin;
   bool? _isCoach;
+  String?  _email;
 
   String? get token => _token;
   int? get userId => _userId;
   bool? get isAdmin => _isAdmin;
   bool? get isCoach => _isCoach;
+  String? get email => _email;
 
   /// Login method to save token and fetch user data.
   Future<void> login(String token) async {
@@ -84,6 +86,7 @@ class AuthProvider with ChangeNotifier {
         _userId = data['id']; // Assuming the response contains the user ID as 'id'
         _isAdmin = data['is_staff']; // Assuming the response contains 'is_staff'
         _isCoach = data['is_coach'];
+        _email = data['email']; // Assuming the response contains 'email'
       } else if (response.statusCode == 401) {
         // Token is invalid or expired, handle logout
         await logout();

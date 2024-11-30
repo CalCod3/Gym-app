@@ -16,6 +16,7 @@ class UserProvider with ChangeNotifier {
   DateTime? _membershipExpiryDate;
   bool _isLoading = false;
   List<UserWithPaymentStatus>? _members; // Updated to use the new model
+  String? _email;
 
   UserProvider(this._authProvider) {
     if (dotenv.env['API_BASE_URL'] == null) {
@@ -29,7 +30,6 @@ class UserProvider with ChangeNotifier {
     _authProvider = authProvider;
     notifyListeners();
   }
-  
 
   AuthProvider? get authProvider => _authProvider;
   int? get userId => _userId;
@@ -40,6 +40,7 @@ class UserProvider with ChangeNotifier {
   DateTime? get membershipExpiryDate => _membershipExpiryDate;
   List<UserWithPaymentStatus>? get members => _members;
   bool get isLoading => _isLoading;
+  String? get email => _email;
 
   Future<void> fetchUserData() async {
     if (_isLoading) return;
@@ -64,6 +65,7 @@ class UserProvider with ChangeNotifier {
         _boxId = data['box_id']; // Store boxId if available in the response
         _name = data['first_name'];
         _profileImageUrl = data['profile_image'];
+        _email = data['email'];
 
         await fetchPaymentInfo(token);
       } else {
@@ -110,6 +112,105 @@ class UserProvider with ChangeNotifier {
     }
   }
 
+  // Edit account details
+  Future<void> editAccountDetails({
+    required String firstName,
+    required String lastName,
+    required String email,
+    String? profileImage,
+  }) async {
+    if (_isLoading) return;
+    _setLoading(true);
+
+    final token = _authProvider?.token;
+    if (token == null) {
+      _setLoading(false);
+      throw Exception('Token not found');
+    }
+
+    final athleteId =
+        _userId; // Retrieve the current user's ID from the provider
+    if (athleteId == null) {
+      _setLoading(false);
+      throw Exception('User ID not found');
+    }
+
+    try {
+      final url = Uri.parse(
+          '$_baseUrl/athletes/$athleteId'); // Use the current user's ID
+      final response = await http.put(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: json.encode({
+          'first_name': firstName,
+          'last_name': lastName,
+          'email': email,
+          'profile_image': profileImage, // Optional field
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        _name = data['first_name'];
+        _profileImageUrl = data['profile_image'];
+        notifyListeners();
+      } else {
+        _handleErrorResponse(response);
+      }
+    } catch (e) {
+      print('Error editing account details: $e');
+      throw Exception('An error occurred while editing account details: $e');
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+// Delete account
+  Future<void> deleteAccount() async {
+    if (_isLoading) return;
+    _setLoading(true);
+
+    final token = _authProvider?.token;
+    if (token == null) {
+      _setLoading(false);
+      throw Exception('Token not found');
+    }
+
+    final athleteId =
+        _userId; // Retrieve the current user's ID from the provider
+    if (athleteId == null) {
+      _setLoading(false);
+      throw Exception('User ID not found');
+    }
+
+    try {
+      final url = Uri.parse(
+          '$_baseUrl/athletes/$athleteId'); // Use the current user's ID
+      final response = await http.delete(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 204) {
+        print('Account successfully deleted');
+        // Optionally, logout the user and clear local data
+        _authProvider?.logout();
+      } else {
+        _handleErrorResponse(response);
+      }
+    } catch (e) {
+      print('Error deleting account: $e');
+      throw Exception('An error occurred while deleting account: $e');
+    } finally {
+      _setLoading(false);
+    }
+  }
+
   Future<void> fetchMembers() async {
     if (_isLoading) return;
     _setLoading(true);
@@ -123,7 +224,8 @@ class UserProvider with ChangeNotifier {
     }
 
     try {
-      final url = Uri.parse('$_baseUrl/admin/users/membership-status'); // Adjust URL if needed
+      final url = Uri.parse(
+          '$_baseUrl/admin/users/membership-status'); // Adjust URL if needed
       final response = await http.get(url, headers: {
         'Authorization': 'Bearer $token',
       });
@@ -145,6 +247,77 @@ class UserProvider with ChangeNotifier {
     }
   }
 
+  Future<void> blockUser(int userId) async {
+    if (_isLoading) return; // Prevent multiple requests at the same time
+    _setLoading(true);
+
+    final token = _authProvider?.token;
+    if (token == null) {
+      _setLoading(false);
+      throw Exception('Token not found');
+    }
+
+    try {
+      final url = Uri.parse('$_baseUrl/users/block/$userId');
+      final response = await http.post(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        // Optionally, update UI or notify the user
+        final data = json.decode(response.body);
+        print('User $userId blocked successfully: ${data['message']}');
+        // You could refresh user data or members after blocking
+      } else {
+        _handleErrorResponse(response);
+      }
+    } catch (e) {
+      print('Error blocking user: $e');
+      throw Exception('An error occurred while blocking user: $e');
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  // Check if a user is blocked based on their ID
+  Future<bool> isUserBlocked(int targetUserId) async {
+    if (_isLoading) return false;  // Prevent multiple simultaneous requests
+
+    final token = _authProvider?.token;
+    if (token == null) {
+      throw Exception('Token not found');
+    }
+
+    try {
+      final url = Uri.parse('$_baseUrl/check-block/$targetUserId'); // Endpoint for checking block status
+      final response = await http.get(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        // If the response is a success and user is not blocked
+        return data["message"] == "User is not blocked";
+      } else {
+        // If the user is blocked, throw an exception
+        if (response.statusCode == 403) {
+          throw Exception("You have blocked this user. Access to their profile is denied.");
+        }
+        _handleErrorResponse(response);
+        return false;
+      }
+    } catch (e) {
+      print('Error checking block status: $e'); 
+      throw Exception('An error occurred while checking block status: $e');
+    }
+  }
+
   void _setLoading(bool value) {
     _isLoading = value;
     notifyListeners();
@@ -152,7 +325,8 @@ class UserProvider with ChangeNotifier {
 
   void _handleErrorResponse(http.Response response) {
     print('Request failed: ${response.statusCode} - ${response.body}');
-    throw Exception('Request failed with status code ${response.statusCode}: ${response.body}');
+    throw Exception(
+        'Request failed with status code ${response.statusCode}: ${response.body}');
   }
 }
 

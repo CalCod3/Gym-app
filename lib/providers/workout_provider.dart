@@ -115,10 +115,10 @@ class GroupWorkoutProvider with ChangeNotifier {
           'Authorization': 'Bearer $token',
         },
         body: json.encode({
-          'name': _title,
+          'title': _title,
           'description': _description,
           'date': _date?.toIso8601String(),
-          'video_links': _videoLinks,
+          'video_links': _videoLinks.isNotEmpty ? _videoLinks : [],
         }),
       );
 
@@ -127,7 +127,7 @@ class GroupWorkoutProvider with ChangeNotifier {
         GroupWorkout groupWorkout = GroupWorkout.fromJson(json.decode(response.body));
         Provider.of<ScheduleProvider>(context, listen: false).createAndAddGroupWorkout(
           token,
-          groupWorkout.name,
+          groupWorkout.title,
           groupWorkout.description,
           groupWorkout.date,
           groupWorkout.videoLinks,
@@ -146,14 +146,14 @@ class GroupWorkoutProvider with ChangeNotifier {
 
 class GroupWorkout {
   final int id;
-  final String name;
+  final String title;
   final String description;
   final DateTime date;
   final List<String> videoLinks;
 
   GroupWorkout({
     required this.id,
-    required this.name,
+    required this.title,
     required this.description,
     required this.date,
     required this.videoLinks,
@@ -162,7 +162,7 @@ class GroupWorkout {
   factory GroupWorkout.fromJson(Map<String, dynamic> json) {
     return GroupWorkout(
       id: json['id'],
-      name: json['name'],
+      title: json['title'],
       description: json['description'],
       date: DateTime.parse(json['date']),
       videoLinks: List<String>.from(json['video_links'] ?? []),

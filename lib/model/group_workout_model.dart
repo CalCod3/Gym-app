@@ -1,7 +1,7 @@
 // models/group_workout_model.dart
 class GroupWorkout {
   final int id;
-  final String name;
+  final String title;
   final String description;
   final DateTime date;
   final List<String> videoLinks;
@@ -9,7 +9,7 @@ class GroupWorkout {
 
   GroupWorkout({
     required this.id,
-    required this.name,
+    required this.title,
     required this.description,
     required this.date,
     required this.videoLinks,
@@ -19,7 +19,7 @@ class GroupWorkout {
   factory GroupWorkout.fromJson(Map<String, dynamic> json) {
     return GroupWorkout(
       id: json['id'],
-      name: json['name'],
+      title: json['title'],
       description: json['description'],
       date: DateTime.parse(json['date']),
       videoLinks: List<String>.from(json['video_links']), 
@@ -30,7 +30,7 @@ class GroupWorkout {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'name': name,
+      'title': title,
       'description': description,
       'date': date.toIso8601String(),
       'video_links': videoLinks,

@@ -27,10 +27,14 @@ class _CreatePaymentPlanPageState extends State<CreatePaymentPlanPage> {
     final authProvider = Provider.of<AuthProvider>(context);
     final paymentPlanProvider = Provider.of<PaymentPlanProvider>(context);
     final userProvider = Provider.of<UserProvider>(context);
+    
 
     // Ensure boxId and token are available
     final int? boxId = userProvider.boxId;
     final String? token = authProvider.token;
+
+    print(boxId);
+    print(token);
 
     if (boxId == null || token == null) {
       return Scaffold(

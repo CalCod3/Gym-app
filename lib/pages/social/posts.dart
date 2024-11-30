@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../const.dart';
@@ -8,7 +10,7 @@ import 'comment_create.dart';
 import 'public_profile.dart';
 
 class PostsScreen extends StatelessWidget {
-  const PostsScreen({super.key});
+  PostsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -86,9 +88,12 @@ class PostsScreen extends StatelessWidget {
                                             : null, // If userProfileImageUrl is not empty, use it as the background image
                                         child: post.userProfileImageUrl.isEmpty
                                             ? Icon(
-                                                Icons.account_circle_outlined, // Show the icon when the image URL is empty
-                                                size: 30.0, // Adjust size as needed
-                                                color: Colors.grey, // Customize the color if necessary
+                                                Icons
+                                                    .account_circle_outlined, // Show the icon when the image URL is empty
+                                                size:
+                                                    30.0, // Adjust size as needed
+                                                color: Colors
+                                                    .grey, // Customize the color if necessary
                                               )
                                             : null, // Don't show the icon when there is an image URL
                                       ),
@@ -164,6 +169,14 @@ class PostsScreen extends StatelessWidget {
                                       },
                                     ),
                                     Text('${post.comments.length}'),
+                                    const SizedBox(width: 16.0),
+                                    // Report button
+                                    IconButton(
+                                      icon: const Icon(Icons.report_outlined),
+                                      onPressed: () {
+                                        _showReportDialog(context, post.id);
+                                      },
+                                    ),
                                   ],
                                 ),
                               ),
@@ -192,5 +205,65 @@ class PostsScreen extends StatelessWidget {
         child: const Icon(Icons.add),
       ),
     );
+  }
+
+  final TextEditingController _reasonController = TextEditingController();
+
+  void _showReportDialog(BuildContext context, int postId) {
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return AlertDialog(
+          title: const Text('Report Post'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text('Please provide a brief reason for reporting:'),
+              TextField(
+                controller: _reasonController,
+                decoration: const InputDecoration(hintText: 'Reason'),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(ctx).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                final reason = _reasonController.text;
+                if (reason.isNotEmpty) {
+                  _reportPost(context, postId, reason);
+                  Navigator.of(ctx).pop();
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Please enter a reason')),
+                  );
+                }
+              },
+              child: const Text('Report'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _reportPost(
+      BuildContext context, int postId, String reason) async {
+    try {
+      await Provider.of<PostProvider>(context, listen: false)
+          .reportPost(postId, reason);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Post has been reported.')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to report post: $e')),
+      );
+    }
   }
 }

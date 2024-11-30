@@ -1,7 +1,6 @@
 import 'package:WOD_Book/pages/schedule/calendar.dart';
 import 'package:flutter/material.dart';
 import 'package:WOD_Book/widgets/custom_card.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import '../../../providers/schedule_provider.dart';
 
@@ -63,7 +62,11 @@ class Scheduled extends StatelessWidget {
                                   ),
                                 ],
                               ),
-                              SvgPicture.asset('assets/svg/more.svg'),
+                              // Replacing SVG with an Icon widget
+                              Icon(
+                                Icons.more_vert, // Replace with the desired icon
+                                color: Colors.grey,
+                              ),
                             ],
                           ),
                         ],

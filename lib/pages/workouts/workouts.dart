@@ -45,7 +45,7 @@ class _GroupWorkoutsListScreenState extends State<GroupWorkoutsListScreen> {
                   itemBuilder: (context, index) {
                     final groupWorkout = provider.groupWorkouts[index];
                     return ListTile(
-                      title: Text(groupWorkout.name),
+                      title: Text(groupWorkout.title),
                       subtitle: Text(groupWorkout.description),
                       trailing: Text(groupWorkout.date.toLocal().toString()),
                       onTap: () {

@@ -1,4 +1,4 @@
-// ignore_for_file: deprecated_member_use, unused_field
+// ignore_for_file: deprecated_member_use, unused_field, library_private_types_in_public_api
 
 import 'package:WOD_Book/pages/schedule/calendar.dart';
 import 'package:WOD_Book/pages/schedule/classes.dart';
@@ -25,21 +25,17 @@ class Menu extends StatefulWidget {
   const Menu({super.key, required this.scaffoldKey});
 
   @override
-  // ignore: library_private_types_in_public_api
   _MenuState createState() => _MenuState();
 }
 
 class _MenuState extends State<Menu> {
   late List<MenuModel> menu;
   late AuthProvider _authProvider;
-  final bool _isAdminExpanded = false;
 
   @override
   void initState() {
     super.initState();
     _authProvider = Provider.of<AuthProvider>(context, listen: false);
-
-    // Build the menu based on admin status
     _buildMenu();
   }
 
@@ -49,12 +45,10 @@ class _MenuState extends State<Menu> {
         MenuModel(
           icon: Icons.admin_panel_settings,
           title: "Admin",
-          route: Container(), // Placeholder route for the dropdown
           children: [
             MenuModel(
               icon: Icons.corporate_fare,
               title: "Box",
-              route: Container(),
               children: [
                 MenuModel(
                   icon: Icons.people,
@@ -76,7 +70,6 @@ class _MenuState extends State<Menu> {
             MenuModel(
               icon: Icons.payments,
               title: "Finance Manager",
-              route: Container(), // Placeholder for the nested dropdown
               children: [
                 MenuModel(
                   icon: Icons.account_balance_wallet,
@@ -91,7 +84,6 @@ class _MenuState extends State<Menu> {
         MenuModel(
           icon: Icons.co_present,
           title: "Coach",
-          route: Container(), // Placeholder route for the dropdown
           children: [
             MenuModel(
               icon: Icons.class_,
@@ -123,7 +115,7 @@ class _MenuState extends State<Menu> {
       MenuModel(
         icon: Icons.group,
         title: "Community",
-        route: const PostsScreen(),
+        route: PostsScreen(),
       ),
       MenuModel(
         icon: Icons.leaderboard,
@@ -138,7 +130,47 @@ class _MenuState extends State<Menu> {
     ];
   }
 
-  int selected = 0;
+  Widget _buildMenuItem(MenuModel menuItem) {
+    if (menuItem.children != null && menuItem.children!.isNotEmpty) {
+      return ExpansionTile(
+        leading: Icon(
+          menuItem.icon,
+          color: Colors.white,
+        ),
+        title: Text(
+          menuItem.title,
+          style: const TextStyle(
+            fontSize: 16,
+            color: Colors.white,
+          ),
+        ),
+        children: menuItem.children!.map(_buildMenuItem).toList(),
+      );
+    } else {
+      return ListTile(
+        leading: Icon(
+          menuItem.icon,
+          color: Colors.white,
+        ),
+        title: Text(
+          menuItem.title,
+          style: const TextStyle(
+            fontSize: 16,
+            color: Colors.grey,
+          ),
+        ),
+        onTap: () {
+          if (menuItem.route != null) {
+            widget.scaffoldKey.currentState!.closeDrawer();
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => menuItem.route!),
+            );
+          }
+        },
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -161,79 +193,7 @@ class _MenuState extends State<Menu> {
               SizedBox(
                 height: Responsive.isMobile(context) ? 40 : 80,
               ),
-              for (var i = 0; i < menu.length; i++)
-                menu[i].children != null
-                    ? ExpansionTile(
-                        leading: Icon(
-                          menu[i].icon,
-                          color: Colors.white,
-                        ),
-                        title: Text(
-                          menu[i].title,
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: selected == i ? Colors.white : Colors.grey,
-                            fontWeight: selected == i
-                                ? FontWeight.w600
-                                : FontWeight.normal,
-                          ),
-                        ),
-                        children: menu[i].children!.map((child) {
-                          return ListTile(
-                            leading: Icon(
-                              child.icon,
-                              color: Colors.white,
-                            ),
-                            title: Text(
-                              child.title,
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.grey,
-                              ),
-                            ),
-                            onTap: () {
-                              setState(() {
-                                selected = i;
-                              });
-                              widget.scaffoldKey.currentState!.closeDrawer();
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => child.route),
-                              );
-                            },
-                          );
-                        }).toList(),
-                      )
-                    : ListTile(
-                        leading: Icon(
-                          menu[i].icon,
-                          color: selected == i
-                              ? Theme.of(context).primaryColor
-                              : Colors.white,
-                        ),
-                        title: Text(
-                          menu[i].title,
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: selected == i ? Colors.white : Colors.grey,
-                            fontWeight: selected == i
-                                ? FontWeight.w600
-                                : FontWeight.normal,
-                          ),
-                        ),
-                        onTap: () {
-                          setState(() {
-                            selected = i;
-                          });
-                          widget.scaffoldKey.currentState!.closeDrawer();
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => menu[i].route),
-                          );
-                        },
-                      ),
+              ...menu.map(_buildMenuItem).toList(),
             ],
           ),
         ),

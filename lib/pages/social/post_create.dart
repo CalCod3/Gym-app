@@ -1,5 +1,6 @@
-// ignore_for_file: use_build_context_synchronously, library_private_types_in_public_api
+// ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously
 
+import 'package:WOD_Book/services/moderation_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/post_provider.dart';
@@ -18,6 +19,9 @@ class _NewPostScreenState extends State<NewPostScreen> {
   final _titleController = TextEditingController();
   final _contentController = TextEditingController();
   bool _isLoading = false; // Loading state for async behavior
+
+  // Instance of the OpenAI Moderation service
+  final OpenAIModerationService _moderationService = OpenAIModerationService();
 
   @override
   Widget build(BuildContext context) {
@@ -52,14 +56,30 @@ class _NewPostScreenState extends State<NewPostScreen> {
                         _isLoading = true; // Start loading
                       });
 
+                      // Moderation check for content
+                      bool isContentFlagged = await _moderationService.checkContent(_contentController.text);
+
+                      if (isContentFlagged) {
+                        // If the content is flagged, show a warning and stop submission
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('The content of your post is flagged for moderation.'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                        setState(() {
+                          _isLoading = false; // End loading
+                        });
+                        return;
+                      }
+
                       final newPost = Post(
                         id: DateTime.now().millisecondsSinceEpoch,
                         title: _titleController.text,
                         content: _contentController.text,
                         userId: currentUserId,
                         comments: [],
-                        userProfileImageUrl: currentUserProfileImageUrl ??
-                            'assets/images/avatar.png',
+                        userProfileImageUrl: currentUserProfileImageUrl ?? 'assets/images/avatar.png',
                         userName: currentUserName,
                       );
 
@@ -110,8 +130,7 @@ class _NewPostScreenState extends State<NewPostScreen> {
                       : null, // If URL is null, we will use the icon
                   child: currentUserProfileImageUrl == null
                       ? Icon(
-                          Icons
-                              .account_circle_outlined, // The icon to display when the image is null
+                          Icons.account_circle_outlined, // The icon to display when the image is null
                           size: 30.0, // Adjust the size as needed
                           color: Colors.grey, // Customize the color as needed
                         )

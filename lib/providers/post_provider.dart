@@ -1,5 +1,10 @@
 // ignore_for_file: avoid_print
 
+import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:http/http.dart' as http;
+
+import 'package:WOD_Book/auth/auth_provider.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import '../model/post_model.dart';
@@ -9,6 +14,7 @@ class PostProvider with ChangeNotifier {
   List<Post> _posts = [];
   final ApiService _apiService;
   bool _isInitialized = false;
+  AuthProvider? _authProvider;
 
   PostProvider(this._apiService) {
     _initializeProvider();
@@ -28,7 +34,8 @@ class PostProvider with ChangeNotifier {
   // Helper function to check initialization
   bool _checkInitialization(String methodName) {
     if (!_isInitialized) {
-      print('Error: PostProvider is not initialized. $methodName cannot proceed.');
+      print(
+          'Error: PostProvider is not initialized. $methodName cannot proceed.');
       return false;
     }
     return true;
@@ -55,6 +62,23 @@ class PostProvider with ChangeNotifier {
     } catch (e) {
       print('Error fetching posts: $e');
       throw Exception('Failed to load posts: $e');
+    }
+  }
+
+  Future<void> fetchPostsByUser(int userId) async {
+    if (!_checkInitialization('fetchPostsByUser')) return;
+
+    try {
+      print('Fetching posts by user...');
+      _posts = await _apiService.getPosts();
+      _posts = _posts
+          .where((post) => post.userId == userId)
+          .toList(); // Filter posts by userId
+      print('Posts by user fetched: $_posts');
+      notifyListeners();
+    } catch (e) {
+      print('Error fetching posts by user: $e');
+      throw Exception('Failed to load posts by user: $e');
     }
   }
 
@@ -94,7 +118,9 @@ class PostProvider with ChangeNotifier {
       await _apiService.deleteComment(postId, commentId);
       final postIndex = _posts.indexWhere((post) => post.id == postId);
       if (postIndex != -1) {
-        _posts[postIndex].comments.removeWhere((comment) => comment.id == commentId);
+        _posts[postIndex]
+            .comments
+            .removeWhere((comment) => comment.id == commentId);
         notifyListeners();
       }
     } catch (e) {
@@ -137,6 +163,39 @@ class PostProvider with ChangeNotifier {
     } catch (e) {
       print('Error fetching comments: $e');
       throw Exception('Failed to load comments: $e');
+    }
+  }
+
+  Future<void> reportPost(int postId, String reason) async {
+    final token = _authProvider?.token;
+    if (token == null) {
+      throw Exception('User is not authenticated');
+    }
+
+    // Load the base URL from .env file
+    final baseUrl = dotenv.env['BASE_URL']; // Add dotenv package to your pubspec.yaml if not done already
+    if (baseUrl == null) {
+      throw Exception('Base URL is not configured in the environment');
+    }
+
+    final url = Uri.parse('$baseUrl/report/$postId');
+    
+    final response = await http.post(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+      body: json.encode({
+        'reason': reason, // Add the reason here in the request body
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      // Handle success
+      print('Post reported successfully');
+    } else {
+      throw Exception('Failed to report post');
     }
   }
 }

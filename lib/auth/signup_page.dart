@@ -7,7 +7,8 @@ import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'auth_provider.dart';
 import 'login_page.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart'; // Import dotenv for environment variables
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -25,15 +26,15 @@ class SignupPageState extends State<SignupPage> {
   final TextEditingController _confirmPasswordController =
       TextEditingController();
   bool _isSubmitting = false;
-  
-  // Add a variable to store the selected box and the list of available boxes
+  bool _acceptedEULA = false;
+
   String? _selectedBox;
   List<dynamic> _availableBoxes = [];
 
   @override
   void initState() {
     super.initState();
-    _fetchBoxes();  // Fetch available boxes when the page is initialized
+    _fetchBoxes();
   }
 
   Future<void> _fetchBoxes() async {
@@ -43,7 +44,7 @@ class SignupPageState extends State<SignupPage> {
         throw Exception('API_BASE_URL not set in .env file');
       }
 
-      final response = await http.get(Uri.parse('$apiUrl/api/boxes/')); // Replace with your actual endpoint for fetching boxes
+      final response = await http.get(Uri.parse('$apiUrl/api/boxes/'));
       if (response.statusCode == 200) {
         setState(() {
           _availableBoxes = json.decode(response.body);
@@ -76,7 +77,7 @@ class SignupPageState extends State<SignupPage> {
       }
 
       final response = await http.post(
-        Uri.parse('$apiUrl/auth/'), // Replace with your actual endpoint path
+        Uri.parse('$apiUrl/auth/'),
         headers: <String, String>{
           'Content-Type': 'application/json',
         },
@@ -85,7 +86,7 @@ class SignupPageState extends State<SignupPage> {
           'last_name': _lastNameController.text,
           'email': _emailController.text,
           'password': _passwordController.text,
-          'box_id': _selectedBox, // Pass the selected box ID
+          'box_id': _selectedBox,
         }),
       );
 
@@ -118,6 +119,50 @@ class SignupPageState extends State<SignupPage> {
       });
     }
   }
+
+  void _showEULADialog() {
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: const Text("End User License Agreement"),
+      content: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: const [
+            Text(
+                "By signing up, you agree to the terms and conditions outlined in our End User License Agreement (EULA)."),
+            SizedBox(height: 10),
+            Text("Please read the full EULA carefully before proceeding."),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: const Text("Close"),
+        ),
+        TextButton(
+          onPressed: () async {
+            final Uri eulaUri = Uri.parse('https://docs.google.com/document/d/1UVqyH0Y9Y5gqkXBscU-dw3jE3kDO-IjVPXfyBerVzXw/edit?usp=sharing'); // Replace with your actual EULA URL
+            if (await canLaunchUrl(eulaUri)) {
+              await launchUrl(
+                eulaUri,
+                mode: LaunchMode.externalApplication, // Opens in the default browser
+              );
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Unable to open the link')),
+              );
+            }
+          },
+          child: const Text("Read more"),
+        ),
+      ],
+    ),
+  );
+}
 
   @override
   Widget build(BuildContext context) {
@@ -193,11 +238,11 @@ class SignupPageState extends State<SignupPage> {
                           return null;
                         },
                       ),
-                      // Add the DropdownButtonFormField for selecting the box
                       DropdownButtonFormField<String>(
                         value: _selectedBox,
                         hint: const Text('Select Box'),
-                        items: _availableBoxes.map<DropdownMenuItem<String>>((box) {
+                        items: _availableBoxes
+                            .map<DropdownMenuItem<String>>((box) {
                           return DropdownMenuItem<String>(
                             value: box['id'].toString(),
                             child: Text(box['name']),
@@ -216,14 +261,37 @@ class SignupPageState extends State<SignupPage> {
                         },
                       ),
                       const SizedBox(height: 20),
+                      Row(
+                        children: [
+                          Checkbox(
+                            value: _acceptedEULA,
+                            onChanged: (value) {
+                              setState(() {
+                                _acceptedEULA = value ?? false;
+                              });
+                            },
+                          ),
+                          GestureDetector(
+                            onTap: _showEULADialog,
+                            child: const Text(
+                              'I agree to the EULA',
+                              style: TextStyle(
+                                  decoration: TextDecoration.underline),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
                       _isSubmitting
                           ? const CircularProgressIndicator()
                           : ElevatedButton(
-                              onPressed: () {
-                                if (_formKey.currentState!.validate()) {
-                                  _signup();
-                                }
-                              },
+                              onPressed: _acceptedEULA
+                                  ? () {
+                                      if (_formKey.currentState!.validate()) {
+                                        _signup();
+                                      }
+                                    }
+                                  : null,
                               child: const Text('Signup'),
                             ),
                       const SizedBox(height: 20),

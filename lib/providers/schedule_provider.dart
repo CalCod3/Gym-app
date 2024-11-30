@@ -113,7 +113,7 @@ class ScheduleProvider with ChangeNotifier {
             data.map((json) => GroupWorkout.fromJson(json)).toList();
         _schedules.addAll(groupWorkouts.map((gw) => Schedule(
               id: gw.id,
-              title: gw.name,
+              title: gw.title,
               description: gw.description,
               startTime: gw.date,
               endTime: gw.date,
@@ -182,7 +182,7 @@ class ScheduleProvider with ChangeNotifier {
   // Create and add a new group workout
   Future<bool> createAndAddGroupWorkout(
     String token,
-    String name,
+    String title,
     String description,
     DateTime date,
     List<String> videoLinks,
@@ -197,7 +197,7 @@ class ScheduleProvider with ChangeNotifier {
           'Authorization': 'Bearer $token',
         },
         body: jsonEncode({
-          'name': name,
+          'title': title,
           'description': description,
           'date': date.toIso8601String(),
           'video_links': videoLinks,
@@ -225,7 +225,7 @@ class ScheduleProvider with ChangeNotifier {
   void addGroupWorkoutToSchedule(GroupWorkout groupWorkout) {
     _schedules.add(Schedule(
       id: groupWorkout.id,
-      title: groupWorkout.name,
+      title: groupWorkout.title,
       description: groupWorkout.description,
       startTime: groupWorkout.date,
       endTime: groupWorkout.date,
