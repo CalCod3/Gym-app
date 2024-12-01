@@ -1,3 +1,4 @@
+import 'package:WOD_Book/widgets/profile/profile_edit.dart';
 import 'package:flutter/material.dart';
 import 'package:WOD_Book/responsive.dart';
 import 'package:WOD_Book/const.dart';
@@ -50,9 +51,12 @@ class Profile extends StatelessWidget {
                           return userProvider.profileImageUrl != null
                               ? Image.network(userProvider.profileImageUrl!)
                               : Icon(
-                                  Icons.account_circle_outlined, // Use the account_circle_outlined icon
-                                  size:50.0, // Set the size of the icon (you can adjust it as needed)
-                                  color: Colors.grey, // Set the color of the icon (you can adjust it as needed)
+                                  Icons
+                                      .account_circle_outlined, // Use the account_circle_outlined icon
+                                  size:
+                                      50.0, // Set the size of the icon (you can adjust it as needed)
+                                  color: Colors
+                                      .grey, // Set the color of the icon (you can adjust it as needed)
                                 );
                         },
                       ),
@@ -67,11 +71,22 @@ class Profile extends StatelessWidget {
                         },
                       ),
                       const SizedBox(height: 2),
-                      Text(
-                        "Edit Profile details",
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Theme.of(context).primaryColor,
+                      TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  EditProfilePage(), // Replace with your actual Profile Edit Screen
+                            ),
+                          );
+                        },
+                        child: Text(
+                          "Edit Profile details",
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Theme.of(context).primaryColor,
+                          ),
                         ),
                       ),
                       Padding(

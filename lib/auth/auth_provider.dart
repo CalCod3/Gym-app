@@ -10,12 +10,14 @@ class AuthProvider with ChangeNotifier {
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
   String? _token;
   int? _userId;
+  int? _boxId;
   bool? _isAdmin;
   bool? _isCoach;
   String?  _email;
 
   String? get token => _token;
   int? get userId => _userId;
+  int? get boxId => _boxId;
   bool? get isAdmin => _isAdmin;
   bool? get isCoach => _isCoach;
   String? get email => _email;
@@ -87,6 +89,7 @@ class AuthProvider with ChangeNotifier {
         _isAdmin = data['is_staff']; // Assuming the response contains 'is_staff'
         _isCoach = data['is_coach'];
         _email = data['email']; // Assuming the response contains 'email'
+        _boxId = data['bix_id'];
       } else if (response.statusCode == 401) {
         // Token is invalid or expired, handle logout
         await logout();

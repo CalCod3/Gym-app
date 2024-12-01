@@ -1,4 +1,4 @@
-// ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously
+// ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously, avoid_print
 
 import 'package:WOD_Book/services/moderation_service.dart';
 import 'package:flutter/material.dart';
@@ -49,43 +49,47 @@ class _NewPostScreenState extends State<NewPostScreen> {
         actions: [
           TextButton(
             onPressed: _isLoading
-                ? null // Disable button when loading
+                ? null
                 : () async {
+                    print('Form submitted...');
                     if (_formKey.currentState!.validate()) {
+                      print('Form validated...');
                       setState(() {
-                        _isLoading = true; // Start loading
+                        _isLoading = true;
                       });
 
-                      // Moderation check for content
-                      bool isContentFlagged = await _moderationService.checkContent(_contentController.text);
-
-                      if (isContentFlagged) {
-                        // If the content is flagged, show a warning and stop submission
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('The content of your post is flagged for moderation.'),
-                            backgroundColor: Colors.red,
-                          ),
-                        );
-                        setState(() {
-                          _isLoading = false; // End loading
-                        });
-                        return;
-                      }
-
-                      final newPost = Post(
-                        id: DateTime.now().millisecondsSinceEpoch,
-                        title: _titleController.text,
-                        content: _contentController.text,
-                        userId: currentUserId,
-                        comments: [],
-                        userProfileImageUrl: currentUserProfileImageUrl ?? 'assets/images/avatar.png',
-                        userName: currentUserName,
-                      );
-
                       try {
+                        print('Moderating content...');
+                        bool isContentFlagged = await _moderationService
+                            .checkContent(_contentController.text);
+                        print('Moderation result: $isContentFlagged');
+
+                        if (isContentFlagged) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                  'The content of your post is flagged for moderation.'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                          return;
+                        }
+
+                        print('Creating post...');
+                        final newPost = Post(
+                          id: DateTime.now().millisecondsSinceEpoch,
+                          title: _titleController.text,
+                          content: _contentController.text,
+                          userId: currentUserId,
+                          comments: [],
+                          userProfileImageUrl: currentUserProfileImageUrl ??
+                              'assets/images/avatar.png',
+                          userName: currentUserName,
+                        );
+
                         await postProvider.addPost(newPost);
-                        // Success: Show success message and navigate back
+                        print('Post created successfully.');
+
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text('Post created successfully!'),
@@ -93,17 +97,14 @@ class _NewPostScreenState extends State<NewPostScreen> {
                           ),
                         );
                         Navigator.pop(context);
-                      } catch (error) {
-                        // Error: Show error message
+                      } catch (e) {
+                        print('Error occurred: $e');
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Failed to create post: $error'),
-                            backgroundColor: Colors.red,
-                          ),
+                          SnackBar(content: Text('Error: $e')),
                         );
                       } finally {
                         setState(() {
-                          _isLoading = false; // End loading
+                          _isLoading = false;
                         });
                       }
                     }
@@ -130,7 +131,8 @@ class _NewPostScreenState extends State<NewPostScreen> {
                       : null, // If URL is null, we will use the icon
                   child: currentUserProfileImageUrl == null
                       ? Icon(
-                          Icons.account_circle_outlined, // The icon to display when the image is null
+                          Icons
+                              .account_circle_outlined, // The icon to display when the image is null
                           size: 30.0, // Adjust the size as needed
                           color: Colors.grey, // Customize the color as needed
                         )
