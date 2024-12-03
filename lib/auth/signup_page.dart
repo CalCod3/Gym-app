@@ -46,8 +46,19 @@ class SignupPageState extends State<SignupPage> {
 
       final response = await http.get(Uri.parse('$apiUrl/api/boxes/'));
       if (response.statusCode == 200) {
+        final List<dynamic> boxes = json.decode(response.body);
         setState(() {
-          _availableBoxes = json.decode(response.body);
+          _availableBoxes = boxes.map((box) {
+            return {
+              'id': box['id'].toString(), // Cast id as String
+              'name': box['name'] as String, // Cast name as String
+            };
+          }).toList();
+
+          print(_availableBoxes);
+          if (_availableBoxes.isNotEmpty) {
+            _selectedBox = _availableBoxes[0]['id']; // Default to the first box
+          }
         });
       } else {
         print('Failed to fetch boxes: ${response.statusCode}');
@@ -86,12 +97,15 @@ class SignupPageState extends State<SignupPage> {
           'last_name': _lastNameController.text,
           'email': _emailController.text,
           'password': _passwordController.text,
-          'box_id': _selectedBox,
+          'box_id': int.parse(_selectedBox!),
         }),
       );
 
+      
+
       if (response.statusCode == 200 || response.statusCode == 201) {
         final responseData = json.decode(response.body);
+        print(responseData);
 
         final authProvider = Provider.of<AuthProvider>(context, listen: false);
         await authProvider.login(responseData['access_token']);
@@ -121,48 +135,50 @@ class SignupPageState extends State<SignupPage> {
   }
 
   void _showEULADialog() {
-  showDialog(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: const Text("End User License Agreement"),
-      content: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
-            Text(
-                "By signing up, you agree to the terms and conditions outlined in our End User License Agreement (EULA)."),
-            SizedBox(height: 10),
-            Text("Please read the full EULA carefully before proceeding."),
-          ],
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("End User License Agreement"),
+        content: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: const [
+              Text(
+                  "By signing up, you agree to the terms and conditions outlined in our End User License Agreement (EULA)."),
+              SizedBox(height: 10),
+              Text("Please read the full EULA carefully before proceeding."),
+            ],
+          ),
         ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text("Close"),
+          ),
+          TextButton(
+            onPressed: () async {
+              final Uri eulaUri = Uri.parse(
+                  'https://docs.google.com/document/d/1UVqyH0Y9Y5gqkXBscU-dw3jE3kDO-IjVPXfyBerVzXw/edit?usp=sharing'); // Replace with your actual EULA URL
+              if (await canLaunchUrl(eulaUri)) {
+                await launchUrl(
+                  eulaUri,
+                  mode: LaunchMode
+                      .externalApplication, // Opens in the default browser
+                );
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Unable to open the link')),
+                );
+              }
+            },
+            child: const Text("Read more"),
+          ),
+        ],
       ),
-      actions: [
-        TextButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          child: const Text("Close"),
-        ),
-        TextButton(
-          onPressed: () async {
-            final Uri eulaUri = Uri.parse('https://docs.google.com/document/d/1UVqyH0Y9Y5gqkXBscU-dw3jE3kDO-IjVPXfyBerVzXw/edit?usp=sharing'); // Replace with your actual EULA URL
-            if (await canLaunchUrl(eulaUri)) {
-              await launchUrl(
-                eulaUri,
-                mode: LaunchMode.externalApplication, // Opens in the default browser
-              );
-            } else {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Unable to open the link')),
-              );
-            }
-          },
-          child: const Text("Read more"),
-        ),
-      ],
-    ),
-  );
-}
+    );
+  }
 
   @override
   Widget build(BuildContext context) {

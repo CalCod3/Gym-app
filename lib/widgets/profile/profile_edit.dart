@@ -49,33 +49,40 @@ class _EditProfilePageState extends State<EditProfilePage> {
               ),
               const SizedBox(height: 20),
               ElevatedButton(
-  onPressed: () async {
-    if (_formKey.currentState!.validate()) {
-      // Ensure that all necessary fields are provided
-      final userProvider = Provider.of<UserProvider>(context, listen: false);
+                onPressed: () async {
+                  if (_formKey.currentState!.validate()) {
+                    // Ensure that all necessary fields are provided
+                    final userProvider =
+                        Provider.of<UserProvider>(context, listen: false);
 
-      // Collect the values for firstName, lastName, and email
-      final firstName = _nameController.text.split(' ')[0]; // Assuming the first name is the first part of the name
-      final lastName = _nameController.text.split(' ').length > 1 ? _nameController.text.split(' ')[1] : ''; // Assuming last name is the second part of the name
-      final email = userProvider.email ?? ''; // You may need to retrieve the current email from the provider
+                    // Collect the values for firstName, lastName, and email
+                    final firstName = _nameController.text.split(' ')[
+                        0]; // Assuming the first name is the first part of the name
+                    final lastName = _nameController.text.split(' ').length > 1
+                        ? _nameController.text.split(' ')[1]
+                        : ''; // Assuming last name is the second part of the name
+                    final email = userProvider.email ??
+                        ''; // You may need to retrieve the current email from the provider
 
-      // Call the editAccountDetails method with the required fields
-      await userProvider.editAccountDetails(
-        firstName: firstName,
-        lastName: lastName,
-        email: email,
-        profileImage: null, // Optional, pass current profile image if needed
-      );
+                    // Call the editAccountDetails method with the required fields
+                    await userProvider.editAccountDetails(
+                      firstName: firstName,
+                      lastName: lastName,
+                      email: email,
+                      profileImage:
+                          null, // Optional, pass current profile image if needed
+                    );
 
-      // Provide feedback on success
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Profile updated successfully')),
-      );
-      Navigator.pop(context); // Go back to the profile page
-    }
-  },
-  child: const Text('Save Changes'),
-),
+                    // Provide feedback on success
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content: Text('Profile updated successfully')),
+                    );
+                    Navigator.pop(context); // Go back to the profile page
+                  }
+                },
+                child: const Text('Save Changes'),
+              ),
               const SizedBox(height: 20),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
@@ -89,9 +96,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       try {
                         await userProvider.deleteAccount();
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Account deleted successfully')),
+                          const SnackBar(
+                              content: Text('Account deleted successfully')),
                         );
-                        Navigator.of(context).popUntil((route) => route.isFirst); // Return to the initial screen
+                        Navigator.of(context).popUntil((route) =>
+                            route.isFirst); // Return to the initial screen
                       } catch (e) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text('Error deleting account: $e')),
@@ -115,7 +124,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
           builder: (BuildContext context) {
             return AlertDialog(
               title: const Text('Confirm Deletion'),
-              content: const Text('Are you sure you want to delete your account? This action cannot be undone.'),
+              content: const Text(
+                  'Are you sure you want to delete your account? This action cannot be undone.'),
               actions: [
                 TextButton(
                   onPressed: () {

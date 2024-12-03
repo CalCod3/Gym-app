@@ -1,5 +1,6 @@
-// ignore_for_file: unused_field, unused_import
+// ignore_for_file: unused_field, unused_import, use_build_context_synchronously, avoid_print
 
+import 'package:WOD_Book/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'auth/auth_provider.dart';
@@ -36,6 +37,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
     // Simulate loading by completing the future after a delay
     Future.delayed(const Duration(seconds: 2), () async {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      final userProvider = Provider.of<UserProvider>(context, listen: false);
 
       // Load the token from storage (if any)
       await authProvider.loadToken();
@@ -50,10 +52,24 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
           MaterialPageRoute(builder: (context) => const LoginPage()),
         );
       } else {
-        // Navigate to the dashboard if token is valid
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => DashBoard()),
-        );
+        try {
+          // Fetch user data after token authentication
+          await userProvider.fetchUserData();
+
+          // Ensure we're still in the correct context
+          if (!mounted) return;
+
+          // Navigate to the dashboard if successful
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => DashBoard()),
+          );
+        } catch (e) {
+          print('Error fetching user data: $e'); // Debug print
+          // Navigate to login if fetching user data fails
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const LoginPage()),
+          );
+        }
       }
     });
   }

@@ -89,7 +89,7 @@ class AuthProvider with ChangeNotifier {
         _isAdmin = data['is_staff']; // Assuming the response contains 'is_staff'
         _isCoach = data['is_coach'];
         _email = data['email']; // Assuming the response contains 'email'
-        _boxId = data['bix_id'];
+        _boxId = data['box_id'];
       } else if (response.statusCode == 401) {
         // Token is invalid or expired, handle logout
         await logout();

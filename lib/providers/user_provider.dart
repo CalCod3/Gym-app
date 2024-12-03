@@ -63,9 +63,14 @@ class UserProvider with ChangeNotifier {
         final data = json.decode(response.body);
         _userId = data['id']; // Store userId
         _boxId = data['box_id']; // Store boxId if available in the response
+
+        print('User ID: $_userId'); // Debug print
+        print('Box ID: $_boxId'); // Debug print
+
         _name = data['first_name'];
         _profileImageUrl = data['profile_image'];
         _email = data['email'];
+        _boxId = data['box_id'];
 
         await fetchPaymentInfo(token);
       } else {
@@ -284,7 +289,7 @@ class UserProvider with ChangeNotifier {
 
   // Check if a user is blocked based on their ID
   Future<bool> isUserBlocked(int targetUserId) async {
-    if (_isLoading) return false;  // Prevent multiple simultaneous requests
+    if (_isLoading) return false; // Prevent multiple simultaneous requests
 
     final token = _authProvider?.token;
     if (token == null) {
@@ -292,7 +297,8 @@ class UserProvider with ChangeNotifier {
     }
 
     try {
-      final url = Uri.parse('$_baseUrl/check-block/$targetUserId'); // Endpoint for checking block status
+      final url = Uri.parse(
+          '$_baseUrl/check-block/$targetUserId'); // Endpoint for checking block status
       final response = await http.get(
         url,
         headers: {
@@ -307,13 +313,14 @@ class UserProvider with ChangeNotifier {
       } else {
         // If the user is blocked, throw an exception
         if (response.statusCode == 403) {
-          throw Exception("You have blocked this user. Access to their profile is denied.");
+          throw Exception(
+              "You have blocked this user. Access to their profile is denied.");
         }
         _handleErrorResponse(response);
         return false;
       }
     } catch (e) {
-      print('Error checking block status: $e'); 
+      print('Error checking block status: $e');
       throw Exception('An error occurred while checking block status: $e');
     }
   }

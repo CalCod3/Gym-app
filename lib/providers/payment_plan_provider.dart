@@ -7,6 +7,7 @@ import 'dart:convert';
 
 class PaymentPlanProvider with ChangeNotifier {
   final String _baseUrl;
+  int _lastGeneratedId = 0;
 
   PaymentPlanProvider() : _baseUrl = dotenv.env['API_BASE_URL']! {
     if (_baseUrl.isEmpty) {
@@ -20,7 +21,6 @@ class PaymentPlanProvider with ChangeNotifier {
   bool get isLoading => _isLoading;
   List<Map<String, dynamic>> get paymentPlans => _paymentPlans;
 
-  // Create a new payment plan
   Future<void> createPaymentPlan({
     required String planId,
     required int boxId,
@@ -32,10 +32,15 @@ class PaymentPlanProvider with ChangeNotifier {
     _isLoading = true;
     notifyListeners();
 
+    print('Creating payment plan for Box ID: $boxId'); // Debug print
+
     final baseUrl = dotenv.env['API_BASE_URL'];
     if (baseUrl == null) {
       throw Exception('Base URL is not configured in the environment.');
     }
+
+    // Generate a unique ID
+    final newId = _generateUniqueId();
 
     final url = Uri.parse('$baseUrl/payment_plans/');
     try {
@@ -46,6 +51,7 @@ class PaymentPlanProvider with ChangeNotifier {
           'Authorization': 'Bearer $token',
         },
         body: json.encode({
+          'id': newId, // Include the generated ID
           'plan_id': planId,
           'box_id': boxId,
           'amount': amount,
@@ -54,18 +60,27 @@ class PaymentPlanProvider with ChangeNotifier {
         }),
       );
 
-      if (response.statusCode == 201) {
-        // Successfully created
+      print(response.body);
+
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        print('Payment plan created successfully.'); // Debug print
       } else {
-        throw Exception('Failed to create payment plan: ${response.statusCode}');
+        throw Exception(
+            'Failed to create payment plan: ${response.statusCode}');
       }
     } catch (e) {
-      print('Error creating payment plan: $e');
-      rethrow; // Rethrow to handle it in the UI
+      print('Error creating payment plan: $e'); // Debug print
+      rethrow;
     } finally {
       _isLoading = false;
       notifyListeners();
     }
+  }
+
+  // Generates a unique, auto-incremented ID
+  int _generateUniqueId() {
+    _lastGeneratedId++;
+    return _lastGeneratedId;
   }
 
   // Fetch all payment plans
@@ -81,7 +96,8 @@ class PaymentPlanProvider with ChangeNotifier {
       );
 
       if (response.statusCode == 200) {
-        _paymentPlans = List<Map<String, dynamic>>.from(json.decode(response.body));
+        _paymentPlans =
+            List<Map<String, dynamic>>.from(json.decode(response.body));
       } else {
         _handleErrorResponse(response);
       }
@@ -142,6 +158,7 @@ class PaymentPlanProvider with ChangeNotifier {
   // Handle non-200/201 error responses
   void _handleErrorResponse(http.Response response) {
     print('Request failed: ${response.statusCode} - ${response.body}');
-    throw Exception('Failed request with status code ${response.statusCode}: ${response.body}');
+    throw Exception(
+        'Failed request with status code ${response.statusCode}: ${response.body}');
   }
 }

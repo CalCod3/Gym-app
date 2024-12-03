@@ -191,7 +191,7 @@ class PostProvider with ChangeNotifier {
       }),
     );
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 || response.statusCode == 201) {
       // Handle success
       print('Post reported successfully');
     } else {

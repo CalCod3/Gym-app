@@ -122,7 +122,7 @@ class GroupWorkoutProvider with ChangeNotifier {
         }),
       );
 
-      if (response.statusCode == 201) {
+      if (response.statusCode == 201 || response.statusCode == 200) {
         // Successfully created
         GroupWorkout groupWorkout = GroupWorkout.fromJson(json.decode(response.body));
         Provider.of<ScheduleProvider>(context, listen: false).createAndAddGroupWorkout(
