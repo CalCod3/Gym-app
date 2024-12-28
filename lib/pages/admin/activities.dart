@@ -39,8 +39,8 @@ class ActivityListScreen extends StatelessWidget {
                           height: 50,
                           fit: BoxFit.cover,
                         ),
-                  title: Text(activity.value),
-                  subtitle: Text(activity.title),
+                  title: Text(activity.value!),
+                  subtitle: Text(activity.title!),
                   onTap: () {
                     // Navigate to activity detail screen if needed
                   },

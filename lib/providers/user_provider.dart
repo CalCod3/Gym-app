@@ -11,6 +11,7 @@ class UserProvider with ChangeNotifier {
   int? _userId;
   int? _boxId; // Assuming you have a way to get/set boxId
   String? _name;
+  String? _lastname;
   String? _profileImageUrl;
   bool _isMembershipActive = false;
   DateTime? _membershipExpiryDate;
@@ -35,6 +36,7 @@ class UserProvider with ChangeNotifier {
   int? get userId => _userId;
   int? get boxId => _boxId;
   String? get name => _name;
+  String? get lastname => _lastname;
   String? get profileImageUrl => _profileImageUrl;
   bool get isMembershipActive => _isMembershipActive;
   DateTime? get membershipExpiryDate => _membershipExpiryDate;
@@ -68,6 +70,7 @@ class UserProvider with ChangeNotifier {
         print('Box ID: $_boxId'); // Debug print
 
         _name = data['first_name'];
+        _lastname = data['last_name'];
         _profileImageUrl = data['profile_image'];
         _email = data['email'];
         _boxId = data['box_id'];
@@ -142,7 +145,7 @@ class UserProvider with ChangeNotifier {
 
     try {
       final url = Uri.parse(
-          '$_baseUrl/athletes/$athleteId'); // Use the current user's ID
+          '$_baseUrl/admin/athletes/$athleteId'); // Use the current user's ID
       final response = await http.put(
         url,
         headers: {
@@ -150,6 +153,7 @@ class UserProvider with ChangeNotifier {
           'Content-Type': 'application/json',
         },
         body: json.encode({
+          'id': athleteId,
           'first_name': firstName,
           'last_name': lastName,
           'email': email,

@@ -1,17 +1,17 @@
 // model/activity_model.dart
 class ActivityModel {
   String? image;
-  final String value;
-  final String title;
-  final String description;
-  final String type;
+  final String? value;
+  final String? title;
+  final String? description;
+  final String? type;
 
   ActivityModel({
     this.image,
-    required this.value,
-    required this.title,
-    required this.description,
-    required this.type
+    this.value,
+    this.title,
+    this.description,
+    this.type
   });
 
   factory ActivityModel.fromJson(Map<String, dynamic> json) {

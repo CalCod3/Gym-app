@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/user_provider.dart';
 
+
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({super.key});
 
@@ -13,13 +14,17 @@ class EditProfilePage extends StatefulWidget {
 
 class _EditProfilePageState extends State<EditProfilePage> {
   final _formKey = GlobalKey<FormState>();
-  late TextEditingController _nameController;
+  late TextEditingController _firstNameController;
+  late TextEditingController _lastNameController;
+  late TextEditingController _emailController;
 
   @override
   void initState() {
     super.initState();
     final userProvider = Provider.of<UserProvider>(context, listen: false);
-    _nameController = TextEditingController(text: userProvider.name ?? '');
+    _firstNameController = TextEditingController(text: userProvider.name?.split(' ').first ?? '');
+    _lastNameController = TextEditingController(text: userProvider.lastname?.split(' ').last ?? '');
+    _emailController = TextEditingController(text: userProvider.email ?? '');
   }
 
   @override
@@ -38,11 +43,33 @@ class _EditProfilePageState extends State<EditProfilePage> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               TextFormField(
-                controller: _nameController,
-                decoration: const InputDecoration(labelText: 'Name'),
+                controller: _firstNameController,
+                decoration: const InputDecoration(labelText: 'First Name'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Name cannot be empty';
+                    return 'First name cannot be empty';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _lastNameController,
+                decoration: const InputDecoration(labelText: 'Last Name'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Last name cannot be empty';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _emailController,
+                decoration: const InputDecoration(labelText: 'Email'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Email cannot be empty';
                   }
                   return null;
                 },
@@ -51,34 +78,27 @@ class _EditProfilePageState extends State<EditProfilePage> {
               ElevatedButton(
                 onPressed: () async {
                   if (_formKey.currentState!.validate()) {
-                    // Ensure that all necessary fields are provided
-                    final userProvider =
-                        Provider.of<UserProvider>(context, listen: false);
+                    final firstName = _firstNameController.text;
+                    final lastName = _lastNameController.text;
+                    final email = _emailController.text;
 
-                    // Collect the values for firstName, lastName, and email
-                    final firstName = _nameController.text.split(' ')[
-                        0]; // Assuming the first name is the first part of the name
-                    final lastName = _nameController.text.split(' ').length > 1
-                        ? _nameController.text.split(' ')[1]
-                        : ''; // Assuming last name is the second part of the name
-                    final email = userProvider.email ??
-                        ''; // You may need to retrieve the current email from the provider
+                    try {
+                      await userProvider.editAccountDetails(
+                        firstName: firstName,
+                        lastName: lastName,
+                        email: email,
+                        profileImage: null,
+                      );
 
-                    // Call the editAccountDetails method with the required fields
-                    await userProvider.editAccountDetails(
-                      firstName: firstName,
-                      lastName: lastName,
-                      email: email,
-                      profileImage:
-                          null, // Optional, pass current profile image if needed
-                    );
-
-                    // Provide feedback on success
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content: Text('Profile updated successfully')),
-                    );
-                    Navigator.pop(context); // Go back to the profile page
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Profile updated successfully')),
+                      );
+                      Navigator.pop(context);
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Error updating profile: $e')),
+                      );
+                    }
                   }
                 },
                 child: const Text('Save Changes'),
@@ -149,7 +169,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   @override
   void dispose() {
-    _nameController.dispose();
+    _firstNameController.dispose();
+    _lastNameController.dispose();
+    _emailController.dispose();
     super.dispose();
   }
 }

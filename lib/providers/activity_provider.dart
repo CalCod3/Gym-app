@@ -31,6 +31,8 @@ class ActivityProvider with ChangeNotifier {
     try {
       final response = await http.get(Uri.parse('$_baseUrl/activities/'));
 
+      print(response.body);
+
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
 
@@ -58,6 +60,8 @@ class ActivityProvider with ChangeNotifier {
   try {
     // Step 1: Upload the image and get the image URL
     String? imageUrl = await uploadImage(image);
+
+    print(imageUrl);
     
     if (imageUrl == null) {
       throw Exception('Failed to upload image.');
@@ -73,10 +77,10 @@ class ActivityProvider with ChangeNotifier {
       body: json.encode(activity.toJson()),  // Include image URL in the activity data
     );
 
-    if (response.statusCode == 201) {
+    if (response.statusCode == 201 || response.statusCode == 200) {
       await fetchActivities();  // Refresh activities after creation
     } else {
-      throw Exception('Failed to create activity: ${response.reasonPhrase}');
+      throw Exception('Failed to create activity: ${response.body}');
     }
   } catch (e) {
     print('Error creating activity: $e');

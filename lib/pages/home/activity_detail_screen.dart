@@ -11,7 +11,7 @@ class ActivityDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(activity.title),
+        title: Text(activity.title!),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -33,12 +33,12 @@ class ActivityDetailScreen extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             Text(
-              activity.value,
+              activity.value!,
               style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),
             Text(
-              activity.description, // Default message for null description
+              activity.description!, // Default message for null description
               style: const TextStyle(fontSize: 16),
             ),
           ],

@@ -76,7 +76,7 @@ class _ActivityDetailsCardState extends State<ActivityDetailsCard> {
                       Padding(
                         padding: const EdgeInsets.only(top: 15, bottom: 4),
                         child: Text(
-                          activity.value,
+                          activity.value!,
                           style: const TextStyle(
                             fontSize: 18,
                             color: Colors.white,
@@ -85,7 +85,7 @@ class _ActivityDetailsCardState extends State<ActivityDetailsCard> {
                         ),
                       ),
                       Text(
-                        activity.title,
+                        activity.title!,
                         style: const TextStyle(
                           fontSize: 13,
                           color: Colors.grey,
