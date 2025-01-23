@@ -9,8 +9,8 @@ import '../../pages/payments/payment_plans.dart';
 import '../../providers/user_provider.dart';
 
 // ignore: must_be_immutable
-class Profile extends StatelessWidget {
-  Profile({super.key});
+class ProfilePage extends StatelessWidget {
+  ProfilePage({super.key});
 
   Future<void>? _fetchUserDataFuture;
 
@@ -21,6 +21,15 @@ class Profile extends StatelessWidget {
     _fetchUserDataFuture ??= userProvider.fetchUserData();
 
     return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context); // Go back to the previous page
+          },
+        ),
+        title: const Text("Profile"),
+      ),
       body: FutureBuilder(
         future: _fetchUserDataFuture,
         builder: (context, snapshot) {
@@ -34,10 +43,8 @@ class Profile extends StatelessWidget {
               height: MediaQuery.of(context).size.height,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.only(
-                  bottomLeft:
-                      Radius.circular(Responsive.isMobile(context) ? 10 : 30.0),
-                  topLeft:
-                      Radius.circular(Responsive.isMobile(context) ? 10 : 30.0),
+                  bottomLeft: Radius.circular(Responsive.isMobile(context) ? 10 : 30.0),
+                  topLeft: Radius.circular(Responsive.isMobile(context) ? 10 : 30.0),
                 ),
                 color: cardBackgroundColor,
               ),
@@ -52,12 +59,9 @@ class Profile extends StatelessWidget {
                           return userProvider.profileImageUrl != null
                               ? Image.network(userProvider.profileImageUrl!)
                               : Icon(
-                                  Icons
-                                      .account_circle_outlined, // Use the account_circle_outlined icon
-                                  size:
-                                      50.0, // Set the size of the icon (you can adjust it as needed)
-                                  color: Colors
-                                      .grey, // Set the color of the icon (you can adjust it as needed)
+                                  Icons.account_circle_outlined,
+                                  size: 50.0,
+                                  color: Colors.grey,
                                 );
                         },
                       ),
@@ -66,8 +70,7 @@ class Profile extends StatelessWidget {
                         builder: (context, userProvider, child) {
                           return Text(
                             userProvider.name ?? "Unknown",
-                            style: const TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.w600),
+                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                           );
                         },
                       ),
@@ -77,8 +80,7 @@ class Profile extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  EditProfilePage(), // Replace with your actual Profile Edit Screen
+                              builder: (context) => EditProfilePage(),
                             ),
                           );
                         },
@@ -91,8 +93,7 @@ class Profile extends StatelessWidget {
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.all(
-                            Responsive.isMobile(context) ? 15 : 20.0),
+                        padding: EdgeInsets.all(Responsive.isMobile(context) ? 15 : 20.0),
                         child: const WeightHeightBloodCard(),
                       ),
                       const SizedBox(height: 20),
@@ -108,8 +109,7 @@ class Profile extends StatelessWidget {
                         builder: (context, userProvider, child) {
                           return Text(
                             userProvider.name ?? "Unknown",
-                            style: const TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.w600),
+                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                           );
                         },
                       ),
@@ -124,8 +124,7 @@ class Profile extends StatelessWidget {
     );
   }
 
-  Widget _buildMembershipStatus(
-      BuildContext context, UserProvider userProvider) {
+  Widget _buildMembershipStatus(BuildContext context, UserProvider userProvider) {
     String membershipStatus = userProvider.isMembershipActive
         ? 'Membership Status: Active'
         : 'Membership Status: Inactive';

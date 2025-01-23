@@ -4,12 +4,11 @@ import 'package:WOD_Book/pages/schedule/calendar.dart';
 import 'package:WOD_Book/pages/schedule/classes.dart';
 import 'package:flutter/material.dart';
 import 'package:WOD_Book/pages/admin/communications.dart';
-import 'package:WOD_Book/pages/home/home_page.dart';
 import 'package:WOD_Book/pages/social/posts.dart';
 import 'package:WOD_Book/responsive.dart';
 import 'package:WOD_Book/model/menu_modal.dart';
 import 'package:WOD_Book/pages/leaderboard/leaderboard.dart';
-import 'package:WOD_Book/widgets/profile/profile.dart';
+import 'package:WOD_Book/widgets/profile/profilepage.dart';
 import 'package:WOD_Book/auth/login_page.dart'; // Assume you handle signout via login page
 import 'package:WOD_Book/auth/auth_provider.dart';
 import 'package:provider/provider.dart';
@@ -100,12 +99,13 @@ class _MenuState extends State<Menu> {
       MenuModel(
         icon: Icons.dashboard,
         title: "Dashboard",
-        route: HomePage(scaffoldKey: widget.scaffoldKey),
+        // Add a flag or custom logic to indicate this item should only close the drawer
+        isDashboard: true,
       ),
       MenuModel(
         icon: Icons.person,
         title: "Profile",
-        route: Profile(),
+        route: ProfilePage(),
       ),
       MenuModel(
         icon: Icons.calendar_today,
@@ -160,8 +160,17 @@ class _MenuState extends State<Menu> {
           ),
         ),
         onTap: () {
+          // Close the drawer
+          widget.scaffoldKey.currentState!.closeDrawer();
+
+          // Handle the "Dashboard" case
+          if (menuItem.isDashboard == true) {
+            // Do nothing else, just close the drawer
+            return;
+          }
+
+          // Navigate to the route for other items
           if (menuItem.route != null) {
-            widget.scaffoldKey.currentState!.closeDrawer();
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => menuItem.route!),

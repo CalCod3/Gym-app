@@ -142,6 +142,12 @@ class MyApp extends StatelessWidget {
           fontFamily: 'IBMPlexSans',
           brightness: Brightness.dark,
         ),
+        builder: (context, child) {
+          return Directionality(
+            textDirection: TextDirection.ltr, // Ensure text renders correctly
+            child: child!,
+          );
+        },
         home: const SplashScreen(),
       ),
     );

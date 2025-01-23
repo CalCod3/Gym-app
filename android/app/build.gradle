@@ -53,12 +53,22 @@ android {
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }
+    signingConfigs {
+        release {
+            storeFile file("C:/Users/user/Desktop/dev/FitBox/Gym-app/UsersuserDesktopdevFitBox.keystore")
+            storePassword "data123"
+            keyAlias "WODBOOK"
+            keyPassword "data123"
+        }
+    }
 
     buildTypes {
         release {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
+            shrinkResources true
+            minifyEnabled true
         }
     }
 }

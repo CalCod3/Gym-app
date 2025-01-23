@@ -62,12 +62,14 @@ class UserProvider with ChangeNotifier {
       });
 
       if (response.statusCode == 200) {
-        final data = json.decode(response.body);
+        final data = json.decode(utf8.decode(response.bodyBytes));
         _userId = data['id']; // Store userId
         _boxId = data['box_id']; // Store boxId if available in the response
 
         print('User ID: $_userId'); // Debug print
         print('Box ID: $_boxId'); // Debug print
+        print('Name: $_name'); // Debug print
+
 
         _name = data['first_name'];
         _lastname = data['last_name'];
@@ -166,6 +168,7 @@ class UserProvider with ChangeNotifier {
         _name = data['first_name'];
         _profileImageUrl = data['profile_image'];
         notifyListeners();
+        fetchUserData();
       } else {
         _handleErrorResponse(response);
       }
@@ -240,7 +243,7 @@ class UserProvider with ChangeNotifier {
       });
 
       if (response.statusCode == 200) {
-        final data = json.decode(response.body);
+        final data = json.decode(utf8.decode(response.bodyBytes));
         _members = (data as List)
             .map((item) => UserWithPaymentStatus.fromJson(item))
             .toList();
