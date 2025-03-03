@@ -1,5 +1,6 @@
 // model/schedule_model.dart
 class Schedule {
+  final int id;
   final String title;
   final String description;
   final DateTime startTime;
@@ -7,7 +8,7 @@ class Schedule {
   final String type;
 
   Schedule({
-    required int id,
+    required this.id,
     required this.title,
     required this.description,
     required this.startTime,

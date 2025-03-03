@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 
+import 'package:WOD_Book/widgets/profile/password_reset.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
@@ -122,6 +123,14 @@ class LoginPageState extends State<LoginPage> {
                           );
                         },
                         child: const Text('Don\'t have an account? Register'),
+                      ),
+                      TextButton(
+                        onPressed: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const PasswordResetPage()),
+                        ),
+                        child: const Text('Forgot Password?'),
                       ),
                     ],
                   ),

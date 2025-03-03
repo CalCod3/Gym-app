@@ -179,6 +179,36 @@ class ScheduleProvider with ChangeNotifier {
     }
   }
 
+  Future<void> enrollUser({
+    required String token,
+    required int userId,
+    required int scheduleId,
+  }) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$_baseUrl/enroll/'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: json.encode({
+          'user_id': userId,
+          'schedule_id': scheduleId,
+        }),
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception(
+              "Enrollment failed");
+        }
+        _handleErrorResponse(response);
+        notifyListeners();
+    } catch (e) {
+      print('Error: $e');
+      throw Exception('An error occurred: $e');
+    }
+  }
+
   // Create and add a new group workout
   Future<bool> createAndAddGroupWorkout(
     String token,

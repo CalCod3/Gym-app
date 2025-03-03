@@ -1,10 +1,14 @@
 // ignore_for_file: avoid_print
 
+import 'package:path/path.dart' as path;
+import 'package:mime/mime.dart';
 import 'package:flutter/material.dart';
 import 'package:WOD_Book/auth/auth_provider.dart';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'dart:io';
 
 class UserProvider with ChangeNotifier {
   AuthProvider? _authProvider;
@@ -169,6 +173,7 @@ class UserProvider with ChangeNotifier {
         _profileImageUrl = data['profile_image'];
         notifyListeners();
         fetchUserData();
+        print(data);
       } else {
         _handleErrorResponse(response);
       }
@@ -329,6 +334,100 @@ class UserProvider with ChangeNotifier {
     } catch (e) {
       print('Error checking block status: $e');
       throw Exception('An error occurred while checking block status: $e');
+    }
+  }
+
+  Future<void> requestPasswordReset(String email) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$_baseUrl/request-password-reset/'),
+        body: json.encode({'email': email}),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception(
+              "Password reset request failed");
+        }
+        _handleErrorResponse(response);
+    } catch (e) {
+      print('Error: $e');
+      throw Exception('An error occurred: $e');
+    }
+  }
+
+  Future<String?> uploadImage(File image) async {
+    _setLoading(true);  // Show loading spinner during upload
+    final mimeType = lookupMimeType(image.path);
+    if (mimeType == null) {
+      _setLoading(false);  // Hide loading spinner in case of an error
+      throw Exception('Cannot determine the MIME type of the image.');
+    }
+
+    final request = http.MultipartRequest(
+      'POST',
+      Uri.parse('$_baseUrl/upload'),
+    );
+
+    try {
+      request.files.add(
+        http.MultipartFile(
+          'file',
+          image.readAsBytes().asStream(),
+          image.lengthSync(),
+          filename: path.basename(image.path),
+          contentType: MediaType.parse(mimeType),
+        ),
+      );
+
+      final response = await request.send();
+
+      if (response.statusCode == 200) {
+        final responseData = await response.stream.bytesToString();
+        final decodedResponse = json.decode(responseData);
+
+        // Validate response data
+        if (decodedResponse['url'] == null) {
+          _setLoading(false);  // Hide loading spinner
+          throw Exception('Failed to parse uploaded image URL from response.');
+        }
+
+        return decodedResponse['url'];
+      } else {
+        _setLoading(false);  // Hide loading spinner
+        throw Exception('Failed to upload image: ${response.reasonPhrase}');
+      }
+    } catch (e) {
+      print('Error uploading image: $e');
+      _setLoading(false);  // Hide loading spinner
+      throw Exception('An error occurred while uploading image: $e');
+    } finally {
+      _setLoading(false);  // Hide loading spinner
+    }
+  }
+
+  Future<void> resetPassword({
+    required String token,
+    required String newPassword,
+  }) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$_baseUrl/reset-password/'),
+        body: json.encode({
+          'token': token,
+          'new_password': newPassword,
+        }),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception(
+              "Password reset failed");
+        }
+        _handleErrorResponse(response);
+    } catch (e) {
+      print('Error: $e');
+      throw Exception('An error occurred: $e');
     }
   }
 

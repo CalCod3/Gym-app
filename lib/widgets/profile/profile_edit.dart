@@ -1,9 +1,10 @@
 // ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously
 
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import '../../providers/user_provider.dart';
-
 
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({super.key});
@@ -17,6 +18,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   late TextEditingController _firstNameController;
   late TextEditingController _lastNameController;
   late TextEditingController _emailController;
+  String? _profileImageUrl;
 
   @override
   void initState() {
@@ -25,6 +27,28 @@ class _EditProfilePageState extends State<EditProfilePage> {
     _firstNameController = TextEditingController(text: userProvider.name?.split(' ').first ?? '');
     _lastNameController = TextEditingController(text: userProvider.lastname?.split(' ').last ?? '');
     _emailController = TextEditingController(text: userProvider.email ?? '');
+    _profileImageUrl = userProvider.profileImageUrl;
+  }
+
+  Future<void> _pickAndUploadImage() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile == null) return;
+
+    File imageFile = File(pickedFile.path);
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    try {
+      String? imageUrl = await userProvider.uploadImage(imageFile);
+      if (imageUrl != null) {
+        setState(() {
+          _profileImageUrl = imageUrl;
+        });
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error uploading image: $e')),
+      );
+    }
   }
 
   @override
@@ -42,6 +66,19 @@ class _EditProfilePageState extends State<EditProfilePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              GestureDetector(
+                onTap: _pickAndUploadImage,
+                child: CircleAvatar(
+                  radius: 50,
+                  backgroundImage: _profileImageUrl != null
+                      ? NetworkImage(_profileImageUrl!)
+                      : null,
+                  child: _profileImageUrl == null
+                      ? const Icon(Icons.person, size: 50)
+                      : null,
+                ),
+              ),
+              const SizedBox(height: 20),
               TextFormField(
                 controller: _firstNameController,
                 decoration: const InputDecoration(labelText: 'First Name'),
@@ -87,7 +124,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         firstName: firstName,
                         lastName: lastName,
                         email: email,
-                        profileImage: null,
+                        profileImage: _profileImageUrl,
                       );
 
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -103,68 +140,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 },
                 child: const Text('Save Changes'),
               ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                ),
-                onPressed: () async {
-                  final confirmDelete = await _confirmDelete(context);
-                  if (confirmDelete) {
-                    final secondConfirm = await _confirmDelete(context);
-                    if (secondConfirm) {
-                      try {
-                        await userProvider.deleteAccount();
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text('Account deleted successfully')),
-                        );
-                        Navigator.of(context).popUntil((route) =>
-                            route.isFirst); // Return to the initial screen
-                      } catch (e) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Error deleting account: $e')),
-                        );
-                      }
-                    }
-                  }
-                },
-                child: const Text('Delete Account'),
-              ),
             ],
           ),
         ),
       ),
     );
-  }
-
-  Future<bool> _confirmDelete(BuildContext context) async {
-    return await showDialog<bool>(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text('Confirm Deletion'),
-              content: const Text(
-                  'Are you sure you want to delete your account? This action cannot be undone.'),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop(false);
-                  },
-                  child: const Text('Cancel'),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).pop(true);
-                  },
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                  child: const Text('Delete'),
-                ),
-              ],
-            );
-          },
-        ) ??
-        false;
   }
 
   @override

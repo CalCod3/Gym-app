@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print, library_private_types_in_public_api, unused_field
+// ignore_for_file: avoid_print, library_private_types_in_public_api, unused_field, use_build_context_synchronously
 
 import 'package:WOD_Book/auth/auth_provider.dart';
 import 'package:WOD_Book/model/schedule_model.dart';
@@ -189,10 +189,46 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   style: TextStyle(fontSize: 12), // Make subtitle smaller
                 ),
                 tileColor: _getEventColor(eventType),
+                trailing: ElevatedButton(
+                  onPressed: () => _handleEnrollment(context, e.id),
+                  child: const Text('Enroll'),
+                )
               )),
         ],
       ),
     );
+  }
+
+  Future<void> _handleEnrollment(BuildContext context, int scheduleId) async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final scheduleProvider = Provider.of<ScheduleProvider>(context, listen: false);
+
+    if (authProvider.userId == null) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Please login to enroll')),
+    );
+    return;
+  }
+
+    try {
+      final token = authProvider.getToken();
+      if (token == null) throw Exception('Not authenticated');
+
+      // Call enrollment through the provider
+      await scheduleProvider.enrollUser(
+        token: token,
+        userId: authProvider.userId!,
+        scheduleId: scheduleId,
+      );
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Successfully enrolled!')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString())),
+      );
+    }
   }
 
   Color _getEventColor(String eventType) {

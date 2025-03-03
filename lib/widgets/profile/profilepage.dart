@@ -1,4 +1,4 @@
-import 'package:WOD_Book/widgets/profile/profile_edit.dart';
+import 'package:WOD_Book/widgets/profile/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:WOD_Book/responsive.dart';
 import 'package:WOD_Book/const.dart';
@@ -74,22 +74,37 @@ class ProfilePage extends StatelessWidget {
                           );
                         },
                       ),
-                      const SizedBox(height: 2),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => EditProfilePage(),
+                      const SizedBox(height: 15),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Consumer<UserProvider>(
+                              builder: (context, userProvider, child) {
+                                return Text(
+                                  userProvider.name ?? "Unknown",
+                                  style: const TextStyle(
+                                      fontSize: 16, 
+                                      fontWeight: FontWeight.w600),
+                                );
+                              },
                             ),
-                          );
-                        },
-                        child: Text(
-                          "Edit Profile details",
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Theme.of(context).primaryColor,
-                          ),
+                            IconButton(
+                              icon: Icon(
+                                Icons.settings,
+                                color: Theme.of(context).primaryColor,
+                              ),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const SettingsPage(),
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
                         ),
                       ),
                       Padding(

@@ -1,4 +1,4 @@
-import 'package:WOD_Book/widgets/profile/profile_edit.dart';
+import 'package:WOD_Book/widgets/profile/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:WOD_Book/responsive.dart';
 import 'package:WOD_Book/const.dart';
@@ -9,17 +9,29 @@ import '../../pages/payments/payment_plans.dart';
 import '../../providers/user_provider.dart';
 
 // ignore: must_be_immutable
-class Profile extends StatelessWidget {
-  Profile({super.key});
+// Modified Profile widget
+class Profile extends StatefulWidget {
+  const Profile({super.key});
 
-  Future<void>? _fetchUserDataFuture;
+  @override
+  State<Profile> createState() => _ProfileState();
+}
+
+class _ProfileState extends State<Profile> {
+  late Future<void> _fetchUserDataFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    final userProvider = Provider.of<UserProvider>(
+      context,
+      listen: false,
+    );
+    _fetchUserDataFuture = userProvider.fetchUserData();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final userProvider = Provider.of<UserProvider>(context, listen: false);
-
-    _fetchUserDataFuture ??= userProvider.fetchUserData();
-
     return Scaffold(
       body: FutureBuilder(
         future: _fetchUserDataFuture,
@@ -29,7 +41,6 @@ class Profile extends StatelessWidget {
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else {
-            print(userProvider.name);
             return Container(
               height: MediaQuery.of(context).size.height,
               decoration: BoxDecoration(
@@ -52,42 +63,43 @@ class Profile extends StatelessWidget {
                           return userProvider.profileImageUrl != null
                               ? Image.network(userProvider.profileImageUrl!)
                               : Icon(
-                                  Icons
-                                      .account_circle_outlined, // Use the account_circle_outlined icon
-                                  size:
-                                      50.0, // Set the size of the icon (you can adjust it as needed)
-                                  color: Colors
-                                      .grey, // Set the color of the icon (you can adjust it as needed)
+                                  Icons.account_circle_outlined,
+                                  size: 50.0,
+                                  color: Colors.grey,
                                 );
                         },
                       ),
                       const SizedBox(height: 15),
-                      Consumer<UserProvider>(
-                        builder: (context, userProvider, child) {
-                          return Text(
-                            userProvider.name ?? "Unknown",
-                            style: const TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.w600),
-                          );
-                        },
-                      ),
-                      const SizedBox(height: 2),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  EditProfilePage(), // Replace with your actual Profile Edit Screen
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Consumer<UserProvider>(
+                              builder: (context, userProvider, child) {
+                                return Text(
+                                  userProvider.name ?? "Unknown",
+                                  style: const TextStyle(
+                                      fontSize: 16, 
+                                      fontWeight: FontWeight.w600),
+                                );
+                              },
                             ),
-                          );
-                        },
-                        child: Text(
-                          "Edit Profile details",
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Theme.of(context).primaryColor,
-                          ),
+                            IconButton(
+                              icon: Icon(
+                                Icons.settings,
+                                color: Theme.of(context).primaryColor,
+                              ),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const SettingsPage(),
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
                         ),
                       ),
                       Padding(
@@ -103,16 +115,6 @@ class Profile extends StatelessWidget {
                       ),
                       const SizedBox(height: 20),
                       const Scheduled(),
-                      const SizedBox(height: 15),
-                      Consumer<UserProvider>(
-                        builder: (context, userProvider, child) {
-                          return Text(
-                            userProvider.name ?? "Unknown",
-                            style: const TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.w600),
-                          );
-                        },
-                      ),
                     ],
                   ),
                 ),
