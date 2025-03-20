@@ -1,6 +1,6 @@
 // ignore_for_file: avoid_print
 
-import 'package:WOD_Book/auth/auth_provider.dart';
+import 'package:wod_book/auth/auth_provider.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';

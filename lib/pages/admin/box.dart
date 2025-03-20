@@ -1,4 +1,4 @@
-import 'package:WOD_Book/pages/admin/box_edit.dart';
+import 'package:wod_book/pages/admin/box_edit.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/box_provider.dart';

@@ -1,10 +1,10 @@
 // ignore_for_file: library_private_types_in_public_api, avoid_print
 
-import 'package:WOD_Book/providers/attendance_provider.dart';
+import 'package:wod_book/providers/attendance_provider.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:WOD_Book/responsive.dart';
-import 'package:WOD_Book/widgets/custom_card.dart';
+import 'package:wod_book/responsive.dart';
+import 'package:wod_book/widgets/custom_card.dart';
 
 class LineChartCard extends StatefulWidget {
   const LineChartCard({super.key});
@@ -52,7 +52,8 @@ class _LineChartCardState extends State<LineChartCard> {
     final attendanceProvider = AttendanceProvider();
     try {
       final attendanceData = await attendanceProvider.fetchAttendanceData(
-        DateTime.now().subtract(const Duration(days: 30)), // Example range: last 30 days
+        DateTime.now()
+            .subtract(const Duration(days: 30)), // Example range: last 30 days
         DateTime.now(),
       );
 
@@ -105,8 +106,8 @@ class _LineChartCardState extends State<LineChartCard> {
                               // Format bottom title (X-axis: month)
                               return bottomTitle[value.toInt()] != null
                                   ? SideTitleWidget(
-                                      axisSide: meta.axisSide,
                                       space: 10,
+                                      meta: meta,
                                       child: Text(
                                         bottomTitle[value.toInt()].toString(),
                                         style: TextStyle(
@@ -135,8 +136,9 @@ class _LineChartCardState extends State<LineChartCard> {
                                   ? Text(
                                       leftTitle[value.toInt()].toString(),
                                       style: TextStyle(
-                                        fontSize:
-                                            Responsive.isMobile(context) ? 9 : 12,
+                                        fontSize: Responsive.isMobile(context)
+                                            ? 9
+                                            : 12,
                                         color: Colors.grey[400],
                                       ),
                                     )
@@ -166,9 +168,8 @@ class _LineChartCardState extends State<LineChartCard> {
                               ],
                             ),
                             show: true,
-                            color: Theme.of(context)
-                                .primaryColor
-                                .withOpacity(0.5),
+                            color:
+                                Theme.of(context).primaryColor.withOpacity(0.5),
                           ),
                           dotData: const FlDotData(show: false),
                           spots: spots,
@@ -177,7 +178,7 @@ class _LineChartCardState extends State<LineChartCard> {
                       minX: 0,
                       maxX: 120, // Adjust based on your range of days
                       maxY: 105, // Adjust max Y-value if needed
-                      minY: -5,  // Adjust min Y-value if needed
+                      minY: -5, // Adjust min Y-value if needed
                     ),
                   ),
           ),

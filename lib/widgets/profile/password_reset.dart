@@ -1,11 +1,11 @@
 // password_reset_page.dart
 // ignore_for_file: use_build_context_synchronously
 
-import 'package:WOD_Book/auth/auth_provider.dart';
-import 'package:WOD_Book/auth/login_page.dart';
+import 'package:wod_book/auth/auth_provider.dart';
+import 'package:wod_book/auth/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:WOD_Book/providers/user_provider.dart';
+import 'package:wod_book/providers/user_provider.dart';
 
 class PasswordResetPage extends StatefulWidget {
   const PasswordResetPage({super.key});

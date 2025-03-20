@@ -1,10 +1,10 @@
 // pages/activity_details_card.dart
 // ignore_for_file: library_private_types_in_public_api
 
-import 'package:WOD_Book/pages/home/activity_detail_screen.dart';
-import 'package:WOD_Book/providers/activity_provider.dart';
-import 'package:WOD_Book/responsive.dart';
-import 'package:WOD_Book/widgets/custom_card.dart';
+import 'package:wod_book/pages/home/activity_detail_screen.dart';
+import 'package:wod_book/providers/activity_provider.dart';
+import 'package:wod_book/responsive.dart';
+import 'package:wod_book/widgets/custom_card.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

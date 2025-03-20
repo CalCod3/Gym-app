@@ -3,7 +3,7 @@
 import 'package:path/path.dart' as path;
 import 'package:mime/mime.dart';
 import 'package:flutter/material.dart';
-import 'package:WOD_Book/auth/auth_provider.dart';
+import 'package:wod_book/auth/auth_provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'dart:convert';

@@ -1,6 +1,6 @@
 // ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously, avoid_print
 
-import 'package:WOD_Book/services/moderation_service.dart';
+import 'package:wod_book/services/moderation_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/post_provider.dart';

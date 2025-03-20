@@ -1,9 +1,9 @@
-import 'package:WOD_Book/widgets/profile/settings.dart';
+import 'package:wod_book/widgets/profile/settings.dart';
 import 'package:flutter/material.dart';
-import 'package:WOD_Book/responsive.dart';
-import 'package:WOD_Book/const.dart';
-import 'package:WOD_Book/widgets/profile/widgets/scheduled.dart';
-import 'package:WOD_Book/widgets/profile/widgets/weightHeightBloodCard.dart';
+import 'package:wod_book/responsive.dart';
+import 'package:wod_book/const.dart';
+import 'package:wod_book/widgets/profile/widgets/scheduled.dart';
+import 'package:wod_book/widgets/profile/widgets/weightHeightBloodCard.dart';
 import 'package:provider/provider.dart';
 import '../../pages/payments/payment_plans.dart';
 import '../../providers/user_provider.dart';

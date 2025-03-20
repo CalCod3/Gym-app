@@ -1,7 +1,7 @@
 // ignore_for_file: avoid_print, library_private_types_in_public_api, unused_field, use_build_context_synchronously
 
-import 'package:WOD_Book/auth/auth_provider.dart';
-import 'package:WOD_Book/model/schedule_model.dart';
+import 'package:wod_book/auth/auth_provider.dart';
+import 'package:wod_book/model/schedule_model.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';

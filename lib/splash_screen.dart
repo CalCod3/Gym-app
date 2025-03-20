@@ -1,6 +1,6 @@
 // ignore_for_file: unused_field, unused_import, use_build_context_synchronously, avoid_print
 
-import 'package:WOD_Book/providers/user_provider.dart';
+import 'package:wod_book/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'auth/auth_provider.dart';

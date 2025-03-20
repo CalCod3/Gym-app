@@ -1,8 +1,8 @@
 // ignore_for_file: avoid_print, library_private_types_in_public_api
 
-import 'package:WOD_Book/pages/social/challenge.dart';
-import 'package:WOD_Book/providers/post_provider.dart';
-import 'package:WOD_Book/providers/user_provider.dart';
+import 'package:wod_book/pages/social/challenge.dart';
+import 'package:wod_book/providers/post_provider.dart';
+import 'package:wod_book/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

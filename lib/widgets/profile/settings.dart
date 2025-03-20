@@ -1,10 +1,10 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'package:WOD_Book/widgets/profile/password_reset.dart';
+import 'package:wod_book/widgets/profile/password_reset.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:WOD_Book/providers/user_provider.dart';
-import 'package:WOD_Book/widgets/profile/profile_edit.dart';
+import 'package:wod_book/providers/user_provider.dart';
+import 'package:wod_book/widgets/profile/profile_edit.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});

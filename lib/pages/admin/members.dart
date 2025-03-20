@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:WOD_Book/providers/user_provider.dart';
+import 'package:wod_book/providers/user_provider.dart';
 import 'package:provider/provider.dart';
 
 class MembersScreen extends StatefulWidget {

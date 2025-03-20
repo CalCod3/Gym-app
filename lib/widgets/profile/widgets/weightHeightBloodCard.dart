@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:WOD_Book/widgets/custom_card.dart';
+import 'package:wod_book/widgets/custom_card.dart';
 
 class WeightHeightBloodCard extends StatelessWidget {
   const WeightHeightBloodCard({

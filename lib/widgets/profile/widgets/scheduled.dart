@@ -1,6 +1,6 @@
-import 'package:WOD_Book/pages/schedule/calendar.dart';
+import 'package:wod_book/pages/schedule/calendar.dart';
 import 'package:flutter/material.dart';
-import 'package:WOD_Book/widgets/custom_card.dart';
+import 'package:wod_book/widgets/custom_card.dart';
 import 'package:provider/provider.dart';
 import '../../../providers/schedule_provider.dart';
 

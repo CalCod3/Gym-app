@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
-import 'package:WOD_Book/auth/auth_provider.dart';
+import 'package:wod_book/auth/auth_provider.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import '../model/post_model.dart';

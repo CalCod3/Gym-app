@@ -1,11 +1,11 @@
 // ignore_for_file: avoid_print, unused_element
 
 import 'dart:async';
-import 'package:WOD_Book/services/notification_service.dart';
+import 'package:wod_book/services/notification_service.dart';
 import 'package:flutter/material.dart';
-import 'package:WOD_Book/providers/activity_provider.dart';
-import 'package:WOD_Book/providers/communications_provider.dart';
-import 'package:WOD_Book/services/api_service.dart';
+import 'package:wod_book/providers/activity_provider.dart';
+import 'package:wod_book/providers/communications_provider.dart';
+import 'package:wod_book/services/api_service.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'auth/auth_provider.dart';

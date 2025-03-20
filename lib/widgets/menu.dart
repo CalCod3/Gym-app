@@ -1,16 +1,16 @@
 // ignore_for_file: deprecated_member_use, unused_field, library_private_types_in_public_api
 
-import 'package:WOD_Book/pages/schedule/calendar.dart';
-import 'package:WOD_Book/pages/schedule/classes.dart';
+import 'package:wod_book/pages/schedule/calendar.dart';
+import 'package:wod_book/pages/schedule/classes.dart';
 import 'package:flutter/material.dart';
-import 'package:WOD_Book/pages/admin/communications.dart';
-import 'package:WOD_Book/pages/social/posts.dart';
-import 'package:WOD_Book/responsive.dart';
-import 'package:WOD_Book/model/menu_modal.dart';
-import 'package:WOD_Book/pages/leaderboard/leaderboard.dart';
-import 'package:WOD_Book/widgets/profile/profilepage.dart';
-import 'package:WOD_Book/auth/login_page.dart'; // Assume you handle signout via login page
-import 'package:WOD_Book/auth/auth_provider.dart';
+import 'package:wod_book/pages/admin/communications.dart';
+import 'package:wod_book/pages/social/posts.dart';
+import 'package:wod_book/responsive.dart';
+import 'package:wod_book/model/menu_modal.dart';
+import 'package:wod_book/pages/leaderboard/leaderboard.dart';
+import 'package:wod_book/widgets/profile/profilepage.dart';
+import 'package:wod_book/auth/login_page.dart'; // Assume you handle signout via login page
+import 'package:wod_book/auth/auth_provider.dart';
 import 'package:provider/provider.dart';
 
 import '../pages/admin/activities.dart';
